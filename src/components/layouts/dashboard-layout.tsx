@@ -295,54 +295,6 @@ const DashboardLayout = () => {
               ]}
             />
           </>
-          {/* ) : ( */}
-          <>
-            {" "}
-            <Menu
-              className=" mb-[80px] ant-dashboard-layout"
-              style={{ background: colorPrimary }}
-              mode={!see || (see && collapsed) ? "vertical" : "inline"}
-              defaultSelectedKeys={[pathname]}
-              onClick={({ key }) => navigate(key)}
-              items={[
-                // {
-                //   key: "/dashboard",
-                //   icon: (
-                //     <MdDashboard
-                //       className={` ${
-                //         collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                //       }`}
-                //     />
-                //   ),
-                //   label: <div className="text-[#0F172A]">Dashboard</div>,
-                // },
-
-                {
-                  key: "/lead",
-                  icon: (
-                    <MdReceipt
-                      className={`${
-                        collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                      }`}
-                    />
-                  ),
-                  label: <div className="text-[#0F172A]">Lead Management</div>,
-                },
-                {
-                  key: "/admin/change-password",
-                  icon: (
-                    <MdDashboard
-                      className={` ${
-                        collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                      }`}
-                    />
-                  ),
-                  label: <div className="">Settings</div>,
-                },
-              ]}
-            />
-          </>
-          {/* )} */}
         </Sider>
         {getSiderWidth() > 70 && currentPage === "Account Details" && (
           <>
