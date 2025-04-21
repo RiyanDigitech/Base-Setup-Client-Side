@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
 // import { FaUser } from "react-icons/fa";
-import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, QuestionCircleOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
+import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, QuestionCircleOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 // import { MdShoppingBag } from "react-icons/md";
 import { MdInventory2 } from "react-icons/md";
 import { MdTask } from "react-icons/md";
@@ -14,6 +14,7 @@ import "../../index.css";
 import AuthService from "@/services/auth.service";
 import { Footer } from "antd/es/layout/layout";
 const { Header, Sider, Content } = Layout;
+
 // import { jwtDecode } from "jwt-decode";
 // import dayjs from "dayjs";
 
@@ -21,6 +22,11 @@ const { Header, Sider, Content } = Layout;
 const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  const toggleSearch = () => {
+    setShowSearch(!showSearch);
+  };
 
   const [see, setSee] = useState(true);
   // const [lastPersonData, setLastPersonData] = useState("");
@@ -175,13 +181,38 @@ const DashboardLayout = () => {
                 {
                   key: "/",
                   icon: (
-                    <MdDashboard
+                    <HomeOutlined
                       className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                         }`}
                     />
                   ),
                   label: <div className="text-[#0F172A]">Dashboard</div>,
                 },
+                {
+                  key: "sent-statistics",
+                  icon: (
+                    <MdDashboard
+                      className={`${
+                        collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                      }`}
+                    />
+                  ),
+                  label: <div className="text-[#0F172A]">Accounts</div>,
+                  children: [
+                    {
+                      key: "/chatbots",
+                      icon: (
+                        <RedditOutlined 
+                          className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                            }`}
+                        />
+                      ),
+                      label: <div className="text-[#0F172A]">Chatbots</div>,
+                    },
+                    
+                  ],
+                },
+                
                 {
                   key: "/sentstatistics",
                   icon: (
@@ -207,45 +238,11 @@ const DashboardLayout = () => {
                     <div className=" text-[#0F172A]">Sent Message</div>
                   ),
                 },
+                
                 {
-                  key: "/complaint",
+                  key: "/settings",
                   icon: (
-                    <MdInventory2
-                      className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                        }`}
-                    />
-                  ),
-                  label: (
-                    <div className="text-[#0F172A]">Complaint Management</div>
-                  ),
-                },
-                {
-                  key: "/service-list",
-                  icon: (
-                    <MdTask
-                      className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                        }`}
-                    />
-                  ),
-                  label: (
-                    <div className="text-[#0F172A]">Service Management</div>
-                  ),
-                },
-                {
-                  key: "/lead-list",
-                  icon: (
-                    <MdReceipt
-                      className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                        }`}
-                    />
-                  ),
-                  label: <div className="text-[#0F172A]">Lead Management</div>,
-                },
-
-                {
-                  key: "/account-details",
-                  icon: (
-                    <MdDashboard
+                    <SettingOutlined
                       className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                         }`}
                     />
@@ -350,8 +347,21 @@ const DashboardLayout = () => {
     <div className="flex flex-col md:flex-row md:items-center justify-between w-full md:w-auto gap-4 md:gap-6 text-center md:text-left">
       <div className="flex items-center gap-4 text-xl justify-center">
         <h2 className="text-[17px] font-bold leading-tight text-gray-500">195 SMS</h2>
-        <SearchOutlined />
-        <BellOutlined />
+        <div style={{ display: "flex", alignItems: "center" }}>
+      <SearchOutlined
+        className="ms-3"
+        style={{ fontSize: "20px", cursor: "pointer" }}
+        onClick={toggleSearch}
+      />
+      {showSearch && (
+        <Input.Search
+          placeholder="Search..."
+          style={{ width: 200, marginLeft: 10 }}
+          allowClear
+        />
+      )}
+    </div>
+        <BellOutlined className="ms-3" />
       </div>
 
       <div className="flex items-center justify-center md:justify-start gap-4 relative cursor-pointer">
