@@ -15,28 +15,28 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#ffffff",
-          fontFamily: "DM Sans",
-        },
-        components: {
-          Menu: {
-            itemSelectedBg: "#e2e8f0",
-            itemColor: "white",
-            colorBgBase: "#FAFAF2",
-          },
-          Layout: {
-            colorBgHeader: "#ffffff",
-            colorBgBody: "#f8fafc",
-          },
-          Checkbox: {
-            colorPrimary: "#008444",
-            colorPrimaryActive: "#036536",
-            colorPrimaryHover: "#03a557",
-          },
-        },
-      }}
+  theme={{
+    token: {
+      colorPrimary: "#ffffff",
+      fontFamily: "DM Sans",
+    },
+    components: {
+      Menu: {
+        itemSelectedBg: "#e2e8f0",
+        itemColor: "#ffffff",
+        colorBgBase: "#FAFAF2",
+      },
+      Layout: {
+        colorBgHeader: "#ffffff",
+        colorBgBody: "#f8fafc",
+      },
+      Checkbox: {
+        colorPrimary: "#059669", // Tailwind green-600
+        colorPrimaryActive: "#10b981", // Tailwind green-500
+        colorPrimaryHover: "#4ade80", // Tailwind green-400
+      },
+    },
+  }}
     >
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />

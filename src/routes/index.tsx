@@ -6,21 +6,21 @@ import DashboardLayout from "@/components/layouts/dashboard-layout";
 import ChangePassword from "@/pages/auth/change-password";
 import ResetNewPassword from "@/pages/auth/reset-new-password";
 import AccountDetails from "@/pages/account-details/account-details";
-import FranchiseList from "@/pages/franchise/franchise-list";
 import ComplainDetails from "@/pages/complaint-details/complain-details";
 import FranchiseCreate from "@/components/modules/franchise/franchise-create";
 import CreateNewService from "@/components/modules/service/create-new-service";
 import LeadList from "@/pages/lead-management/lead-management";
 import SendQuotation from "@/pages/send-quotation/send-quotation";
 import ServiceList from "@/pages/service-management/service-list";
-import ProtectedRoute from "./protected-routes";
+// import ProtectedRoute from "./protected-routes";
 import FranchiseUpdate from "@/components/modules/franchise/franchise-update";
 import ServiceDetails from "@/components/modules/service/update-service";
-import CustomerList from "@/pages/customer-management/customer-list";
 import ForGetPassword from "@/pages/auth/forget-password";
 import LoginPage from "@/pages/auth/login-page";
 import FranchiseLeadList from "@/pages/lead-management/targeted-franchise-lead-list";
 import FranchiseSendQuotation from "@/pages/send-quotation/franchise-send-quotation";
+import SentStatistics from "@/pages/SentStatistics/SentStatistics";
+import SentMessage from "@/pages/SentMessage/SentMessage";
 // import AddressAutocomplete from "@/pages/location";
 
 const router = createBrowserRouter([
@@ -70,14 +70,14 @@ const router = createBrowserRouter([
       { path: "/account-details", element: <AccountDetails /> },
       { path: "/create-franchise", element: <FranchiseCreate /> },
       { path: "/franchise-edit/:id", element: <FranchiseUpdate /> },
-      { path: "/franchise-list", element: <FranchiseList /> },
+      { path: "/sentstatistics", element: <SentStatistics /> },
       { path: "/complaint-details/:id", element: <ComplainDetails /> },
       { path: "/add-new-service", element: <CreateNewService /> },
       { path: "/service-details/:id", element: <ServiceDetails /> },
       { path: "/lead-list", element: <LeadList /> },
       { path: "/send-quotation/:id", element: <SendQuotation /> },
 
-      { path: "/customer-list", element: <CustomerList /> },
+      { path: "/sentmessage", element: <SentMessage /> },
       { path: "/service-list", element: <ServiceList /> },
     ],
   },
