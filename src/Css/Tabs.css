@@ -1,0 +1,13 @@
+.custom-tab-bar .ant-tabs-tab {
+    background-color: transparent;
+    color: #333;
+    border-radius: 6px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .custom-tab-bar .ant-tabs-tab-active {
+    background-color: #047857 !important; /* green-700 */
+    color: transparent !important;
+  }
+  

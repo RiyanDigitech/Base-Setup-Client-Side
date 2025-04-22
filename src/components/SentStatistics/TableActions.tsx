@@ -25,31 +25,15 @@ function TableAction() {
     {
       title: 'ID',
       dataIndex: 'ID',
-      sorter: (a, b) => a.ID - b.ID,
     },
     {
       title: 'FROM',
       dataIndex: 'FROM',
-      filters: [
-        { text: 'Joe', value: 'Joe' },
-        {
-          text: 'Category 1', value: 'Category 1',
-          children: [{ text: 'Yellow', value: 'Yellow' }, { text: 'Pink', value: 'Pink' }]
-        },
-        {
-          text: 'Category 2', value: 'Category 2',
-          children: [{ text: 'Green', value: 'Green' }, { text: 'Black', value: 'Black' }]
-        },
-      ],
-      filterMode: 'tree',
-      filterSearch: true,
-      onFilter: (value, record) => record.FROM.includes(value as string),
-      width: '30%',
+      
     },
     {
       title: 'TO',
       dataIndex: 'TO',
-      sorter: (a, b) => a.ID - b.ID,
     },
     {
       title: 'Message',
@@ -61,17 +45,14 @@ function TableAction() {
           ? words.slice(0, 10).join(' ') + '...'
           : text;
       },
-      sorter: (a, b) => a.ID - b.ID,
     },
     {
       title: 'Submitted',
       dataIndex: 'Submitted',
-      sorter: (a, b) => a.ID - b.ID,
     },
     {
       title: 'Delivered',
       dataIndex: 'Delivered',
-      sorter: (a, b) => a.ID - b.ID,
     },
     {
       title: 'Status',
@@ -82,7 +63,6 @@ function TableAction() {
           <CheckCircleOutlined /> {text.toUpperCase()}
         </Tag>
       ),
-      sorter: (a, b) => a.ID - b.ID,
     },
   ];
 

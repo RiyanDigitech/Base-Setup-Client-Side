@@ -3,31 +3,30 @@ import { Table, Card, Input } from "antd";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 
-interface DataType {
-  key: string;
-  id: number;
-  data: string;
-  smsCount: number;
-}
 
-const originalData: DataType[] = [
+// interface DataType {
+//   key: string;
+//   id: number;
+//   data: string;
+//   smsCount: number;
+// }
+
+
+const data = [
+  // {
+  //   id: 1,
+  //   data: "2025-04-21",
+  //   smsCount: 2,
+  // },
   {
-    key: "1",
-    id: 1,
-    data: "2025-04-18",
-    smsCount: 5,
-  },
-  {
-    key: "2",
     id: 2,
-    data: "2025-04-17",
-    smsCount: 3,
+    data: "2025-05-21",
+    smsCount: 243,
   },
   {
-    key: "3",
     id: 3,
-    data: "2025-04-16",
-    smsCount: 4,
+    data: "2025-12-21",
+    smsCount: 452,
   },
 ];
 
@@ -81,9 +80,6 @@ const chartSeries = [
 const SmsStatistics: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   
-  const filteredData = originalData.filter(item =>
-    item.data.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   return (
     <div style={{ display: 'flex', gap: '2rem' }}>
@@ -94,26 +90,30 @@ const SmsStatistics: React.FC = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ marginBottom: 16 }}
         />
-        <Table
-          dataSource={filteredData}
-          columns={columns}
-          pagination={{ pageSize: 5 }}
-          summary={() => {
-            const total = filteredData.reduce((sum, item) => sum + item.smsCount, 0);
-            return (
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0}>TOTAL:</Table.Summary.Cell>
-                <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                <Table.Summary.Cell index={3}>{total}</Table.Summary.Cell>
-              </Table.Summary.Row>
-            );
-          }}
-        />
+         <div style={{ background: "#fff", padding: 20, borderRadius: 10 }}>
+      
+
+      <Table
+        dataSource={data}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+        rowKey="id"
+        summary={() => (
+          <Table.Summary.Row>
+            <Table.Summary.Cell index={0} colSpan={2}>
+              <strong>TOTAL:</strong>
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={2}>
+              <strong>645</strong>
+            </Table.Summary.Cell>
+          </Table.Summary.Row>
+        )}
+      />
+    </div>
       </Card>
 
       <Card style={{ flex: 1 }}>
-        <Chart
+        <Chart         
           options={chartOptions}
           series={chartSeries}
           type="bar"
