@@ -1,82 +1,110 @@
-import { Form, Input, notification, Spin } from "antd";
+import { Button, Form, Input, notification, Spin } from "antd";
 import {
   Controller,
   SubmitErrorHandler,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
-import { PiGreaterThanLight } from "react-icons/pi";
-// import { useNavigate } from "react-router-dom";
-import "../../index.css";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FaKey, FaQuestionCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { AiOutlineLogin } from "react-icons/ai";
+import AuthService from "@/services/auth.service";
 import { schemaForgotPassword } from "@/lib/schemas";
 import { InputsForgotPassword } from "@/lib/types/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import AuthService from "@/services/auth.service";
+
 export default function ForGetPassword() {
   const {
     control,
     handleSubmit,
-    // formState: { errors },
     reset,
+    formState: { errors },
   } = useForm<InputsForgotPassword>({
     resolver: zodResolver(schemaForgotPassword),
+    mode: "onTouched",
   });
-  // const navigate = useNavigate();
+
   const { useHandleForGotPassword } = AuthService();
   const { mutate, isPending } = useHandleForGotPassword(reset);
-  const onSubmit: SubmitHandler<InputsForgotPassword> = (data) => {
-    console.log(data, "forgetpassword data");
-    localStorage.setItem("lastpersonemail", data?.email);
 
+  const onSubmit: SubmitHandler<InputsForgotPassword> = (data) => {
+    localStorage.setItem("lastWhatsappNumber", data.WhatsappNumber);
     mutate(data);
   };
+
   const onError: SubmitErrorHandler<InputsForgotPassword> = (errors) => {
-    if (errors?.email) {
+    if (errors.WhatsappNumber) {
       notification.error({
-        message: "Failed",
-        description: "Email field is missing",
+        message: "Validation Failed",
+        description: errors.WhatsappNumber.message,
         placement: "topRight",
       });
     }
   };
+
   return (
-    <div className="h-screen bg-[url('/auth-bg.png')] bg-cover bg-center  relative flex md:items-center justify-center font-manrope">
-      <div className="font-manrope my-auto md:my-5 flex-1 md:max-w-150 bg-white bg-opacity-40 rounded-2xl pt-9 px-8 md:px-16 h-hit">
-        <h2 className="text-xl font-bold text-[#fa7537]">App Name / logo</h2>
-        <div className="mt-5 md:mt-28">
-          <h1 className="text-lg text-center md:text-2xl font-bold text-[#222834] md:mt-6 font-manrope">
-            Forgot your Password?
-          </h1>
-          <p className="text-[#6b6b6b] text-center font-manrope text-sm md:mb-5">
-            Enter your email below and we will send you reset link{" "}
-          </p>
-          <form
-            onSubmit={handleSubmit(onSubmit, onError)}
-            className="font-manrope mt-4 w-full flex items-center flex-col md:flex-row md:mt-0 md:mb-30"
-          >
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="w-[800px] border rounded-md shadow-sm pb-6 border-gray-300">
+        {/* Header */}
+        <div className="bg-gray-100 px-4 py-3 rounded-t-md border-b flex items-center gap-2 mb-4">
+          <FaKey className="text-gray-600" />
+          <h2 className="text-gray-800 text-sm font-semibold">
+            Forgot your Password
+          </h2>
+        </div>
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit(onSubmit, onError)}
+          className="space-y-4 px-6"
+        >
+          <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-0">
+            <label className="block text-gray-700 sm:my-auto sm:mr-4   sm:text-left">
+              WhatsApp Number
+            </label>
             <Controller
-              name="email"
+              name="WhatsappNumber"
               control={control}
               render={({ field }) => (
-                <Form.Item className="w-full sm:w-full ">
+                <Form.Item
+                  validateStatus={errors.WhatsappNumber ? "error" : ""}
+                  help={errors.WhatsappNumber?.message}
+                  className="mb-0 w-full sm:w-auto"
+                >
                   <Input
                     {...field}
-                    id="email"
-                    placeholder="Enter Email"
-                    className=" w-full bg-white border-[1px] border-[#CBD0DD] h-[44px]"
+                    placeholder="Enter your WhatsApp number"
+                    className="w-full sm:w-96 h-10"
+                    maxLength={18}
                   />
                 </Form.Item>
               )}
             />
-            <button
-              type="submit"
-              className="submit bg-[#ff6f2c] h-[44px] mb-6 px-6 rounded-lg text-white ml-2 flex items-center"
-            >
-              {isPending ? <Spin /> : "Send"}
-              <PiGreaterThanLight className="text-white ml-2" />{" "}
-            </button>
-          </form>
-        </div>
+          </div>
+
+          <div className="flex justify-center items-center">
+            <div className="w-full sm:w-[370px] ">
+              <Button
+                htmlType="submit"
+                type="primary"
+                icon={isPending ? <Spin size="small" /> : <AiOutlineLogin />}
+                className="w-full bg-green-600 hover:!bg-green-700 lg:ms-19 md:ms-19 sm:ms-19 border-none"
+              >
+                Send Reset Link
+              </Button>
+
+              <div className="mt-2 text-center">
+                <Link
+                  to="/admin/login"
+                  className="text-blue-600 hover:underline inline-flex gap-1 justify-center"
+                >
+                  <FaQuestionCircle className="text-blue-600 my-auto" />
+                  Login Your Account?
+                </Link>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );
