@@ -45,7 +45,7 @@ const SentMessage = () => {
 
         <Button
           icon={<DownloadOutlined />}
-          className="w-full md:w-auto bg-green-600 text-white hover:bg-green-700"
+           className="bg-green-700 text-white w-full md:w-auto hover:!bg-green-500"
           onClick={handleExport}
         >
           Export
