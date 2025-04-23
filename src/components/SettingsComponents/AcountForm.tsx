@@ -44,10 +44,14 @@ const AccountForm = () => {
                                </Row>
    
                                <Form.Item>
-                                   <Button htmlType="submit" className="mr-2 bg-[#047857] text-white hover:bg-green-900">
+                                   <Button htmlType="submit" 
+                                    className="bg-[#047857] me-5 text-white w-full md:w-auto hover:!bg-green-500"
+                                   >
                                        Save changes
                                    </Button>
-                                   <Button>Discard</Button>
+                                   <Button
+                                   className="bg-[#6d6d6d] text-white w-full md:w-auto hover:!bg-green-500"
+                                   >Discard</Button>
                                </Form.Item>
                            </Form>
                        </Card>
