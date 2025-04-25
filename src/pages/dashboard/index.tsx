@@ -12,7 +12,7 @@ const DashboardPage = () => {
     { icon: "/icons/seven.svg", value: 0, label: "SMS" },
   ];
   return (
-    <div className="mt-7">
+    <div className="mt-7 flex flex-col md-flex-row">
       <Card className="rounded-lg shadow-md">
         <h2 className="text-lg font-semibold text-gray-700 mb-2">WhatsAPP Account Statistics</h2>
         <hr className="mb-10" />
