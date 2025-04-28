@@ -7,7 +7,7 @@ import { MdInventory2 } from "react-icons/md";
 import { MdTask } from "react-icons/md";
 import { MdReceipt } from "react-icons/md";
 import { Input, Layout, Menu, theme, Dropdown, Badge } from "antd";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 // import tokenService from "@/services/token.service";
 // import { RiCustomerService2Fill } from "react-icons/ri";
@@ -48,9 +48,11 @@ const DashboardLayout = () => {
       <Menu.Item key="3" icon={<QuestionCircleOutlined />}>
         Help
       </Menu.Item>
+      <Link to={'/admin/login'}>
       <Menu.Item key="4" onClick={logoutFunc} className="!text-red-500" icon={<LogoutOutlined />}>
         Logout
       </Menu.Item>
+      </Link>
     </Menu>
   );
 

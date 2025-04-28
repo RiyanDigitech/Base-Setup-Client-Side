@@ -1,4 +1,6 @@
+import {useNavigate } from 'react-router-dom';
 import { ThebaseUrl } from '../Base/BaseUrl';
+import { message } from 'antd';
 
 
 export const AuthuserLogin = async ({phone,password}:{phone:string,password:string}) => {
@@ -38,6 +40,7 @@ export const RecivecedOTPLogin = async ({phone , otp_code}:{phone:string , otp_c
 }
 
 
+// const navigate = useNavigate()
 export const logoutFunc = async () => {
     try {
       const accesstoken: any = localStorage.getItem('token');
@@ -49,9 +52,11 @@ export const logoutFunc = async () => {
             Accept: 'application/json',
             Authorization: `Bearer ${accesstoken}`,
           },});
-  
+    
       if (response.status === 200) {
         localStorage.removeItem('token');
+        message.success('You Have Logout Successfully')
+        
         return response.data;
       }
     } catch (error) {
