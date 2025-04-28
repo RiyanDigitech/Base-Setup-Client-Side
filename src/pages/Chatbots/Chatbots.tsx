@@ -1,21 +1,15 @@
 import React, { useState } from "react";
-import { Input, Button, Radio, Card, List, message, Modal, Upload } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
-
-interface SubMenu {
-  id: number;
-  name: string;
-  key: number;
-  type: string;
-}
-
-interface Menu {
-  id: number;
-  name: string;
-  type: string;
-  key: number;
-  children: SubMenu[];
-}
+import { Button, Card, List, message,} from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import AddMenu from "@/components/ChatbotsComponents/AddMenu";
+import { Menu } from "@/lib/types/menu";
+import AddContentModal from "@/components/ChatbotsComponents/modals/AddContentModal";
+import EditSubMenuModal from "@/components/ChatbotsComponents/modals/EditSubMenuModal";
+import EditDraftMenuModal from "@/components/ChatbotsComponents/modals/EditDraftMenuModal";
+import MenuKeyModal from "@/components/ChatbotsComponents/modals/MenuKeyModal";
+import AddSubMenuModal from "@/components/ChatbotsComponents/modals/AddSubMenuModal";
+import EditMenuModal from "@/components/ChatbotsComponents/modals/EditMenuModal";
+import EditSaveSubMenu from "@/components/ChatbotsComponents/modals/EditSaveSubMenu";
 
 const Chatbots: React.FC = () => {
   const [menuType, setMenuType] = useState<string>("Normal");
@@ -46,14 +40,7 @@ const Chatbots: React.FC = () => {
 
   const [currentMenuId, setCurrentMenuId] = useState<number | null>(null);
 
-  const handleAddMenuDraft = () => {
-    if (!menuName) {
-      message.error("Please enter a menu description.");
-      return;
-    }
-    setIsMenuModalOpen(true);
-  };
-
+ 
   const handleConfirmAddMenu = () => {
     if (!menuKey || menuKey < 1 || menuKey > 99) {
       message.error("Menu key must be between 1 and 99.");
@@ -79,7 +66,6 @@ const Chatbots: React.FC = () => {
   setIsDraftEditModalOpen(true);
 };
 
-
 const handleUpdateDraftMenu = () => {
   const updated = draftMenus.map(menu =>
     menu.id === editDraftMenu.id ? { ...menu, name: editDraftMenu.name, key: editDraftMenu.key } : menu
@@ -88,15 +74,10 @@ const handleUpdateDraftMenu = () => {
   setIsDraftEditModalOpen(false);
 };
 
-
 const deleteDraftMenu = (id:any) => {
   const filtered = draftMenus.filter(menu => menu.id !== id);
   setDraftMenus(filtered);
 };
-
-
-
-
   const saveDraftToMenus = () => {
     setMenus([...menus, ...draftMenus]);
     setDraftMenus([]);
@@ -119,8 +100,6 @@ const deleteDraftMenu = (id:any) => {
       )
     );
   };
-
-
   const deleteSubbb = (menuId: number, subId: number) => {
     const updatedMenus = draftMenus.map(menu => {
       if (menu.id === menuId) {
@@ -134,13 +113,6 @@ const deleteDraftMenu = (id:any) => {
 
     setDraftMenus(updatedMenus);
   };
-
-
-
-
-
-
-
 
   const showContentModal = (menuId: number) => {
     setCurrentMenuId(menuId);
@@ -218,9 +190,6 @@ const deleteDraftMenu = (id:any) => {
     setSubMenuKey(null);
     setIsSubMenuModalOpen(false);
   };
-
-
-
   const showEditModal = () => {
     setIsOpenSubMenuEditModal(true);
   };
@@ -254,8 +223,6 @@ const deleteDraftMenu = (id:any) => {
   }
 };
 
-
-
   return (
 
 
@@ -266,60 +233,10 @@ const deleteDraftMenu = (id:any) => {
       <hr className="mt-3 mb-5" />
 
       {/* Menu Type & Input Section */}
-      <div className="border p-4 flex flex-col gap-4 md:flex-row md:items-center">
-        <Radio.Group
-          onChange={(e) => setMenuType(e.target.value)}
-          className="w-full md:w-auto"
-          value={menuType}
-        >
-          <Radio
-            value="Normal"
-            style={{
-              color: menuType === "Normal" ? "green" : "inherit",
-              fontWeight: menuType === "Normal" ? "bolder" : "normal",
-              textDecoration: menuType === "Normal" ? "underline" : "none",
-            }}
-          >
-            Normal
-          </Radio>
-          <Radio
-            value="Textarea"
-            style={{
-              color: menuType === "Textarea" ? "green" : "inherit",
-              fontWeight: menuType === "Textarea" ? "bolder" : "normal",
-              textDecoration: menuType === "Textarea" ? "underline" : "none",
-            }}
-          >
-            Textarea
-          </Radio>
-        </Radio.Group>
-
-        {menuType === "Textarea" ? (
-          <Input.TextArea
-            rows={4}
-            placeholder="Please Enter Your Menu Description"
-            value={menuName}
-            onChange={(e) => setMenuName(e.target.value)}
-            className="w-full md:w-[400px]"
-          />
-        ) : (
-          <Input
-            placeholder="Please Enter Your Menu Description"
-            value={menuName}
-            onChange={(e) => setMenuName(e.target.value)}
-            className="w-full md:w-[400px]"
-          />
-        )}
-
-        <Button
-          className="bg-green-700 text-white w-full md:w-auto hover:!bg-green-500"
-
-          icon={<PlusOutlined />}
-          onClick={handleAddMenuDraft}
-        >
-          Add Menu
-        </Button>
-      </div>
+      <div>
+      <AddMenu draftMenus={draftMenus} setDraftMenus={setDraftMenus} />
+      {/* <DraftMenuList draftMenus={draftMenus} /> */}
+    </div>
 
 
 
@@ -361,49 +278,27 @@ const deleteDraftMenu = (id:any) => {
   className="text-green-700 cursor-pointer hover:scale-110 transition"
   onClick={() => editSbbb(menu.id, child.id)}
 />
-<Modal
-  title="Edit Submenu"
-  open={isEditModalOpen}
-  onOk={() => {
-    const updatedMenus = draftMenus.map(menu => {
-      if (menu.id === editItem.menuId) {
-        return {
-          ...menu,
-          children: menu.children.map(child =>
-            child.id === editItem.id
-              ? { ...child, name: editItem.name, id: editModeType === "submenu" ? editItem.id : child.id }
-              : child
-          ),
-        };
-      }
-      return menu;
-    });
-
-    setDraftMenus(updatedMenus);
-    setIsEditModalOpen(false);
-  }}
-  onCancel={() => setIsEditModalOpen(false)}
-  okText="Save"
-  cancelText="Cancel"
-  okButtonProps={{ className: "bg-green-700 text-white hover:!bg-green-500" }}
->
-  <div className="space-y-4">
-    <Input
-      value={editItem.name}
-      onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
-      placeholder="Enter Name"
-    />
-
-    {editModeType === "submenu" && (
-      <Input
-        value={editItem.id}
-        onChange={(e) => setEditItem({ ...editItem, id: e.target.value })}
-        placeholder="Enter ID"
+      <EditSubMenuModal
+        visible={isEditModalOpen}
+        editItem={editItem}
+        setEditItem={setEditItem}
+        onOk={() => {
+          const updatedMenus = draftMenus.map(menu => {
+            if (menu.id === editItem.menuId) {
+              return {
+                ...menu,
+                children: menu.children.map(child =>
+                  child.id === editItem.id ? { ...child, name: editItem.name } : child
+                ),
+              };
+            }
+            return menu;
+          });
+          setDraftMenus(updatedMenus);
+          setIsEditModalOpen(false);
+        }}
+        onCancel={() => setIsEditModalOpen(false)}
       />
-    )}
-  </div>
-</Modal>
-
                             <DeleteOutlined
                               className="text-red-500 cursor-pointer hover:scale-110 transition"
                               onClick={() => deleteSubbb(menu.id, child.id)}
@@ -461,60 +356,18 @@ const deleteDraftMenu = (id:any) => {
           />
 
           {/* Modal for Content Add */}
-          <Modal
-            title="Add Content to Menu"
+          <AddContentModal
             open={isContentModalOpen}
+            contentType={contentType}
+            contentValue={contentValue}
+            setContentType={setContentType}
+            setContentValue={setContentValue}
             onOk={handleAddContent}
             onCancel={() => setIsContentModalOpen(false)}
-            okText="Save"
-            cancelText="Cancel"
-            okButtonProps={{
-              className: "bg-green-700 text-white hover:!bg-green-500"
-            }}
-          >
-            <Radio.Group
-              value={contentType}
-              onChange={(e) => setContentType(e.target.value)}
-            >
-              <Radio value="Text">Text</Radio>
-              <Radio value="Image">Image</Radio>
-              <Radio value="Document">Document</Radio>
-            </Radio.Group>
+/>
 
-            <div className="mt-4">
-              {contentType === "Text" && (
-                <Input.TextArea
-                  rows={4}
-                  placeholder="Enter text"
-                  value={contentValue}
-                  onChange={(e) => setContentValue(e.target.value)}
-                />
-              )}
-
-              {(contentType === "Image" || contentType === "Document") && (
-                <Upload
-                  beforeUpload={(file) => {
-                    const url = URL.createObjectURL(file);
-                    setContentValue(url);
-                    return false;
-                  }}
-                  showUploadList={false}
-                >
-                  <Button
-                    icon={<UploadOutlined />}
-                    className="bg-green-700 text-white hover:!bg-green-500"
-                  >
-                    Upload {contentType}
-                  </Button>
-                </Upload>
-              )}
-            </div>
-          </Modal>
         </div>
       )}
-
-
-
       {/* Saved Menus Section */}
       <div className="mt-5">
         <h3 className="p-4 text-2xl font-bold underline">Saved Menu Structure</h3>
@@ -532,35 +385,12 @@ const deleteDraftMenu = (id:any) => {
 
                   </div>
                 </div>
-                <Modal
-                  title="Edit Menu"
-                  open={isOpenSubMenuEditModal}
-                  onCancel={handleCancel}
-                  footer={null}
-
-                >
-                  {/* Modal ke andar ka content */}
-                  {/* <p>Edit content for menu id: {menu?.id}</p> */}
-                  <Input
-                    type="string"
-                    defaultValue={menu.name}
-                  />
-
-                  <Input
-                    type="number"
-                    className="mt-4"
-                    defaultValue={menu.key}
-                  />
-
-                  <div className="mt-4 flex justify-end">
-                    <Button
-                      className="bg-green-700 text-white w-full md:w-auto hover:!bg-green-500"
-
-                    >
-                      Edit
-                    </Button>    </div>
-
-                </Modal>
+                <EditMenuModal 
+                isOpenSubMenuEditModal = {isOpenSubMenuEditModal}
+                handleCancel = {handleCancel}
+                menu = {menu}
+                />
+                
               </>
             }
             style={{ marginBottom: 16 }}
@@ -575,38 +405,12 @@ const deleteDraftMenu = (id:any) => {
                       onClick={showSubmenuEditModal}
 
                     />,
+                   <EditSaveSubMenu
+                    subMenuModal = {subMenuModal}
+                    handleSubmenuCancel = {handleSubmenuCancel}
+                    menu = {menu}
+                   />,
 
-
-                    <Modal
-                      title="Edit SubMenu"
-                      open={subMenuModal}
-                      onCancel={handleSubmenuCancel}
-                      footer={null}
-
-                    >
-                      {/* Modal ke andar ka content */}
-                      {/* <p>Edit content for menu id: {menu?.id}</p> */}
-                      <Input
-                        type="string"
-                        defaultValue={menu.name}
-                      />
-
-                      <Input
-                        type="number"
-                        className="mt-4"
-                        defaultValue={menu.key}
-                      />
-
-                      <div className="mt-4 flex justify-end">
-                        <Button
-                          className="bg-green-700 text-white w-full md:w-auto hover:!bg-green-500"
-
-                        >
-                          Edit
-                        </Button>    </div>
-
-                    </Modal>,
-//delete
                     <DeleteOutlined
                       key="delete"
                       onClick={() => deleteSubMenu(menu.id, item.id)}
@@ -636,78 +440,32 @@ const deleteDraftMenu = (id:any) => {
       </div>
 
       {/* Menu Key Modal */}
-      <Modal
-        title="Enter Menu Key (1-99)"
-        open={isMenuModalOpen}
-        onOk={handleConfirmAddMenu}
-        onCancel={() => {
-          setIsMenuModalOpen(false);
-          setMenuKey(null);
-        }}
-        okText="Save Draft"
-        okButtonProps={{
-          className: "bg-green-700 text-white w-full md:w-auto hover:!bg-green-500"
-        }}
-      >
-        <Input
-          type="number"
-          placeholder="Enter key from 1 to 99"
-          value={menuKey ?? ""}
-          onChange={(e) => setMenuKey(Number(e.target.value))}
-        />
-      </Modal>
+      <MenuKeyModal
+      isMenuModalOpen = {isMenuModalOpen}
+      handleConfirmAddMenu ={handleConfirmAddMenu}
+      setIsMenuModalOpen = {setIsMenuModalOpen}
+      setMenuKey = {setMenuKey}
+      menuKey = {menuKey}
+       />
 
       {/* SubMenu Modal */}
-      <Modal
-        title="Add Sub Menu"
-        open={isSubMenuModalOpen}
-        onOk={handleAddSubMenu}
-        onCancel={() => {
-          setIsSubMenuModalOpen(false);
-          setSubMenuName("");
-          setSubMenuKey(null);
-        }}
-        okText="Add"
-        cancelText="Cancel"
-        okButtonProps={{
-          className: "bg-green-700 text-white w-full md:w-auto hover:!bg-green-500"
-        }}
-      >
-        <Input
-          placeholder="Enter sub menu name"
-          value={subMenuName}
-          onChange={(e) => setSubMenuName(e.target.value)}
-          style={{ marginBottom: 10 }}
-        />
-        <Input
-          type="number"
-          placeholder="Enter key from 1 to 99"
-          value={subMenuKey ?? ""}
-          onChange={(e) => setSubMenuKey(Number(e.target.value))}
-        />
-      </Modal>
-      <Modal
-  title="Edit Draft Menu"
-  open={isDraftEditModalOpen}
-  onOk={handleUpdateDraftMenu}
-  onCancel={() => setIsDraftEditModalOpen(false)}
-  okText="Save"
-  cancelText="Cancel"
-  okButtonProps={{ className: "bg-green-700 text-white hover:!bg-green-500" }}
->
-  <div className="space-y-4">
-    <Input
-      value={editDraftMenu.name}
-      onChange={(e) => setEditDraftMenu({ ...editDraftMenu, name: e.target.value })}
-      placeholder="Enter Menu Name"
-    />
-    <Input
-      value={editDraftMenu.key}
-      onChange={(e) => setEditDraftMenu({ ...editDraftMenu, key: e.target.value })}
-      placeholder="Enter Menu Key"
-    />
-  </div>
-</Modal>
+      
+      <AddSubMenuModal
+      isSubMenuModalOpen = {isSubMenuModalOpen}
+      handleAddSubMenu = {handleAddSubMenu}
+      setIsSubMenuModalOpen ={setIsSubMenuModalOpen}
+      setSubMenuName = {setSubMenuName}
+      setSubMenuKey = {setSubMenuKey}
+      subMenuName = {subMenuName}
+      subMenuKey = {subMenuKey}
+      />
+ <EditDraftMenuModal
+        visible={isDraftEditModalOpen}
+        editDraftMenu={editDraftMenu}
+        setEditDraftMenu={setEditDraftMenu}
+        onOk={handleUpdateDraftMenu}
+        onCancel={() => setIsDraftEditModalOpen(false)}
+      />
 
     </div>
   );
