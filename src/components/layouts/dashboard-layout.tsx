@@ -6,13 +6,14 @@ import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, Hom
 import { MdInventory2 } from "react-icons/md";
 import { MdTask } from "react-icons/md";
 import { MdReceipt } from "react-icons/md";
-import { Input, Layout, Menu, theme, Dropdown } from "antd";
+import { Input, Layout, Menu, theme, Dropdown, Badge } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 // import tokenService from "@/services/token.service";
 // import { RiCustomerService2Fill } from "react-icons/ri";
 import AuthService from "@/services/auth.service";
 import { Footer } from "antd/es/layout/layout";
+import { logoutFunc } from "@/services/authService/AuthService";
 const { Header, Sider, Content } = Layout;
 
 // import { jwtDecode } from "jwt-decode";
@@ -47,10 +48,26 @@ const DashboardLayout = () => {
       <Menu.Item key="3" icon={<QuestionCircleOutlined />}>
         Help
       </Menu.Item>
-      <Menu.Item key="4" className="!text-red-500" icon={<LogoutOutlined />}>
+      <Menu.Item key="4" onClick={logoutFunc} className="!text-red-500" icon={<LogoutOutlined />}>
         Logout
       </Menu.Item>
     </Menu>
+  );
+
+  const notifications = [
+    { id: 1, text: "New booking received" },
+    { id: 2, text: "Room 101 is ready" },
+    { id: 3, text: "New review submitted" },
+  ];
+  
+  // Notification Dropdown Menu
+  const notificationMenu = (
+    <Menu
+      items={notifications.map((noti) => ({
+        key: noti.id,
+        label: noti.text,
+      }))}
+    />
   );
 
   useEffect(() => {
@@ -198,6 +215,7 @@ const DashboardLayout = () => {
                     />
                   ),
                   label: <div className="text-[#0F172A]">Accounts</div>,
+        
                   children: [
                     {
                       key: "/chatbots",
@@ -326,68 +344,73 @@ const DashboardLayout = () => {
         )}{" "}
         <Layout className="p-6 !rounded-xl">
         <Header
-  className={`bg-white shadow-md flex items-center ${getMarginLeft()} transition-all duration-300 p-4`}
+  className={`bg-white shadow-md flex items-center justify-between ${getMarginLeft()} transition-all duration-300 p-4 flex-wrap`}
   style={{
     paddingLeft: 24,
     paddingRight: 24,
-    height: "auto", // height auto so content can wrap
+    height: "auto",
   }}
 >
-  <div className="flex flex-wrap md:flex-nowrap justify-between items-center w-full gap-4">
-    {/* Left Side Icons */}
-    <div className="flex items-center gap-5 text-xl w-full md:w-auto justify-start">
-      <button onClick={() => setCollapsed(!collapsed)}>
-        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      </button>
-      <FileTextOutlined />
-      <CalendarOutlined />
-    </div>
+  {/* Left Side */}
+  <div className="flex items-center gap-5 text-xl flex-shrink-0">
+    <button onClick={() => setCollapsed(!collapsed)}>
+      {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+    </button>
+    <FileTextOutlined />
+    <CalendarOutlined />
+  </div>
 
-    {/* Right Side Profile Section */}
-    <div className="flex flex-col md:flex-row md:items-center justify-between w-full md:w-auto gap-4 md:gap-6 text-center md:text-left">
-      <div className="flex items-center gap-4 text-xl justify-center">
-        <h2 className="text-[17px] font-bold leading-tight text-gray-500">195 SMS</h2>
-        <div style={{ display: "flex", alignItems: "center" }}>
+  {/* Right Side */}
+  <div className="flex items-center justify-end gap-6 flex-1 flex-wrap sm:flex-nowrap mt-4 sm:mt-0">
+    {/* SMS */}
+    <h2 className="text-[17px] font-bold leading-tight text-gray-500 whitespace-nowrap">
+      195 SMS
+    </h2>
+
+    {/* Search Box */}
+    <div className="flex items-center">
       <SearchOutlined
         className="ms-3"
         style={{ fontSize: "20px", cursor: "pointer" }}
         onClick={toggleSearch}
       />
       {showSearch && (
-        <Input.Search
+        <Input
+          className="!border mt-2 sm:mt-0"
           placeholder="Search..."
           style={{ width: 200, marginLeft: 10 }}
           allowClear
         />
       )}
     </div>
-        <BellOutlined className="ms-3" />
+
+    {/* Notifications */}
+    <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
+      <Badge count={notifications.length} size="small" offset={[-2, 2]}>
+        <BellOutlined className="ms-3 text-xl cursor-pointer hover:text-green-700 transition" />
+      </Badge>
+    </Dropdown>
+
+    {/* Profile */}
+    <div className="flex items-center gap-3 relative cursor-pointer">
+      <div className="text-right hidden sm:block leading-tight">
+        <h2 className="text-[14px] font-bold text-gray-500">Rabees Waheed</h2>
+        <h2 className="text-[12px] font-bold text-gray-500">Account ID # 1263</h2>
       </div>
 
-      <div className="flex items-center justify-center md:justify-start gap-4 relative cursor-pointer">
-        <div className="space-y-0 mt-1">
-          <h2 className="text-[14px] font-bold leading-tight text-gray-500">
-            Rabees Waheed
-          </h2>
-          <h2 className="text-[12px] font-bold leading-tight text-gray-500">
-            Account ID # 1263
-          </h2>
-        </div>
+      <Dropdown overlay={profileMenu} placement="bottomRight" arrow>
+        <img
+          className="h-10 w-10 rounded-full object-cover"
+          src="/profilelgo.png"
+          alt="profile"
+        />
+      </Dropdown>
 
-        <Dropdown overlay={profileMenu} placement="bottomRight" arrow>
-          <img
-            className="h-10 w-10 rounded-full object-cover"
-            src="/profilelgo.png"
-            alt="profile"
-          />
-        </Dropdown>
-
-        {/* Green dot for online status */}
-        <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></span>
-      </div>
+      <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></span>
     </div>
   </div>
 </Header>
+
 
 
           <Content
