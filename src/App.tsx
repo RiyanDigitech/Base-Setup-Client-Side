@@ -1,3 +1,4 @@
+
 import { RouterProvider } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -40,7 +41,6 @@ function App() {
     >
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </ConfigProvider>
   );

@@ -82,7 +82,9 @@ const SmsStatistics: React.FC = () => {
   
 
   return (
-    <div style={{ display: 'flex', gap: '2rem' }}>
+    <div 
+    className="flex flex-col md:flex-row"
+    style={{ display: 'flex', gap: '2rem'}}>
       <Card style={{ flex: 1 }} title="Statistics 2025-04-18 - To - 2025-04-18">
         <Input
           placeholder="Search by Date..."
