@@ -606,7 +606,7 @@ const deleteDraftMenu = (id:any) => {
                         </Button>    </div>
 
                     </Modal>,
-
+//delete
                     <DeleteOutlined
                       key="delete"
                       onClick={() => deleteSubMenu(menu.id, item.id)}
