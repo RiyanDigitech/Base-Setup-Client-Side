@@ -1,30 +1,27 @@
 import DashboardLayout from "@/components/layouts/dashboard-layout";
-
-import LoginPage from "@/pages/auth/login-page";
+import NotFoundPage from "@/NotFoundPage";
 import ChangePassword from "@/pages/auth/change-password";
 import ForGetPassword from "@/pages/auth/forget-password";
+import LoginPage from "@/pages/auth/login-page";
 import ResetNewPassword from "@/pages/auth/reset-new-password";
-import NotFoundPage from "@/NotFoundPage";
-
-import DashboardPage from "@/pages/dashboard";
-import FranchiseSendQuotation from "@/pages/send-quotation/franchise-send-quotation";
-import FranchiseLeadList from "@/pages/lead-management/targeted-franchise-lead-list";
-import SendQuotation from "@/pages/send-quotation/send-quotation";
-import Settings from "@/pages/Settings/Settings";
 import Chatbots from "@/pages/Chatbots/Chatbots";
+import DashboardPage from "@/pages/dashboard";
+import LeadList from "@/pages/lead-management/lead-management";
+import FranchiseLeadList from "@/pages/lead-management/targeted-franchise-lead-list";
+import FranchiseSendQuotation from "@/pages/send-quotation/franchise-send-quotation";
+import SendQuotation from "@/pages/send-quotation/send-quotation";
+import SentMessage from "@/pages/SentMessage/SentMessage";
+import SentStatistics from "@/pages/SentStatistics/SentStatistics";
+import Settings from "@/pages/Settings/Settings";
+import { createBrowserRouter } from "react-router-dom";
+import ServiceDetails from '@/components/modules/service/update-service';
+import CreateNewService from "@/components/modules/service/create-new-service";
 import FranchiseCreate from "@/components/modules/franchise/franchise-create";
 import FranchiseUpdate from "@/components/modules/franchise/franchise-update";
 import ComplainDetails from "@/pages/complaint-details/complain-details";
-import CreateNewService from "@/components/modules/service/create-new-service";
-import ServiceDetails from "@/components/modules/service/update-service";
-import LeadList from "@/pages/lead-management/lead-management";
-import SentStatistics from "@/pages/SentStatistics/SentStatistics";
-import SentMessage from "@/pages/SentMessage/SentMessage";
-import { createBrowserRouter} from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoutes";
 
 const router = createBrowserRouter([
-  // { path: "/", element: <Navigate to="/admin/login" /> },
-
   {
     path: "/admin/login",
     element: <LoginPage />,
@@ -39,19 +36,23 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/change-password",
-    element: <ChangePassword />,
+    element: (
+      <ProtectedRoute>
+        <ChangePassword />
+      </ProtectedRoute>
+    ),
   },
-
   {
     element: (
-      <DashboardLayout />
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
     ),
     children: [
       { path: "/", element: <DashboardPage /> },
       { path: "/franchise-lead/:id", element: <FranchiseSendQuotation /> },
       { path: "/lead", element: <FranchiseLeadList /> },
       { path: "/send-quotation/:id", element: <SendQuotation /> },
-
       { path: "/settings", element: <Settings /> },
       { path: "/chatbots", element: <Chatbots /> },
       { path: "/create-franchise", element: <FranchiseCreate /> },
@@ -64,7 +65,6 @@ const router = createBrowserRouter([
       { path: "/sentmessage", element: <SentMessage /> },
     ],
   },
-
   {
     path: "*",
     element: <NotFoundPage />,

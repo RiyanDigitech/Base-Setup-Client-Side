@@ -1,5 +1,5 @@
 import { Controller, useForm, SubmitHandler } from "react-hook-form";
-import { Button, Checkbox, Form, Input, message, Modal, notification } from "antd";
+import { Button, Checkbox, Form, Input, message, Modal } from "antd";
 import { AiOutlineLogin } from "react-icons/ai";
 import { FaKey, FaQuestionCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,40 +12,40 @@ interface LoginFormInputs {
   password: string;
 }
 
-
 export default function LoginPage() {
-  const { control, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
+  const { control, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
+    defaultValues: { phone: '', password: '' }, // default empty
+    mode: "onTouched" // validation touch par chale
+  });
+
   const [isButtonDisabled, setIsButtonDisabled] = useState(false); 
   const [isRememberMeChecked, setIsRememberMeChecked] = useState(false);
-  const [phone, setphone] = useState('');
-  const [password, setpassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [otp_code, setOtp] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogin: SubmitHandler<LoginFormInputs> = (data) => {
-    setphone(data.phone);
-    setpassword(data.password);
+    setPhone(data.phone);
+    setPassword(data.password);
     sendOtpMutation.mutate({ phone: data.phone, password: data.password });
   };
 
   const handleVerifyOTP = () => {
-    console.log("OTP" , otp_code)
-    verifyOtpMutation.mutate({ phone , otp_code });
+    verifyOtpMutation.mutate({ phone, otp_code });
   };
-  
+
   const sendOtpMutation = useMutation({
     mutationFn: AuthuserLogin,
     onSuccess: () => {
-      // message.success('OTP sent to your phone number');
-      message.success('OTP sent to your phone number')
+      message.success('OTP sent to your phone number');
       setIsModalVisible(true);
     },
     onError: (error: any) => {
-      message.error('Failed to send OTP')
-      console.log(error)
+      message.error('Failed to send OTP');
+      console.log(error);
     },
   });
 
@@ -53,16 +53,12 @@ export default function LoginPage() {
     mutationFn: RecivecedOTPLogin,
     onSuccess: (data: any) => {
       localStorage.setItem('token', data.token);
-      console.log(data.token) 
-      navigate('/')
+      navigate('/');
     },
     onError: () => {
       message.error('Invalid OTP');
     },
   });
-
-
-
 
   return (
     <div className="min-h-screen lg:px-0 md:px-0 px-4 flex items-center justify-center bg-white">
@@ -82,6 +78,7 @@ export default function LoginPage() {
               <Controller
                 name="phone"
                 control={control}
+                rules={{ required: "Phone number is required" }}
                 render={({ field }) => (
                   <Form.Item
                     validateStatus={errors.phone ? "error" : ""}
@@ -102,21 +99,21 @@ export default function LoginPage() {
               <Controller
                 name="password"
                 control={control}
+                rules={{ required: "Password is required" }}
                 render={({ field }) => (
                   <Form.Item
                     validateStatus={errors.password ? "error" : ""}
                     help={errors.password?.message}
                     className="mb-0"
                   >
-                    <Input.Password  
-                    className="lg:w-80 md:w-80 w-50 h-10" {...field} />
+                    <Input.Password className="lg:w-80 md:w-80 w-50 h-10" {...field} />
                   </Form.Item>
                 )}
               />
             </div>
           </div>
 
-          {/* Remember Me */}
+          {/* Remember Me and Submit */}
           <div className="flex">
             <div className="mx-auto ps-20">
               <div className="flex items-center gap-2">
@@ -126,7 +123,6 @@ export default function LoginPage() {
                 <span className="text-sm text-gray-700">Remember Me</span>
               </div>
 
-              {/* Login Button */}
               <Button
                 htmlType="submit"
                 type="primary"
@@ -137,12 +133,8 @@ export default function LoginPage() {
                 Login
               </Button>
 
-              {/* Forgot Password Link */}
-              <div className=" mt-2">
-                <Link
-                  to="/admin/forgot-password"
-                  className="text-blue-600 hover:underline flex gap-1"
-                >
+              <div className="mt-2">
+                <Link to="/admin/forgot-password" className="text-blue-600 hover:underline flex gap-1">
                   <FaQuestionCircle className="text-blue-600 my-auto" />
                   Forgot Your Password?
                 </Link>
@@ -151,12 +143,14 @@ export default function LoginPage() {
           </div>
         </form>
       </div>
+
+      {/* Modal */}
       <Modal
         title="Verify OTP"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={[
-          <Button key="submit" className='!bg-green-600' type="primary" onClick={handleVerifyOTP}>
+          <Button key="submit" className="!bg-green-600" type="primary" onClick={handleVerifyOTP}>
             Verify OTP
           </Button>,
         ]}
