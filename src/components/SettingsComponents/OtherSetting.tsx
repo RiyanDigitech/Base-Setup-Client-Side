@@ -92,7 +92,7 @@ const OtherSettings: React.FC = () => {
       checked={checked}
       onChange={handleChange}
       style={{
-        backgroundColor: checked ? 'green' : 'white',
+        backgroundColor: checked ? 'green' : 'gray',
         borderColor: checked ? 'green' : 'gray', // Adjust border color if needed
         transition: 'background-color 0.3s ease',
       }}
