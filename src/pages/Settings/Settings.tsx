@@ -4,6 +4,7 @@ import { UserOutlined, LockOutlined, KeyOutlined, SettingOutlined } from '@ant-d
 import '../../Css/Tabs.css'
 import AccountForm from '@/components/SettingsComponents/AcountForm';
 import ChangePasswordForm from '@/components/SettingsComponents/ChangePassword';
+import OtherSettings from '@/components/SettingsComponents/OtherSetting';
 
 const { TabPane } = Tabs;
 
@@ -60,7 +61,7 @@ const Settings = () => {
                     }
                     key="4"
                 >
-                    <p>Other settings content here.</p>
+                    <OtherSettings />
                 </TabPane>
             </Tabs>
         </div>
