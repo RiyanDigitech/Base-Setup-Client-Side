@@ -67,7 +67,6 @@ const OtherSettings: React.FC = () => {
   const handleUpdate = (key: string) => {
     const updatedSetting = settings.find((setting) => setting.key === key);
     console.log('Updating setting:', updatedSetting);
-    // Yahan API call kar sakte ho
   };
 
   const columns = [
