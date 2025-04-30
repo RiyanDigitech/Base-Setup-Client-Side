@@ -1,4 +1,3 @@
-import {useNavigate } from 'react-router-dom';
 import { ThebaseUrl } from '../Base/BaseUrl';
 import { message } from 'antd';
 
@@ -40,7 +39,6 @@ export const RecivecedOTPLogin = async ({phone , otp_code}:{phone:string , otp_c
 }
 
 
-// const navigate = useNavigate()
 export const logoutFunc = async () => {
     try {
       const accesstoken: any = localStorage.getItem('token');
@@ -65,3 +63,4 @@ export const logoutFunc = async () => {
     }
 }
   
+
