@@ -5,7 +5,7 @@ import { FaKey, FaQuestionCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { AuthuserLogin, RecivecedOTPLogin } from "@/services/authService/AuthService";
+import { AuthuserLogin, RecivecedOTPLogin, useSendOtp, useVerifyOtp } from "@/services/authService/AuthService";
 
 interface LoginFormInputs {
   phone: string;
@@ -37,28 +37,34 @@ export default function LoginPage() {
     verifyOtpMutation.mutate({ phone, otp_code });
   };
 
-  const sendOtpMutation = useMutation({
-    mutationFn: AuthuserLogin,
-    onSuccess: () => {
-      message.success('OTP sent to your phone number');
-      setIsModalVisible(true);
-    },
-    onError: (error: any) => {
-      message.error('Failed to send OTP');
-      console.log(error);
-    },
+  const sendOtpMutation = useSendOtp({
+    onSuccess: () => setIsModalVisible(true),
   });
 
-  const verifyOtpMutation = useMutation({
-    mutationFn: RecivecedOTPLogin,
-    onSuccess: (data: any) => {
-      localStorage.setItem('token', data.token);
-      navigate('/');
-    },
-    onError: () => {
-      message.error('Invalid OTP');
-    },
-  });
+  const verifyOtpMutation = useVerifyOtp();
+  
+  // const sendOtpMutation = useMutation({
+  //   mutationFn: AuthuserLogin,
+  //   onSuccess: () => {
+  //     message.success('OTP sent to your phone number');
+  //     setIsModalVisible(true);
+  //   },
+  //   onError: (error: any) => {
+  //     message.error('Failed to send OTP');
+  //     console.log(error);
+  //   },
+  // });
+
+  // const verifyOtpMutation = useMutation({
+  //   mutationFn: RecivecedOTPLogin,
+  //   onSuccess: (data: any) => {
+  //     localStorage.setItem('token', data.token);
+  //     navigate('/');
+  //   },
+  //   onError: () => {
+  //     message.error('Invalid OTP');
+  //   },
+  // });
 
   return (
     <div className="min-h-screen lg:px-0 md:px-0 px-4 flex items-center justify-center bg-white">
@@ -128,6 +134,7 @@ export default function LoginPage() {
                 type="primary"
                 icon={<AiOutlineLogin />}
                 className="lg:w-[325px] md:w-[325px] w-[225px] bg-green-600 mt-4 hover:!bg-green-700 border-none"
+                loading={sendOtpMutation.isPending}
                 disabled={isButtonDisabled}
               >
                 Login
@@ -150,7 +157,7 @@ export default function LoginPage() {
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={[
-          <Button key="submit" className="!bg-green-600" type="primary" onClick={handleVerifyOTP}>
+          <Button key="submit" className="!bg-green-600" type="primary" onClick={handleVerifyOTP} loading ={verifyOtpMutation.isPending}>
             Verify OTP
           </Button>,
         ]}

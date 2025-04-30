@@ -1,16 +1,13 @@
 import {useNavigate } from 'react-router-dom';
 import { ThebaseUrl } from '../Base/BaseUrl';
 import { message } from 'antd';
+import axios from "@/lib/config/axios-instance"
+import { useMutation } from '@tanstack/react-query';
 
 
 export const AuthuserLogin = async ({phone,password}:{phone:string,password:string}) => {
     try {
-        const response = await ThebaseUrl.post(`/login`,{phone , password }, {
-            headers:{
-                "Content-Type" : "application/json",
-                // "Authorization" : `Bearer ${TokenValue}`
-               },
-        })
+        const response = await axios.post(`/login`,{phone , password })
         if(response.status === 200){
             return response.data
         }
@@ -24,12 +21,7 @@ export const AuthuserLogin = async ({phone,password}:{phone:string,password:stri
 export const RecivecedOTPLogin = async ({phone , otp_code}:{phone:string , otp_code:string}) => {
 
     try {
-        const response = await ThebaseUrl.post(`/verify-otp` ,{phone , otp_code} , {
-            headers:{
-                "Accept":"application/json",
-                "Content-Type":"application/json",
-            }
-        })
+        const response = await axios.post(`/verify-otp` ,{phone , otp_code})
     
         if(response.status === 200){
             return response.data
@@ -46,7 +38,7 @@ export const logoutFunc = async () => {
       const accesstoken: any = localStorage.getItem('token');
       console.log('Token:', accesstoken);
   
-      const response = await ThebaseUrl.post(
+      const response = await axios.post(
         `/logout`,{},{
           headers: {
             Accept: 'application/json',
@@ -64,4 +56,33 @@ export const logoutFunc = async () => {
       return { error: true, message: 'Logout failed' };
     }
 }
+  // TanStack Query hooks
+export const useSendOtp = ({ onSuccess }: { onSuccess: () => void }) => {
+    return useMutation({
+      mutationFn: AuthuserLogin,
+      onSuccess: () => {
+        message.success("OTP sent to your phone number");
+        onSuccess(); // trigger modal etc.
+      },
+      onError: () => {
+        message.error("Failed to send OTP");
+      },
+    });
+  };
+
+//   verify OPT
+export const useVerifyOtp = () => {
+    const navigate = useNavigate();
+  
+    return useMutation({
+      mutationFn: RecivecedOTPLogin,
+      onSuccess: (data: any) => {
+        localStorage.setItem("token", data.token);
+        navigate("/");
+      },
+      onError: () => {
+        message.error("Invalid OTP");
+      },
+    });
+  };
   
