@@ -1,50 +1,50 @@
-// components/ChatbotsComponents/modals/EditSubMenuModal.tsx
-import React from "react";
-import { Modal, Input } from "antd";
+import React from 'react';
+import { Modal, Input } from 'antd';
+import { Menu } from '@/lib/types/menu';
 
-interface Props {
+interface EditSubMenuModalProps {
   visible: boolean;
-  editItem: {
-    menuId: number | null;
-    id: number | null;
-    name: string;
-    type: string;
-  };
-  setEditItem: (item: any) => void;
+  subMenuToEdit: Menu | null;
+  setSubMenuToEdit: React.Dispatch<React.SetStateAction<Menu | null>>;
   onOk: () => void;
   onCancel: () => void;
 }
 
-const EditSubMenuModal: React.FC<Props> = ({
+const EditSubMenuModal: React.FC<EditSubMenuModalProps> = ({
   visible,
-  editItem,
-  setEditItem,
+  subMenuToEdit,
+  setSubMenuToEdit,
   onOk,
   onCancel,
 }) => {
   return (
     <Modal
-      title="Edit Submenu"
       open={visible}
+      title="Edit Sub Menu"
       onOk={onOk}
       onCancel={onCancel}
       okText="Save"
-      cancelText="Cancel"
-      okButtonProps={{ className: "bg-green-700 text-white hover:!bg-green-500" }}
     >
-      <div className="space-y-4">
+      <div className="flex flex-col gap-4 mt-4">
         <Input
-          value={editItem.name}
-          onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
-          placeholder="Enter Name"
+          placeholder="Sub Menu Name"
+          value={subMenuToEdit?.name}
+          onChange={(e) =>
+            setSubMenuToEdit((prev) =>
+              prev ? { ...prev, name: e.target.value } : null
+            )
+          }
         />
-        {editItem.type === "submenu" && (
-          <Input
-            value={editItem.id ?? ""}
-            onChange={(e) => setEditItem({ ...editItem, id: Number(e.target.value) })}
-            placeholder="Enter ID"
-          />
-        )}
+        <Input
+          placeholder="Sub Menu Key"
+          type="number"
+          value={subMenuToEdit?.key}
+          onChange={(e) =>
+            setSubMenuToEdit((prev) =>
+              prev ? { ...prev, key: Number(e.target.value) } : null
+            )
+          }
+        />
       </div>
     </Modal>
   );
