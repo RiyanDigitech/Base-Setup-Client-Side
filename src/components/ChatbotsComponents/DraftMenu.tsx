@@ -90,7 +90,7 @@ const DraftMenu: React.FC<DraftMenuProps> = ({
             <div className="flex justify-between items-center">
               <List.Item className="!border-none !p-0">
                 <span className="font-medium">
-                  {idx + 1}. {menu.name} (Key: {menu.key})
+                  {idx + 1}. {menu.name} (Key:{menu.key})
                 </span>
               </List.Item>
               <div className="flex gap-2">

@@ -64,3 +64,21 @@ export const logoutFunc = async () => {
 }
   
 
+export const enableOTPModal = async (enable:boolean) => {
+    try {
+        const accessToken:any = localStorage.getItem('token')
+        console.log("njkjbnvkn" ,accessToken)
+        const reponse = await ThebaseUrl.post(`/mfa-toggle`,{enable},{
+        headers:{
+            Accept:"application/json",
+            Authorization:`Bearer ${accessToken}`
+        },
+        })
+
+    if(reponse.status === 200){
+        return  reponse.data
+    }else {[]}
+    } catch (error) {
+        console.log(error)
+    }
+}
