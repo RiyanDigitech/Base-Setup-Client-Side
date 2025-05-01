@@ -183,37 +183,75 @@ const handleAddSubMenu = (name: string, key: string) => {
     setDraftMenus(filtered);
   };
   const renderSubMenus = (menus: Menu[]) => {
-  return menus.map((menu) => (
-    <div key={menu.id} className="border border-gray-500 p-4 mt-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="font-medium">{menu.name} (Key: {menu.key})</p>
-        </div>
-        <div className="flex gap-2">
-          <EditOutlined
-          className="text-green-700 cursor-pointer hover:scale-110 transition"
-          onClick={() => handleEditSubMenu(menu)}
+    return menus.map((menu) => (
+      <div key={menu.id} className="border border-gray-500 p-4 mt-4 ml-4 rounded">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="font-medium">{menu.name} (Key: {menu.key})</p>
+          </div>
+          <div className="flex gap-2">
+            <EditOutlined
+              className="text-green-700 cursor-pointer hover:scale-110 transition"
+              onClick={() => handleEditSubMenu(menu)}
             />
             <DeleteOutlined
-                className="text-red-500 cursor-pointer hover:scale-110 transition"
-                onClick={() => handleDeleteSubMenu(menu.id)} 
-                />
-          {/* <Button onClick={() => handleEditSubMenu(menu)} className="!bg-green-500 !text-white">Edit</Button>
-          <Button onClick={() => handleDeleteSubMenu(menu.id)} className="!bg-red-500 !text-white">Delete</Button> */}
+              className="text-red-500 cursor-pointer hover:scale-110 transition"
+              onClick={() => handleDeleteSubMenu(menu.id)}
+            />
+          </div>
         </div>
-        
+  
+        {/* ➕ Add Content & Submenu Buttons */}
+        <div className="mt-3 flex gap-4 flex-wrap">
+          <Button onClick={() => hanldeNestedContentModal(menu.id)} className="!bg-green-700 !text-white active:!scale-110">
+            Add Content
+          </Button>
+          <Button onClick={() => openAddSubMenuModal(menu.id)} className="!bg-green-700 !text-white active:!scale-110">
+            Add SubMenu
+          </Button>
+        </div>
+  
+        {/* 📄 Show contents */}
+        {menu.children && menu.children.length > 0 && (
+          <List
+            size="small"
+            className="my-3"
+            bordered
+            dataSource={menu.children}
+            renderItem={(child, cidx) => (
+              <List.Item
+                actions={[
+                  <EditOutlined
+                    className="text-green-700 cursor-pointer hover:scale-110 transition"
+                    onClick={() => showContentModal(menu.id, child)}
+                  />,
+                  <DeleteOutlined
+                    className="text-red-500 cursor-pointer hover:scale-110 transition"
+                    onClick={() => handleDeleteContent(menu.id, child.id)}
+                  />
+                ]}
+              >
+                {cidx + 1}.{" "}
+                {child.type === "Text" ? (
+                  <span>{child.name}</span>
+                ) : child.type === "Image" ? (
+                  <img src={child.name} alt="img" className="max-w-[100px] max-h-[60px] rounded" />
+                ) : (
+                  <a href={child.name} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                    View Document
+                  </a>
+                )}
+              </List.Item>
+            )}
+          />
+        )}
+  
+        {/* 🔁 Recursive Submenus */}
+        {menu.subMenus && renderSubMenus(menu.subMenus)}
       </div>
-      <div className='mt-3 flex gap-4'>
-        <Button onClick={() => hanldeNestedContentModal(menu.id)} className="!bg-green-700 !text-white active:!scale-110">Add Content</Button>
-        <Button onClick={() => openAddSubMenuModal(menu.id)} className="!bg-green-700 !text-white active:!scale-110">Add SubMenu</Button>
-          
-        </div>
-
-      {/* Recursive call */}
-      {menu.subMenus && renderSubMenus(menu.subMenus)}
-    </div>
-  ));
-};
+    ));
+  };
+  
 const updateSubMenuRecursively = (menus: Menu[]): Menu[] => {
   return menus.map(menu => {
     if (menu.id === subMenuToEdit?.id) {

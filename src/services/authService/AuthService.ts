@@ -55,6 +55,26 @@ export const logoutFunc = async () => {
       return { error: true, message: 'Logout failed' };
     }
 }
+
+export const enableOTPModal = async (enable:boolean) => {
+  try {
+      const accessToken:any = localStorage.getItem('token')
+      console.log("njkjbnvkn" ,accessToken)
+      const reponse = await axios.post(`/mfa-toggle`,{enable},{
+      headers:{
+          Accept:"application/json",
+          Authorization:`Bearer ${accessToken}`
+      },
+      })
+
+  if(reponse.status === 200){
+      return  reponse.data
+  }else {[]}
+  } catch (error) {
+      console.log(error)
+  }
+}
+
   // TanStack Query hooks
 export const useSendOtp = ({ onSuccess }: { onSuccess: () => void }) => {
     return useMutation({
@@ -85,22 +105,16 @@ export const useVerifyOtp = () => {
     });
   };
   
-
-export const enableOTPModal = async (enable:boolean) => {
-    try {
-        const accessToken:any = localStorage.getItem('token')
-        console.log("njkjbnvkn" ,accessToken)
-        const reponse = await ThebaseUrl.post(`/mfa-toggle`,{enable},{
-        headers:{
-            Accept:"application/json",
-            Authorization:`Bearer ${accessToken}`
-        },
-        })
-
-    if(reponse.status === 200){
-        return  reponse.data
-    }else {[]}
-    } catch (error) {
-        console.log(error)
-    }
-}
+// MFA Toggle Mutation Hook
+export const useMfaToggle = () => {
+  return useMutation({
+    mutationFn: enableOTPModal,
+    onSuccess: () => {
+      message.success("Two Step Verification Enabled");
+    },
+    onError: (error) => {
+      console.error("MFA toggle failed:", error);
+      message.error("Failed to update Two Step Verification");
+    },
+  });
+};

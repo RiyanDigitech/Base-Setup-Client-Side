@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Table, Switch, Input, Button, Space, Card, message } from 'antd';
+import { Table, Switch, Input, Button, Space, Card } from 'antd';
 import {
   KeyOutlined,
   MailOutlined,
   ContactsOutlined,
 } from '@ant-design/icons';
-import { useMutation } from '@tanstack/react-query';
-import { enableOTPModal } from '@/services/authService/AuthService';
+import { useMfaToggle } from '@/services/authService/AuthService';
 
 interface Setting {
   key: string;
@@ -75,17 +74,18 @@ const OtherSettings: React.FC = () => {
     mfaToggleMutation.mutate(enable)
 
   };
+  const mfaToggleMutation = useMfaToggle();
 
-  const mfaToggleMutation = useMutation({
-   mutationFn:enableOTPModal,
-   onSuccess:()=>{
-      message.success("Two Step Verification Enable")
-   },
-   onError(error) {
-    message.success("Two Step Verification Disable")
-    console.log(error)
-   },
-  })
+  // const mfaToggleMutation = useMutation({
+  //  mutationFn:enableOTPModal,
+  //  onSuccess:()=>{
+  //     message.success("Two Step Verification Enable")
+  //  },
+  //  onError(error) {
+  //   message.success("Two Step Verification Disable")
+  //   console.log(error)
+  //  },
+  // })
 
   const columns = [
     {
