@@ -7,6 +7,7 @@ import { Button, Card, List, message } from 'antd';
 import React, { useState } from 'react'
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import AddContentModal from '@/components/ChatbotsComponents/modals/AddContentModal';
+import AddNestedContentModal from '@/components/ChatbotsComponents/modals/AddNestedContentModal';
 
 const Chatbots:React.FC = () => {
   const [draftMenus, setDraftMenus] = useState<Menu[]>([]);
@@ -81,6 +82,23 @@ const handleAddContent = () => {
   message.success(isEditingContent ? "Content updated." : "Content added.");
 };
 
+const hanldeNestedContentModal = (menuId: number, content?: any) => {
+  setCurrentMenuId(menuId);
+  setIsContentModalOpen(true);
+  if (content) {
+    setContentType(content.type);
+    setContentValue(content.name);
+    setContentIdBeingEdited(content.id);
+    setIsEditingContent(true);
+  } else {
+    setContentType("Text");
+    setContentValue("");
+    setContentIdBeingEdited(null);
+    setIsEditingContent(false);
+  } 
+}
+
+
 const showContentModal = (menuId: number, content?: any) => {
   setCurrentMenuId(menuId);
   setIsContentModalOpen(true);
@@ -120,6 +138,8 @@ const openAddSubMenuModal = (menuId: number) => {
   setSubMenuKey('');
   setIsAddSubMenuModalOpen(true);
 };
+
+
 
 const handleAddSubMenu = (name: string, key: string) => {
   if (!selectedMenuId) return;
@@ -164,13 +184,12 @@ const handleAddSubMenu = (name: string, key: string) => {
   };
   const renderSubMenus = (menus: Menu[]) => {
   return menus.map((menu) => (
-    <div key={menu.id} className="ml-6 border-l pl-4 mt-4">
+    <div key={menu.id} className="border border-gray-500 p-4 mt-4">
       <div className="flex justify-between items-center">
         <div>
           <p className="font-medium">{menu.name} (Key: {menu.key})</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => openAddSubMenuModal(menu.id)} className="!bg-green-700 !text-white">Add SubMenu</Button>
           <EditOutlined
           className="text-green-700 cursor-pointer hover:scale-110 transition"
           onClick={() => handleEditSubMenu(menu)}
@@ -182,7 +201,13 @@ const handleAddSubMenu = (name: string, key: string) => {
           {/* <Button onClick={() => handleEditSubMenu(menu)} className="!bg-green-500 !text-white">Edit</Button>
           <Button onClick={() => handleDeleteSubMenu(menu.id)} className="!bg-red-500 !text-white">Delete</Button> */}
         </div>
+        
       </div>
+      <div className='mt-3 flex gap-4'>
+        <Button onClick={() => hanldeNestedContentModal(menu.id)} className="!bg-green-700 !text-white active:!scale-110">Add Content</Button>
+        <Button onClick={() => openAddSubMenuModal(menu.id)} className="!bg-green-700 !text-white active:!scale-110">Add SubMenu</Button>
+          
+        </div>
 
       {/* Recursive call */}
       {menu.subMenus && renderSubMenus(menu.subMenus)}
@@ -244,7 +269,7 @@ const handleDeleteSubMenu = (id: number) => {
             bordered
             dataSource={draftMenus}
             renderItem={(menu, idx) => (
-              <div key={menu.id} className="p-4 border rounded-md mb-6 shadow-sm">
+              <div key={menu.id} className="p-4 rounded-md shadow-sm">
                 {/* Top Level Menu Info */}
                 <div className="flex justify-between items-center">
                   <List.Item className="!border-none !p-0">
@@ -329,9 +354,13 @@ const handleDeleteSubMenu = (id: number) => {
                   >
                     Save Menu
                   </Button>
+                  
                 </div>
+                
               </div>
+              
             )}
+            
           />
 
         </div>
@@ -353,10 +382,9 @@ const handleDeleteSubMenu = (id: number) => {
         </div>
       }
     >
-      {/* Submenus */}
       {menu.subMenus && menu.subMenus.length > 0 && (
         <div className="mb-4">
-          <h4 className="font-bold underline">SubMenus</h4>
+          <h4 className="font-bold text-lg underline">SubMenus</h4>
           {renderSubMenus(menu.subMenus)}
         </div>
       )}
@@ -364,7 +392,7 @@ const handleDeleteSubMenu = (id: number) => {
       {/* Contents */}
       {menu.children && menu.children.length > 0 && (
         <div>
-          <h4 className="font-bold underline">Contents</h4>
+          <h4 className="font-bold text-lg underline">Contents</h4>
           <List
             size="small"
             bordered
@@ -449,6 +477,16 @@ const handleDeleteSubMenu = (id: number) => {
             onOk={handleAddContent}
             onCancel={() => setIsContentModalOpen(false)}
 />
+{/* Modal for add Nested Content Add */}
+<AddNestedContentModal
+            open={isContentModalOpen}
+            contentType={contentType}
+            contentValue={contentValue}
+            setContentType={setContentType}
+            setContentValue={setContentValue}
+            onOk={handleAddContent}
+            onCancel={() => setIsContentModalOpen(false)}
+/>
 
     </div>
   )
@@ -456,7 +494,6 @@ const handleDeleteSubMenu = (id: number) => {
 
 export default Chatbots
 
-// import React, { useState } from "react";
 // import { Button, Card, List, message,} from "antd";
 // import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 // import AddMenu from "@/components/ChatbotsComponents/AddMenu";
