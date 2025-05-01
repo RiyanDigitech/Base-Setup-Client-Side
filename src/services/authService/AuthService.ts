@@ -2,6 +2,7 @@ import { ThebaseUrl } from '../Base/BaseUrl';
 import { message } from 'antd';
 import axios from "@/lib/config/axios-instance"
 import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router';
 
 
 export const AuthuserLogin = async ({phone,password}:{phone:string,password:string}) => {
