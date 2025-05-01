@@ -1,4 +1,3 @@
-import {useNavigate } from 'react-router-dom';
 import { ThebaseUrl } from '../Base/BaseUrl';
 import { message } from 'antd';
 import axios from "@/lib/config/axios-instance"
@@ -32,7 +31,6 @@ export const RecivecedOTPLogin = async ({phone , otp_code}:{phone:string , otp_c
 }
 
 
-// const navigate = useNavigate()
 export const logoutFunc = async () => {
     try {
       const accesstoken: any = localStorage.getItem('token');
@@ -86,3 +84,22 @@ export const useVerifyOtp = () => {
     });
   };
   
+
+export const enableOTPModal = async (enable:boolean) => {
+    try {
+        const accessToken:any = localStorage.getItem('token')
+        console.log("njkjbnvkn" ,accessToken)
+        const reponse = await ThebaseUrl.post(`/mfa-toggle`,{enable},{
+        headers:{
+            Accept:"application/json",
+            Authorization:`Bearer ${accessToken}`
+        },
+        })
+
+    if(reponse.status === 200){
+        return  reponse.data
+    }else {[]}
+    } catch (error) {
+        console.log(error)
+    }
+}
