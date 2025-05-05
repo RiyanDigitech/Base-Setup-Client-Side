@@ -24,6 +24,9 @@ const EditSubMenuModal: React.FC<EditSubMenuModalProps> = ({
       onOk={onOk}
       onCancel={onCancel}
       okText="Save"
+      okButtonProps={{
+        className: "bg-green-700 text-white hover:!bg-green-500",
+      }}
     >
       <div className="flex flex-col gap-4 mt-4">
         <Input
