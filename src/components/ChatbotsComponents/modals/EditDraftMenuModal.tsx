@@ -25,6 +25,9 @@ const EditDraftMenuModal: React.FC<Props> = ({
       onCancel={onCancel}
       okText="Update"
       cancelText="Cancel"
+      okButtonProps={{
+        className: "bg-green-700 text-white hover:!bg-green-500",
+      }}
     >
       <Input
         placeholder="Menu Name"

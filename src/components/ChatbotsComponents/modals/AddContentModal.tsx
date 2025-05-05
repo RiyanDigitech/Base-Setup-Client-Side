@@ -10,6 +10,14 @@ interface Props {
   setContentValue: (value: string) => void;
   onOk: () => void;
   onCancel: () => void;
+  editContentInfo: {
+    menuId: number | null;
+    contentId: number | null;
+  } | null;
+  setEditContentInfo: React.Dispatch<React.SetStateAction<{
+    menuId: number | null;
+    contentId: number | null;
+  } | null>>;
 }
 
 const AddContentModal: React.FC<Props> = ({
@@ -20,13 +28,18 @@ const AddContentModal: React.FC<Props> = ({
   setContentValue,
   onOk,
   onCancel,
+  editContentInfo,
+  setEditContentInfo
 }) => {
   return (
     <Modal
-      title="Add Content to Menu"
+    title={editContentInfo ? "Edit Content" : "Add Content"}
       open={open}
       onOk={onOk}
-      onCancel={onCancel}
+      onCancel={() => {
+        setEditContentInfo(null);
+        onCancel();
+      }}
       okText="Save"
       cancelText="Cancel"
       okButtonProps={{

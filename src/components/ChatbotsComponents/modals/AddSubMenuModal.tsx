@@ -27,6 +27,9 @@ const AddSubMenuModal: React.FC<AddSubMenuModalProps> = ({
       onOk={() => onOk(name, menuKey)}
       onCancel={onCancel}
       okText="Add"
+      okButtonProps={{
+        className: "bg-green-700 text-white hover:!bg-green-500",
+      }}
     >
       <div className="flex flex-col gap-4">
         <Input
