@@ -20,11 +20,17 @@ import FranchiseCreate from "@/components/modules/franchise/franchise-create";
 import FranchiseUpdate from "@/components/modules/franchise/franchise-update";
 import ComplainDetails from "@/pages/complaint-details/complain-details";
 import ProtectedRoute from "./ProtectedRoutes";
+import Resetnewpassword from "@/pages/auth/reset-new-password";
+import RolePermissionUI from "@/pages/RolesAndPermissions/RolesAndPermission";
 
 const router = createBrowserRouter([
   {
     path: "/admin/login",
     element: <LoginPage />,
+  },
+   {
+    path: "/admin/changeresetpassword",
+    element: <Resetnewpassword />,
   },
   {
     path: "/admin/forgot-password",
@@ -37,7 +43,7 @@ const router = createBrowserRouter([
   {
     path: "/admin/change-password",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute >
         <ChangePassword />
       </ProtectedRoute>
     ),
@@ -63,6 +69,7 @@ const router = createBrowserRouter([
       { path: "/lead-list", element: <LeadList /> },
       { path: "/sentstatistics", element: <SentStatistics /> },
       { path: "/sentmessage", element: <SentMessage /> },
+      { path: "/role&permission", element: <RolePermissionUI /> },
     ],
   },
   {

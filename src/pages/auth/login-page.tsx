@@ -3,9 +3,9 @@ import { Button, Checkbox, Form, Input, message, Modal } from "antd";
 import { AiOutlineLogin } from "react-icons/ai";
 import { FaKey, FaQuestionCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { AuthuserLogin, RecivecedOTPLogin, useSendOtp, useVerifyOtp } from "@/services/authService/AuthService";
+import { AuthuserLogin, RecivecedOTPLogin } from "@/services/authService/AuthService";
 
 interface LoginFormInputs {
   phone: string;
@@ -24,8 +24,22 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [otp_code, setOtp] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
 
   const navigate = useNavigate();
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  // Optional: Also check expiry if you are setting it
+  const expiry = localStorage.getItem("token_expiry");
+  const isExpired = expiry ? Date.now() > Number(expiry) : true;
+
+  if (token && !isExpired) {
+    navigate("/", { replace: true });
+  }
+}, []);
+
 
   const handleLogin: SubmitHandler<LoginFormInputs> = (data) => {
     setPhone(data.phone);
@@ -37,35 +51,43 @@ export default function LoginPage() {
     verifyOtpMutation.mutate({ phone, otp_code });
   };
 
-  const sendOtpMutation = useSendOtp({
-    onSuccess: () => setIsModalVisible(true),
+  const sendOtpMutation = useMutation({
+    mutationFn: AuthuserLogin,
+    onSuccess: (data: any) => {
+      if (data?.success) {
+        
+          localStorage.setItem('token', data?.data?.token);
+          localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
+          message.success(data.data.message || "Login successful");
+          console.log("User Logged In:", data);
+          navigate('/');
+      
+      }
+       else {
+        message.error(data.error || "Login failed");
+      }
+    },
+    onError: (error: any) => {
+      message.success("OTP Sent Successfully");
+          console.log("OTP Sent Response:", error);
+          setIsModalVisible(true);
+    }
   });
-
-  const verifyOtpMutation = useVerifyOtp();
   
-  // const sendOtpMutation = useMutation({
-  //   mutationFn: AuthuserLogin,
-  //   onSuccess: () => {
-  //     message.success('OTP sent to your phone number');
-  //     setIsModalVisible(true);
-  //   },
-  //   onError: (error: any) => {
-  //     message.error('Failed to send OTP');
-  //     console.log(error);
-  //   },
-  // });
 
-  // const verifyOtpMutation = useMutation({
-  //   mutationFn: RecivecedOTPLogin,
-  //   onSuccess: (data: any) => {
-  //     localStorage.setItem('token', data.token);
-  //     navigate('/');
-  //   },
-  //   onError: () => {
-  //     message.error('Invalid OTP');
-  //   },
-  // });
-
+  const verifyOtpMutation = useMutation({
+    mutationFn: RecivecedOTPLogin,
+    onSuccess: (data: any) => {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
+      navigate('/');
+    },
+    onError: () => {
+      message.error('Invalid OTP');
+    },
+  });
+  
+  
   return (
     <div className="min-h-screen lg:px-0 md:px-0 px-4 flex items-center justify-center bg-white">
       <div className="w-[700px] border rounded-md shadow-sm pb-6 border-gray-300">
@@ -91,7 +113,7 @@ export default function LoginPage() {
                     help={errors.phone?.message}
                     className="mb-0"
                   >
-                    <Input className="lg:w-80 md:w-80 w-50 h-10" {...field} />
+                    <Input className="lg:w-80 md:w-80 w-50 h-10 focus:!border-green-600 hover:!border-green-600 focus:!shadow-none" {...field} />
                   </Form.Item>
                 )}
               />
@@ -112,7 +134,12 @@ export default function LoginPage() {
                     help={errors.password?.message}
                     className="mb-0"
                   >
-                    <Input.Password className="lg:w-80 md:w-80 w-50 h-10" {...field} />
+                    <Input.Password
+                      {...field}
+                      className={`lg:w-80 md:w-80 w-50 h-10 !border ${isPasswordFocused || field.value ? '!border-green-600' : '!border-gray-300'} focus:!border-green-600 hover:!border-green-600 focus:!shadow-none`}
+                      onFocus={() => setIsPasswordFocused(true)}
+                      onBlur={() => setIsPasswordFocused(false)}
+                    />
                   </Form.Item>
                 )}
               />

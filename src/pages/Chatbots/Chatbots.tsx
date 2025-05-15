@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import AddContentModal from '@/components/ChatbotsComponents/modals/AddContentModal';
 import { dummySavedMenus } from './dumysavemenu';
+import EditSavedMenuModal from '@/components/ChatbotsComponents/modals/EditSaveMenuModal';
 
 
 const Chatbots:React.FC = () => {
@@ -29,6 +30,40 @@ const [editContentInfo, setEditContentInfo] = useState<{
   contentId: number | null;
 } | null>(null);
 const [savedMenus, setSavedMenus] = useState<Menu[]>([]);
+const [isSavedEditModalOpen, setIsSavedEditModalOpen] = useState(false);
+const [editSavedMenu, setEditSavedMenu] = useState<any>({ id: null, name: "", key: "" });
+const [isEditingSavedMenu, setIsEditingSavedMenu] = useState(false);
+
+const handleEditSavedSubMenu = (menu: Menu) => {
+  setIsEditingSavedMenu(true);
+  setSubMenuToEdit(menu);
+  setIsEditSubMenuModalOpen(true);
+};
+
+const handleDeleteSavedSubMenu = (id: number) => {
+  const updated = deleteSubMenuRecursively(savedMenus, id);
+  setSavedMenus(updated);
+};
+
+const showSavedEditModal = (menu: any) => {
+  setEditSavedMenu(menu);
+  setIsSavedEditModalOpen(true);
+};
+const handleUpdateSavedMenu = () => {
+  const updated = savedMenus.map(menu =>
+    menu.id === editSavedMenu.id
+      ? { ...menu, name: editSavedMenu.name, key: editSavedMenu.key }
+      : menu
+  );
+  setSavedMenus(updated);
+  setIsSavedEditModalOpen(false);
+};
+
+const deleteSavedMenu = (id: any) => {
+  const filtered = savedMenus.filter(menu => menu.id !== id);
+  setSavedMenus(filtered);
+};
+
 const openAddContentModal = (menuId: number) => {
   setSelectedContentMenuId(menuId);
   setContentType('Text');
@@ -147,6 +182,7 @@ const handleDeleteContent = (menuId: number, contentId: number) => {
 
 
 const handleEditSubMenu = (menu: Menu) => {
+  setIsEditingSavedMenu(false);
   setSubMenuToEdit(menu);
   setIsEditSubMenuModalOpen(true);
 };
@@ -210,11 +246,15 @@ const handleAddSubMenu = (name: string, key: string) => {
           <div className="flex gap-2">
             <EditOutlined
               className="text-green-700 cursor-pointer hover:scale-110 transition"
-              onClick={() => handleEditSubMenu(menu)}
+              onClick={() => isSavedView ? handleEditSavedSubMenu(menu) : handleEditSubMenu(menu)}
             />
             <DeleteOutlined
               className="text-red-500 cursor-pointer hover:scale-110 transition"
-              onClick={() => handleDeleteSubMenu(menu.id)}
+              onClick={() =>
+                isSavedView
+                  ? handleDeleteSavedSubMenu(menu.id)
+                  : handleDeleteSubMenu(menu.id)
+              }
             />
           </div>
         </div>
@@ -286,30 +326,42 @@ const handleAddSubMenu = (name: string, key: string) => {
     ));
   };
   
-const updateSubMenuRecursively = (menus: Menu[]): Menu[] => {
-  return menus.map(menu => {
-    if (menu.id === subMenuToEdit?.id) {
-      return {
-        ...menu,
-        name: subMenuToEdit.name,
-        key: subMenuToEdit.key,
-      };
-    }
-    if (menu.subMenus) {
-      return {
-        ...menu,
-        subMenus: updateSubMenuRecursively(menu.subMenus),
-      };
-    }
-    return menu;
-  });
-};
+  const updateSubMenuRecursively = (menus: Menu[], updatedSubMenu: Menu): Menu[] => {
+    return menus.map(menu => {
+      if (menu.id === updatedSubMenu.id) {
+        return {
+          ...menu,
+          name: updatedSubMenu.name,
+          key: updatedSubMenu.key,
+        };
+      }
+  
+      if (menu.subMenus && menu.subMenus.length > 0) {
+        return {
+          ...menu,
+          subMenus: updateSubMenuRecursively(menu.subMenus, updatedSubMenu),
+        };
+      }
+  
+      return menu;
+    });
+  };
+  
 
-const handleEditSubMenuSave = () => {
-  const updatedMenus = updateSubMenuRecursively(draftMenus);
-  setDraftMenus(updatedMenus);
-  setIsEditSubMenuModalOpen(false);
-};
+  const handleEditSubMenuSave = () => {
+    if (!subMenuToEdit) return;
+  
+    if (isEditingSavedMenu) {
+      const updated = updateSubMenuRecursively(savedMenus, subMenuToEdit);
+      setSavedMenus(updated);
+    } else {
+      const updated = updateSubMenuRecursively(draftMenus, subMenuToEdit);
+      setDraftMenus(updated);
+    }
+  
+    setIsEditSubMenuModalOpen(false);
+  };
+  
 const deleteSubMenuRecursively = (menus: Menu[], idToDelete: number): Menu[] => {
   return menus
     .map(menu => ({
@@ -509,8 +561,8 @@ const handleDeleteSubMenu = (id: number) => {
       style={{ marginBottom: 16 }}
       extra={
         <div className="flex gap-2">
-          <Button className="!bg-green-700 !text-white">Edit</Button>
-          <Button className="!bg-red-500 !text-white">Delete</Button>
+          <Button onClick={() => showSavedEditModal(menu)} className="!bg-green-700 !text-white">Edit</Button>
+          <Button className="!bg-red-500 !text-white" onClick={() => deleteSavedMenu(menu.id)}>Delete</Button>
         </div>
       }
     >
@@ -626,6 +678,13 @@ const handleDeleteSubMenu = (id: number) => {
             }
             editContentInfo={editContentInfo}
   setEditContentInfo={setEditContentInfo}
+/>
+<EditSavedMenuModal
+  visible={isSavedEditModalOpen}
+  editSavedMenu={editSavedMenu}
+  setEditSavedMenu={setEditSavedMenu}
+  onOk={handleUpdateSavedMenu}
+  onCancel={() => setIsSavedEditModalOpen(false)}
 />
 
 

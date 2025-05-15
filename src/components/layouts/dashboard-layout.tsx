@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
 // import { FaUser } from "react-icons/fa";
-import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, QuestionCircleOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
+import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, QuestionCircleOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 // import { MdShoppingBag } from "react-icons/md";
 import { MdInventory2 } from "react-icons/md";
 import { MdTask } from "react-icons/md";
@@ -48,11 +48,20 @@ const DashboardLayout = () => {
       <Menu.Item key="3" icon={<QuestionCircleOutlined />}>
         Help
       </Menu.Item>
-      <Link to={'/admin/login'}>
-      <Menu.Item key="4" onClick={logoutFunc} className="!text-red-500" icon={<LogoutOutlined />}>
-        Logout
-      </Menu.Item>
-      </Link>
+      <Menu.Item
+  key="4"
+  onClick={async () => {
+    const res = await logoutFunc();
+    if (!res?.error) {
+      navigate('/admin/login');
+    }
+  }}
+  className="!text-red-500"
+  icon={<LogoutOutlined />}
+>
+  Logout
+</Menu.Item>
+
     </Menu>
   );
 
@@ -268,6 +277,16 @@ const DashboardLayout = () => {
                     />
                   ),
                   label: <div className="">Settings</div>,
+                },
+                {
+                  key: "/role&permission",
+                  icon: (
+                    <OrderedListOutlined
+                      className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                        }`}
+                    />
+                  ),
+                  label: <div className="">Role&Permission</div>,
                 },
               ]}
             />
