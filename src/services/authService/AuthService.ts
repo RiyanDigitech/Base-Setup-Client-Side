@@ -3,25 +3,43 @@ import { message } from 'antd';
 import axios from "@/lib/config/axios-instance"
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
+import { resetPasswordType } from '@/lib/types/resetPasswordTypes';
 
 
-export const AuthuserLogin = async ({phone,password}:{phone:string,password:string}) => {
+export const AuthuserLogin = async ({ phone, password }: { phone: string, password: string }) => {
     try {
-        const response = await axios.post(`/login`,{phone , password })
-        if(response.status === 200){
-            return response.data
-        }
-    } catch (error) {
-        console.log(error)
-    }
+        const response = await axios.post(`/login`, { phone, password }, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
-}
+        if (response.status === 200) {
+            return { success: true, data: response.data };
+        } else if (response.status === 401) {
+            console.log("Unauthorized access");
+            return { success: false, error: 'Unauthorized' };
+        } else{[]}
+    } catch (error: any) {
+        console.log("Login Error:", error?.response?.data || error.message);
+        return {
+            success: false,
+            error: error?.response?.data?.message || "Something went wrong",
+        };
+    }
+};
+
 
 
 export const RecivecedOTPLogin = async ({phone , otp_code}:{phone:string , otp_code:string}) => {
 
     try {
-        const response = await axios.post(`/verify-otp` ,{phone , otp_code})
+        const response = await axios.post(`/verify-otp` ,{phone , otp_code} , {
+            headers:{
+                "Accept":"application/json",
+                "Content-Type":"application/json",
+            }
+        })
     
         if(response.status === 200){
             return response.data
@@ -46,33 +64,67 @@ export const logoutFunc = async () => {
     
       if (response.status === 200) {
         localStorage.removeItem('token');
-        message.success('You Have Logout Successfully')
+        message.success('Logged out successfully')
         
         return response.data;
       }
+      
     } catch (error) {
       console.error('Logout error:', error);
       return { error: true, message: 'Logout failed' };
     }
 }
+  
 
 export const enableOTPModal = async (enable:boolean) => {
-  try {
-      const accessToken:any = localStorage.getItem('token')
-      console.log("njkjbnvkn" ,accessToken)
-      const reponse = await axios.post(`/mfa-toggle`,{enable},{
-      headers:{
-          Accept:"application/json",
-          Authorization:`Bearer ${accessToken}`
-      },
-      })
+    try {
+        const accessToken:any = localStorage.getItem('token')
+        console.log("njkjbnvkn" ,accessToken)
+        const reponse = await axios.post(`/mfa-toggle`,{enable},{
+        headers:{
+            Accept:"application/json",
+            Authorization:`Bearer ${accessToken}`
+        },
+        })
 
-  if(reponse.status === 200){
-      return  reponse.data
-  }else {[]}
-  } catch (error) {
-      console.log(error)
-  }
+    if(reponse.status === 200){
+        return  reponse.data
+    }else {[]}
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const resetPassword = async (phone : string) => {
+   try {
+    const reponse = await axios.post(`/forgot-password`,{phone})
+
+    if(reponse.status === 200){
+        return  reponse.data
+    }else {[]}
+    } 
+   catch (error) {
+    console.log(error)
+   }
+}
+
+
+export const resetChangePassword = async (data:resetPasswordType) => {
+    try {
+        const reponse = await axios.post(`/reset-password`,data , {
+            headers:{
+                "Content-Type" : "multipart/form-data",
+            }
+        })
+    
+        if(reponse.status === 200){
+            return  reponse.data
+        }
+        else {[]}
+        } 
+       catch (error) {
+        console.log(error)
+       }
 }
 
   // TanStack Query hooks
