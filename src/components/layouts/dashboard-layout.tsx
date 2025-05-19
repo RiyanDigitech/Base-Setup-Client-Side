@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
 // import { FaUser } from "react-icons/fa";
-import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, QuestionCircleOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
-// import { MdShoppingBag } from "react-icons/md";
-import { MdInventory2 } from "react-icons/md";
-import { MdTask } from "react-icons/md";
-import { MdReceipt } from "react-icons/md";
+import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined} from "@ant-design/icons";
+
 import { Input, Layout, Menu, theme, Dropdown, Badge } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
@@ -37,31 +34,28 @@ const DashboardLayout = () => {
     token: { colorPrimary },
   } = theme.useToken();
 
-  const profileMenu = (
+ const profileMenu = (
     <Menu>
-      <Menu.Item key="1" icon={<UserOutlined />}>
-        Profile
-      </Menu.Item>
+      {/* <Menu.Item key="1" icon={<UserOutlined />}>
+        <Link to="/settings">Profile</Link>
+      </Menu.Item> */}
+  
       <Menu.Item key="2" icon={<SettingOutlined />}>
-        Settings
+        <Link to="/settings">Settings</Link>
       </Menu.Item>
-      <Menu.Item key="3" icon={<QuestionCircleOutlined />}>
+  
+      {/* <Menu.Item key="3" icon={<QuestionCircleOutlined />}>
         Help
-      </Menu.Item>
+      </Menu.Item> */}
+  
       <Menu.Item
-  key="4"
-  onClick={async () => {
-    const res = await logoutFunc();
-    if (!res?.error) {
-      navigate('/admin/login');
-    }
-  }}
-  className="!text-red-500"
-  icon={<LogoutOutlined />}
->
-  Logout
-</Menu.Item>
-
+        key="4"
+        onClick={logoutFunc}
+        className="!text-red-500"
+        icon={<LogoutOutlined />}
+      >
+        <Link to="/admin/login">Logout</Link>
+      </Menu.Item>
     </Menu>
   );
 
@@ -71,6 +65,13 @@ const DashboardLayout = () => {
     { id: 3, text: "New review submitted" },
   ];
   
+  const expiryStr = localStorage.getItem("token_expiry");
+  const expiry = expiryStr ? Number(expiryStr) : 0;
+
+  if (Date.now() > expiry) {
+  localStorage.clear();
+  window.location.href = "/admin/login";
+}
   // Notification Dropdown Menu
   const notificationMenu = (
     <Menu

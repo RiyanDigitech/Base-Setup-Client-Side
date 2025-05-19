@@ -3,7 +3,6 @@ import NotFoundPage from "@/NotFoundPage";
 import ChangePassword from "@/pages/auth/change-password";
 import ForGetPassword from "@/pages/auth/forget-password";
 import LoginPage from "@/pages/auth/login-page";
-import ResetNewPassword from "@/pages/auth/reset-new-password";
 import Chatbots from "@/pages/Chatbots/Chatbots";
 import DashboardPage from "@/pages/dashboard";
 import LeadList from "@/pages/lead-management/lead-management";
@@ -20,15 +19,15 @@ import FranchiseCreate from "@/components/modules/franchise/franchise-create";
 import FranchiseUpdate from "@/components/modules/franchise/franchise-update";
 import ComplainDetails from "@/pages/complaint-details/complain-details";
 import ProtectedRoute from "./ProtectedRoutes";
-import Resetnewpassword from "@/pages/auth/reset-new-password";
 import RolePermissionUI from "@/pages/RolesAndPermissions/RolesAndPermission";
+import Resetnewpassword from "@/pages/auth/Reset-new-password";
 
 const router = createBrowserRouter([
   {
     path: "/admin/login",
     element: <LoginPage />,
   },
-   {
+  {
     path: "/admin/changeresetpassword",
     element: <Resetnewpassword />,
   },
@@ -37,13 +36,9 @@ const router = createBrowserRouter([
     element: <ForGetPassword />,
   },
   {
-    path: "/admin/reset-password/:token",
-    element: <ResetNewPassword />,
-  },
-  {
     path: "/admin/change-password",
     element: (
-      <ProtectedRoute >
+      <ProtectedRoute>
         <ChangePassword />
       </ProtectedRoute>
     ),

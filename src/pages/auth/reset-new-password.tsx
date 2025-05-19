@@ -34,17 +34,21 @@ function Resetnewpassword() {
     resetPasswordMutation.mutate(formData)
   };
 
-const naviagte = useNavigate()
+  const naviagte = useNavigate()
   const resetPasswordMutation = useMutation({
-mutationFn:resetChangePassword,
-onSuccess:()=> {
-
-naviagte('/admin/login')
-message.success("Password has been reset successfully")
-},
-onError:()=>{
-  message.error("Failed To Change Password")
-}
+    mutationFn: resetChangePassword,
+    onSuccess: (data:any) => {
+      if (data?.success) {
+        console.log(data)
+        message.success(data.data.message || "Password has been reset successfully");
+      naviagte('/admin/login')
+      }else {
+              message.error(data.error || "Password Reset failed");
+            }
+    },
+    onError: () => {
+      message.error("Failed To Change Password")
+    }
   })
 
   return (
@@ -66,12 +70,12 @@ onError:()=>{
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Phone Number
             </label>
-            <input
+            <Input
               type="text"
-              placeholder="Enter your Phone Number"
+              placeholder="Enter your phone number"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300"
             />
           </div>
 
@@ -84,7 +88,7 @@ onError:()=>{
               placeholder="Enter OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300"
             />
           </div>
 
@@ -93,11 +97,11 @@ onError:()=>{
               New Password
             </label>
             <Input.Password
+              className="!w-full !h-10 px-3 !border !border-gray-300 !rounded-md focus:!outline-none focus:!ring-2 focus:!ring-green-500"
               type="password"
               placeholder="Enter new password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
@@ -106,18 +110,18 @@ onError:()=>{
               Confirm Password
             </label>
             <Input.Password
+              className="!w-full !h-10 px-3 !border !border-gray-300 !rounded-md !focus:!outline-none !focus:!ring-2 !focus:!ring-green-500"
               type="password"
               placeholder="Confirm new password"
               value={password_confirmation}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
           <Button
-          htmlType='submit'
+            htmlType='submit'
             loading={resetPasswordMutation.isPending}
-            className="!w-full !bg-green-600 !text-white !font-medium !py-2 rounded-md hover:!bg-green-700 !transition !duration-300"
+            className="w-full bg-green-600 text-white font-medium py-2 rounded-md hover:!bg-green-700 transition duration-300"
           >
             Reset Password
           </Button>

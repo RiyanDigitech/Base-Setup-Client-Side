@@ -1,4 +1,4 @@
-import { ChangePasswordType, errorType } from "@/lib/types";
+// import { ChangePasswordType, errorType } from "@/lib/types";
 import { Form, Input, Spin } from "antd";
 import {
   Controller,
