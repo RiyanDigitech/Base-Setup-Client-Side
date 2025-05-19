@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Table, Switch, Input, Button, Space, Card } from 'antd';
+import { Table, Switch, Input, Button, Space, Card, message } from 'antd';
 import {
-  KeyOutlined,
-  MailOutlined,
-  ContactsOutlined,
+  KeyOutlined
 } from '@ant-design/icons';
-import { useMfaToggle } from '@/services/authService/AuthService';
+import { useMutation } from '@tanstack/react-query';
+import { enableOTPModal } from '@/services/authService/AuthService';
 
 interface Setting {
   key: string;
@@ -16,37 +15,22 @@ interface Setting {
 }
 
 const OtherSettings: React.FC = () => {
+
+
+  let switchC = localStorage.getItem("SwitchValue");
+  const val = JSON.parse(switchC)
+
   const [settings, setSettings] = useState<Setting[]>([
     {
       key: 'twoStepVerification',
       description: 'Enable Two Step Verification',
       type: 'switch',
       icon: <KeyOutlined />,
-      value: false,
+      value: val,
     },
-    {
-      key: 'failedSMSResubmission',
-      description: 'Failed SMS Resubmission',
-      type: 'switch',
-      icon: <MailOutlined />,
-      value: true,
-    },
-    {
-      key: 'resubmissionAttempts',
-      description: 'No. Of Resubmission Attempts',
-      type: 'input',
-      icon: <MailOutlined />,
-      value: 3,
-    },
-    {
-      key: 'alternativeContacts',
-      description:
-        'Alternative Contact Details For Notification Like, OTP, Expiry Reminders.',
-      type: 'input',
-      icon: <ContactsOutlined />,
-      value: '923001234567,923131234567',
-    },
-  ]);
+     ]);
+
+
 
   const handleSwitchChange = (key: string, checked: boolean) => {
     setSettings((prev) =>
@@ -54,7 +38,7 @@ const OtherSettings: React.FC = () => {
         setting.key === key ? { ...setting, value: checked } : setting
       )
     );
-    console.log(`${key}:`, checked);
+    console.log(`${key}:` , "jnsdvsndvks", checked);
   };
 
   const handleInputChange = (key: string, value: string) => {
@@ -70,22 +54,22 @@ const OtherSettings: React.FC = () => {
     console.log('Updating setting:', updatedSetting);
     const enable = updatedSetting.value
     console.log("sfgd",enable)
+    localStorage.setItem("SwitchValue" , enable)
     
     mfaToggleMutation.mutate(enable)
 
   };
-  const mfaToggleMutation = useMfaToggle();
 
-  // const mfaToggleMutation = useMutation({
-  //  mutationFn:enableOTPModal,
-  //  onSuccess:()=>{
-  //     message.success("Two Step Verification Enable")
-  //  },
-  //  onError(error) {
-  //   message.success("Two Step Verification Disable")
-  //   console.log(error)
-  //  },
-  // })
+  const mfaToggleMutation = useMutation({
+   mutationFn:enableOTPModal,
+   onSuccess:()=>{
+      message.success("Two Step Verification Enable")
+   },
+   onError(error) {
+    message.success("Two Step Verification Disable")
+    console.log(error)
+   },
+  })
 
   const columns = [
     {
@@ -136,6 +120,7 @@ const OtherSettings: React.FC = () => {
           className='!bg-green-700 !text-white active:!scale-110'
           type="primary"
           onClick={() => handleUpdate(record.key)}
+          loading={mfaToggleMutation.isPending}
         >
           Update
         </Button>

@@ -31,27 +31,9 @@ const Settings = () => {
                     <AccountForm />
                 </TabPane>
 
-                <TabPane
-                    tab={
-                        <span>
-                            <LockOutlined /> Change Password
-                        </span>
-                    }
-                    key="2"
-                >
-                    <ChangePasswordForm />
-                </TabPane>
+                
 
-                <TabPane
-                    tab={
-                        <span>
-                            <KeyOutlined /> Change API KEY
-                        </span>
-                    }
-                    key="3"
-                >
-                    <p>API Key management yahan hoga.</p>
-                </TabPane>
+                
 
                 <TabPane
                     tab={

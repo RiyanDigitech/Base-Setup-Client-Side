@@ -1,9 +1,6 @@
-import { ThebaseUrl } from '../Base/BaseUrl';
-import { message } from 'antd';
 import axios from "@/lib/config/axios-instance"
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router';
-import { resetPasswordType } from '@/lib/types/resetPasswordTypes';
+import { resetPasswordType } from "@/lib/types/resetPasswordTypes";
+import { message } from 'antd';
 
 
 export const AuthuserLogin = async ({ phone, password }: { phone: string, password: string }) => {
@@ -118,55 +115,19 @@ export const resetChangePassword = async (data:resetPasswordType) => {
         })
     
         if(reponse.status === 200){
-            return  reponse.data
+            return { success: true, data: reponse.data };
+        }
+        else if(reponse.status === 422){
+            console.log("OTP is Invalid");
+            return { success: false, error: 'OTP is Invalid' };
         }
         else {[]}
         } 
-       catch (error) {
-        console.log(error)
-       }
+        catch (error: any) {
+            console.log("Login Error:", error?.response?.data || error.message);
+            return {
+                success: false,
+                error: error?.response?.data?.message || "Something went wrong",
+            };
+        }
 }
-
-  // TanStack Query hooks
-export const useSendOtp = ({ onSuccess }: { onSuccess: () => void }) => {
-    return useMutation({
-      mutationFn: AuthuserLogin,
-      onSuccess: () => {
-        message.success("OTP sent to your phone number");
-        onSuccess(); // trigger modal etc.
-      },
-      onError: () => {
-        message.error("Failed to send OTP");
-      },
-    });
-  };
-
-//   verify OPT
-export const useVerifyOtp = () => {
-    const navigate = useNavigate();
-  
-    return useMutation({
-      mutationFn: RecivecedOTPLogin,
-      onSuccess: (data: any) => {
-        localStorage.setItem("token", data.token);
-        navigate("/");
-      },
-      onError: () => {
-        message.error("Invalid OTP");
-      },
-    });
-  };
-  
-// MFA Toggle Mutation Hook
-export const useMfaToggle = () => {
-  return useMutation({
-    mutationFn: enableOTPModal,
-    onSuccess: () => {
-      message.success("Two Step Verification Enabled");
-    },
-    onError: (error) => {
-      console.error("MFA toggle failed:", error);
-      message.error("Failed to update Two Step Verification");
-    },
-  });
-};
