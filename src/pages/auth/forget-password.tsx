@@ -70,7 +70,7 @@ export default function ForGetPassword() {
         />
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center lg:ps-6 sm:ps-22">
         <div className="w-full max-w-md">
           <div className="flex flex-col sm:flex-row justify-between gap-3">
             <Button
