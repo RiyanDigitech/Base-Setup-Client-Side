@@ -1,5 +1,5 @@
 import { Controller, useForm, SubmitHandler } from "react-hook-form";
-import { Button, Form, Input, message, Modal } from "antd";
+import { Button, Checkbox, Form, Input, message, Modal } from "antd";
 import { AiOutlineLogin } from "react-icons/ai";
 import { FaKey, FaQuestionCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,11 +19,12 @@ export default function LoginPage() {
   });
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  // const [isRememberMeChecked, setIsRememberMeChecked] = useState(false);
+  const [isRememberMeChecked, setIsRememberMeChecked] = useState(false);
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [otp_code, setOtp] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,6 +47,7 @@ export default function LoginPage() {
       if (data?.success) {
         
           localStorage.setItem('token', data?.data?.data?.token);
+          localStorage.setItem('userdetails', JSON.stringify(data?.data?.data?.user));
           localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
           message.success(data.data.message || "Login successful");
           console.log("User Logged In:", data.data.data.token);
@@ -68,6 +70,7 @@ export default function LoginPage() {
     mutationFn: RecivecedOTPLogin,
     onSuccess: (data: any) => {
       localStorage.setItem('token', data?.data?.token);
+      localStorage.setItem('userdetails', JSON.stringify(data?.data?.data?.user));
       localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
       console.log("User Logged In:", data);
       navigate('/');
@@ -78,8 +81,8 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen px-4 flex items-center justify-center bg-white">
-      <div className="w-full max-w-xl border rounded-md shadow-sm pb-6 border-gray-300">
+    <div className="min-h-screen lg:px-0 md:px-0 px-4 flex items-center justify-center bg-white">
+      <div className="w-[700px] border rounded-md shadow-sm pb-6 border-gray-300">
         {/* Header */}
         <div className="bg-gray-100 px-4 py-3 rounded-t-md border-b flex items-center gap-2 mb-4">
           <FaKey className="text-gray-600" />
@@ -87,10 +90,11 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className="space-y-4 px-4 sm:px-6" onSubmit={handleSubmit(handleLogin)}>
+        <form className="space-y-4 px-6" onSubmit={handleSubmit(handleLogin)}>
           {/* Username */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
-            <label className="block text-gray-700 w-full sm:w-auto sm:me-4">Username</label>
+          <div className="flex">
+            <div className="flex mx-auto">
+              <label className="block text-gray-700 my-auto me-4">Username</label>
             <Controller
               name="phone"
               control={control}
@@ -99,20 +103,22 @@ export default function LoginPage() {
                 <Form.Item
                   validateStatus={errors.phone ? "error" : ""}
                   help={errors.phone?.message}
-                  className="mb-0 w-full max-w-xs"
+                  className="mb-0"
                 >
                   <Input
-                    className="w-full h-10 border border-gray-300 hover:border-green-500 focus:border-green-500"
+                    className="lg:w-80 md:w-80 w-50 h-10 focus:!border-green-600 hover:!border-green-600 focus:!shadow-none"
                     {...field}
                   />
                 </Form.Item>
               )}
             />
           </div>
+          </div>
 
           {/* Password */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-2">
-            <label className="block text-gray-700 w-full sm:w-auto sm:me-4">Password</label>
+          <div className="flex">
+            <div className="flex mx-auto">
+              <label className="block text-gray-700 my-auto me-5">Password</label>
             <Controller
               name="password"
               control={control}
@@ -121,30 +127,34 @@ export default function LoginPage() {
                 <Form.Item
                   validateStatus={errors.password ? "error" : ""}
                   help={errors.password?.message}
-                  className="mb-0 w-full max-w-xs"
+                  className="mb-0"
                 >
                   <Input.Password
-                    className="w-full h-10 border border-gray-300 hover:border-green-500 focus:border-green-500"
-                    {...field}
+                    className={`lg:w-80 md:w-80 w-50 h-10 !border ${isPasswordFocused || field.value ? '!border-green-600' : '!border-gray-300'} focus:!border-green-600 hover:!border-green-600 focus:!shadow-none`} {...field}
+                    onFocus={() => setIsPasswordFocused(true)}
+                      onBlur={() => setIsPasswordFocused(false)}
                   />
                 </Form.Item>
               )}
             />
           </div>
+          </div>
 
           {/* Remember Me and Submit */}
-          <div className="flex justify-center">
-            <div className="w-full sm:w-auto text-center">
-              {/* <div className="flex items-center justify-center gap-2 mb-4">
-                <Checkbox />
+          <div className="flex">
+            <div className="mx-auto ps-20">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  onChange={(e) => setIsRememberMeChecked(e.target.checked)}
+                />
                 <span className="text-sm text-gray-700">Remember Me</span>
-              </div> */}
+              </div>
 
               <Button
                 htmlType="submit"
                 type="primary"
                 icon={<AiOutlineLogin />}
-                className="w-full sm:w-[325px] bg-green-600 hover:!bg-green-700 border-none"
+                className="lg:w-[325px] md:w-[325px] w-[225px] bg-green-600 mt-4 hover:!bg-green-700 border-none"
                 disabled={isButtonDisabled}
                 loading={sendOtpMutation.isPending}
               >
@@ -152,8 +162,8 @@ export default function LoginPage() {
               </Button>
 
               <div className="mt-2">
-                <Link to="/admin/forgot-password" className="text-blue-600 hover:underline flex items-center justify-center gap-1">
-                  <FaQuestionCircle className="text-blue-600" />
+                <Link to="/admin/forgot-password" className="text-blue-600 hover:underline flex gap-1">
+                  <FaQuestionCircle className="text-blue-600 my-auto" />
                   Forgot Your Password?
                 </Link>
               </div>

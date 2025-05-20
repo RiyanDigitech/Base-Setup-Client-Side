@@ -33,7 +33,6 @@ const DashboardLayout = () => {
   const {
     token: { colorPrimary },
   } = theme.useToken();
-
  const profileMenu = (
     <Menu>
       {/* <Menu.Item key="1" icon={<UserOutlined />}>
@@ -149,11 +148,12 @@ const DashboardLayout = () => {
   console.log(see, collapsed);
 
 
-  const { useFetchTargetedAdmin } = AuthService();
+  // const { useFetchTargetedAdmin } = AuthService();
 
-  const { data } = useFetchTargetedAdmin();
+  // const { data } = useFetchTargetedAdmin();
+  const userDetails = JSON.parse(localStorage.getItem('userdetails') || '{}');
 
-  console.log("admin data", data?.data);
+  // console.log("admin data", data?.data);
   return (
     <>
       {" "}
@@ -365,70 +365,74 @@ const DashboardLayout = () => {
           </>
         )}{" "}
         <Layout className="p-6 !rounded-xl">
-        <Header
-  className={`bg-white shadow-md flex items-center justify-between ${getMarginLeft()} transition-all duration-300 p-4 flex-wrap`}
+      <Header
+  className={`bg-white shadow-md transition-all duration-300 ${getMarginLeft()} p-4`}
   style={{
     paddingLeft: 24,
     paddingRight: 24,
     height: "auto",
   }}
 >
-  {/* Left Side */}
-  <div className="flex items-center gap-5 text-xl flex-shrink-0">
-    <button onClick={() => setCollapsed(!collapsed)}>
-      {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-    </button>
-    <FileTextOutlined />
-    <CalendarOutlined />
-  </div>
-
-  {/* Right Side */}
-  <div className="flex items-center justify-end gap-6 flex-1 flex-wrap sm:flex-nowrap mt-4 sm:mt-0">
-    {/* SMS */}
-    <h2 className="text-[17px] font-bold leading-tight text-gray-500 whitespace-nowrap">
-      195 SMS
-    </h2>
-
-    {/* Search Box */}
-    <div className="flex items-center">
-      <SearchOutlined
-        className="ms-3"
-        style={{ fontSize: "20px", cursor: "pointer" }}
-        onClick={toggleSearch}
-      />
-      {showSearch && (
-        <Input
-          className="!border mt-2 sm:mt-0"
-          placeholder="Search..."
-          style={{ width: 200, marginLeft: 10 }}
-          allowClear
-        />
-      )}
+<div className="w-full max-w-screen-xl mx-auto flex items-center justify-between overflow-x-auto gap-4">    
+    {/* Left Side */}
+    <div className="flex items-center gap-4 text-xl flex-shrink-0">
+      <button onClick={() => setCollapsed(!collapsed)}>
+        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+      </button>
+      <FileTextOutlined className="hidden lg:block md:block sm:block" />
+      <CalendarOutlined className="hidden lg:block md:block sm:block" />
     </div>
 
-    {/* Notifications */}
-    <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
-      <Badge count={notifications.length} size="small" offset={[-2, 2]}>
-        <BellOutlined className="ms-3 text-xl cursor-pointer hover:text-green-700 transition" />
-      </Badge>
-    </Dropdown>
+    {/* Right Side */}
+    <div className="flex items-center justify-end flex-nowrap gap-4 sm:gap-6 w-full overflow-x-auto">
 
-    {/* Profile */}
-    <div className="flex items-center gap-3 relative cursor-pointer">
-      <div className="text-right hidden sm:block leading-tight">
-        <h2 className="text-[14px] font-bold text-gray-500">Rabees Waheed</h2>
-        <h2 className="text-[12px] font-bold text-gray-500">Account ID # 1263</h2>
+      
+      {/* SMS */}
+      <h2 className="text-[17px] hidden lg:block md:block sm:block font-bold text-gray-500 whitespace-nowrap">
+        195 SMS
+      </h2>
+
+      {/* Search */}
+      <div className="flex items-center">
+        <SearchOutlined
+          className="ms-2"
+          style={{ fontSize: "20px", cursor: "pointer" }}
+          onClick={toggleSearch}
+        />
+        {showSearch && (
+          <Input
+            className="!border mt-2 sm:mt-0"
+            placeholder="Search..."
+            style={{ width: 200, marginLeft: 10 }}
+            allowClear
+          />
+        )}
       </div>
 
-      <Dropdown overlay={profileMenu} placement="bottomRight" arrow>
-        <img
-          className="h-10 w-10 rounded-full object-cover"
-          src="/profilelgo.png"
-          alt="profile"
-        />
+      {/* Notification */}
+      <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
+        <Badge count={notifications.length} size="small" offset={[-2, 2]}>
+          <BellOutlined className="ms-2 text-xl cursor-pointer hover:text-green-700 transition" />
+        </Badge>
       </Dropdown>
 
-      <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></span>
+      {/* Profile */}
+      <div className="flex items-center gap-3 relative cursor-pointer">
+        <div className="text-right hidden sm:block leading-tight">
+          <h2 className="text-[14px] font-bold text-gray-500">{userDetails.name ? userDetails.name : "user"}</h2>
+          <h2 className="text-[12px] font-bold text-gray-500">Account ID # 000{userDetails.id ? userDetails.id : "000"}</h2>
+        </div>
+
+        <Dropdown overlay={profileMenu} placement="bottomRight" arrow>
+          <img
+            className="h-10 w-10 rounded-full object-cover"
+            src="/profilelgo.png"
+            alt="profile"
+          />
+        </Dropdown>
+
+        <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></span>
+      </div>
     </div>
   </div>
 </Header>
@@ -459,8 +463,8 @@ const DashboardLayout = () => {
       // }}
       >
         
-         <div className="flex justify-between">
-         <div className="flex justify-center">
+         <div className="lg:flex  lg:justify-between ">
+         <div className="lg:flex md:flex sm:flex text-center justify-center">
          <h2 className="">COPYRIGHT © 2025WA.</h2>
             <h2 className='text-blue-500 cursor-pointer underline'>DIGITECHINFRA.COM</h2>
            <h2 className="">All rights Reserved</h2>
@@ -470,8 +474,7 @@ const DashboardLayout = () => {
          </div>
          </div>
          
-      </Footer>
-    </>
+      </Footer>   </>
   );
 };
 
