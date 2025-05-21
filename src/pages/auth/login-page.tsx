@@ -70,7 +70,7 @@ export default function LoginPage() {
     mutationFn: RecivecedOTPLogin,
     onSuccess: (data: any) => {
       localStorage.setItem('token', data?.data?.token);
-      localStorage.setItem('userdetails', JSON.stringify(data?.data?.data?.user));
+      localStorage.setItem('userdetails', JSON.stringify(data?.data?.user));
       localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
       console.log("User Logged In:", data);
       navigate('/');
