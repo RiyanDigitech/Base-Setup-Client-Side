@@ -1,71 +1,92 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   Button,
   Input,
-  List,
   message,
   Row,
   Col,
   Alert,
   Spin,
+  Table,
+  Menu,
+  Dropdown,
+  Modal,
 } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, MoreOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import CreateRoleModal from '@/components/RoleComponents/CreateRoleModal';
 import PermissionModal from '@/components/RoleComponents/PermissionModal';
-import { useRoles } from '@/services/authService/AuthService';
+import { assignPermissionsToRole, useCreateRole, useDeleteRole, useRoles, useUpdateRole } from '@/services/Role&PermissionService/Roles&PermissionService';
+import { useDebounce } from 'use-debounce';
+import "../../Css/Spin.css"
+import EditRoleModal from '@/components/RoleComponents/EditRoleModal';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 
 const RolePermissionUI: React.FC = () => {
-
-  const {
-    data: fetchedRoles = [],      
-    isLoading,
-    isError,
-    error,
-  } = useRoles();
-
-
-  const [extraRoles, setExtraRoles] = useState<string[]>([]);      
-  const [search, setSearch] = useState('');
+     
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+const [roleToEdit, setRoleToEdit] = useState<{ id: number; name: string } | null>(null);
+
   const [rolePermissions, setRolePermissions] =
     useState<Record<string, any>>({});
+   const [search, setSearch] = useState('');
+  const [debouncedSearch] = useDebounce(search, 400);
+   const {
+    data: fetchedRoles = [],
+    isFetching,
+    isError,
+    error,
+  } = useRoles(debouncedSearch);
 
-  
-  const allRoleNames = useMemo(() => {
-    const remote = fetchedRoles.map(r => r.name);
-    return Array.from(new Set([...remote, ...extraRoles])); // dedupe
-  }, [fetchedRoles, extraRoles]);
+  const { mutate: deleteRoleMutation } = useDeleteRole();
+  const { mutate: updateRoleMutation, isPending: isUpdatingRole } = useUpdateRole(() => setEditModalVisible(false));
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+  mutationFn: assignPermissionsToRole,
+  onMutate: () => setLoading(true),
+  onSuccess: () => {
+    message.success("Permissions assigned successfully");
+    setLoading(false);
+    setShowPermissionModal(false); 
+    queryClient.invalidateQueries({ queryKey: ['roles'] });
+  },
+  onError: () => {
+    message.error("Failed to assign permissions");
+    setLoading(false);
+  },
+});
 
-  const displayedRoles = useMemo(
-    () =>
-      allRoleNames.filter(r =>
-        r.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [allRoleNames, search],
-  );
 
+  const { mutate: createRoleMutation, isPending: isCreatingRole } = useCreateRole(() => {
+    setShowRoleModal(false);
+  });
 
   const handleAddRole = (role: string) => {
-    if (allRoleNames.includes(role)) {
-      message.warning('Role already exists');
-      return;
-    }
-    setExtraRoles(prev => [...prev, role]);
-    message.success('Role added successfully');
-  };
-
-  const handleSavePermissions = (role: string, permissions: any) => {
-    setRolePermissions(prev => ({ ...prev, [role]: permissions }));
-    message.success('Permissions saved successfully');
+    createRoleMutation(role);
   };
 
 
-  if (isLoading) return <Spin />;
-  if (isError) return <Alert type="error" message={String(error)} />;
+const handleSavePermissions = (roleId: number, permissionIds: number[]) => {
+  const roleObj = fetchedRoles.find((role) => role.id === roleId);
+  if (!roleObj) {
+    message.error("Role not found");
+    return;
+  }
+
+  mutate({
+    roleId,
+    permissions: permissionIds,
+  });
+
+  setRolePermissions((prev) => ({ ...prev, [roleObj.name]: permissionIds }));
+};
+
+
 
   return (
     <Card title="Role & Permission Management" className="mt-3">
@@ -91,6 +112,7 @@ const RolePermissionUI: React.FC = () => {
         <Col>
           <Button
             onClick={() => setShowRoleModal(true)}
+             loading={isCreatingRole}
             className="!bg-green-600 !text-white !font-medium !py-2 rounded-md hover:!bg-green-700 !transition !duration-300 lg:mt-0 md:mt-0 sm:mt-0 mt-1"
           >
             + Create Role
@@ -99,48 +121,154 @@ const RolePermissionUI: React.FC = () => {
       </Row>
 
       {/* list ---------------------------------------------------------- */}
-      <List
-        bordered
-        locale={{ emptyText: 'No roles found' }}
-        dataSource={displayedRoles}
-        renderItem={role => (
-          <List.Item
-            actions={[
-              <Button
-                key="perm"
-                onClick={() => {
-                  setSelectedRole(role);
-                  setShowPermissionModal(true);
-                }}
-                className="!bg-green-600 !text-white hover:!bg-green-700"
-              >
-                {rolePermissions[role]
-                  ? 'Edit Permissions'
-                  : 'Assign Permissions'}
-              </Button>,
-            ]}
-          >
-            {role}
-          </List.Item>
-        )}
-      />
+      <Spin
+  style={{ color: '#15803D' }}
+  className="custom-green-spin"
+  spinning={isFetching}
+>
+  {isError ? (
+    <Alert
+      type="error"
+      message="Failed to load roles"
+      description={String(error)}
+      showIcon
+      className="mb-4"
+    />
+  ) : (
+    <Table
+  rowKey={(record) => record.id}
+  loading={isFetching}
+  dataSource={fetchedRoles}
+  className='overflow-auto'
+  scroll={{ x: 'max-content' }}
+  columns={[
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'Role',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Created At',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text) => new Date(text).toLocaleString(),
+    },
+    {
+      title: 'Updated At',
+      dataIndex: 'updated_at',
+      key: 'updated_at',
+      render: (text) => new Date(text).toLocaleString(),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+       render: (_, record) => {
+    const menu = (
+      <Menu>
+        <Menu.Item
+          key="edit"
+          icon={<EditOutlined />}
+         onClick={() => {
+    setRoleToEdit({ id: record.id, name: record.name });
+    setEditModalVisible(true);
+  }}
+        >
+          Edit
+        </Menu.Item>
+        <Menu.Item
+  key="delete"
+  icon={<DeleteOutlined />}
+  danger
+  onClick={() => {
+    Modal.confirm({
+      title: "Confirm Deletion",
+      content: `Are you sure you want to delete the role "${record.name}"?`,
+      okText: "Yes",
+      cancelText: "No",
+      okButtonProps: {
+        className: "bg-green-600 text-white hover:!bg-green-700",
+      },
+      onOk: () =>
+        new Promise((resolve, reject) => {
+          deleteRoleMutation(record.id, {
+            onSuccess: () => {
+              resolve(null);
+            },
+            onError: (error) => {
+              reject(error);
+            },
+          });
+        }),
+    });
+  }}
+>
+  Delete
+</Menu.Item>
+
+        <Menu.Item
+          key="assign"
+          icon={<SettingOutlined />}
+          onClick={() => {
+            setSelectedRole(record.name);
+            setShowPermissionModal(true);
+          }}
+        >
+          Assign Permissions
+        </Menu.Item>
+      </Menu>
+    );
+
+    return (
+      <Dropdown overlay={menu} trigger={['click']}>
+        <Button className='!text-black' icon={<MoreOutlined />}  />
+      </Dropdown>
+    );
+  },
+    },
+  ]}
+/>
+  )}
+</Spin>
 
       {/* modals -------------------------------------------------------- */}
       <CreateRoleModal
         visible={showRoleModal}
         onClose={() => setShowRoleModal(false)}
         onCreate={handleAddRole}
+        
       />
 
       <PermissionModal
-        visible={showPermissionModal}
-        role={selectedRole}
-        existingPermissions={
-          selectedRole ? rolePermissions[selectedRole] : null
-        }
-        onClose={() => setShowPermissionModal(false)}
-        onSave={handleSavePermissions}
-      />
+  visible={showPermissionModal}
+  roleId={
+    selectedRole
+      ? fetchedRoles.find((r) => r.name === selectedRole)?.id ?? null
+      : null
+  }
+  existingPermissions={
+    selectedRole
+      ? fetchedRoles
+          .find((r) => r.name === selectedRole)
+          ?.permissions.map((p) => p.id) ?? []
+      : []
+  }
+  onClose={() => setShowPermissionModal(false)}
+  onSave={handleSavePermissions}
+  loading={loading}
+/>
+
+      <EditRoleModal
+  visible={editModalVisible}
+  onClose={() => setEditModalVisible(false)}
+  onSubmit={(data) => updateRoleMutation(data)}
+  isUpdating={isUpdatingRole}
+  role={roleToEdit}
+/>
     </Card>
   );
 };

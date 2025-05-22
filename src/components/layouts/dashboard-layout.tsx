@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
 // import { FaUser } from "react-icons/fa";
-import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined} from "@ant-design/icons";
+import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
 
 import { Input, Layout, Menu, theme, Dropdown, Badge } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -269,6 +269,16 @@ const DashboardLayout = () => {
                   ),
                 },
                 
+                {
+                  key: "/user-management",
+                  icon: (
+                    <UserOutlined
+                      className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                        }`}
+                    />
+                  ),
+                  label: <div className="">User Management</div>,
+                },
                 {
                   key: "/settings",
                   icon: (

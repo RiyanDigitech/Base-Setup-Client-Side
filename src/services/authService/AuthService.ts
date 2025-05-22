@@ -1,6 +1,5 @@
 import axios from "@/lib/config/axios-instance"
 import { resetPasswordType } from "@/lib/types/resetPasswordTypes";
-import { useQuery } from "@tanstack/react-query";
 import { message } from 'antd';
 
 
@@ -132,23 +131,4 @@ export const resetChangePassword = async (data:resetPasswordType) => {
             };
         }
 }
-export interface Role {
-  id: number;
-  name: string;
-  permissions: Permission[];
-}
-export interface Permission {
-  id: number;
-  name: string;
-}
 
- const fetchRoles = async (): Promise<Role[]> => {
-  const res = await axios.get('/roles');       // GET /roles
-  return res.data.data as Role[];            // unwrap “data” key
-};
-export const useRoles = () =>
-  useQuery({
-    queryKey: ['roles'],
-    queryFn: fetchRoles,
-    staleTime: 5 * 60 * 1000,   // 5 min – tweak as you like
-  });
