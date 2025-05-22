@@ -61,6 +61,8 @@ export const logoutFunc = async () => {
     
       if (response.status === 200) {
         localStorage.removeItem('token');
+        localStorage.removeItem('token_expiry');
+        localStorage.removeItem('userdetails');
         message.success('Logged out successfully')
         
         return response.data;

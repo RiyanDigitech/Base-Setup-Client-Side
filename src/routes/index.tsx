@@ -21,7 +21,11 @@ import ComplainDetails from "@/pages/complaint-details/complain-details";
 import ProtectedRoute from "./ProtectedRoutes";
 import RolePermissionUI from "@/pages/RolesAndPermissions/RolesAndPermission";
 import Resetnewpassword from "@/pages/auth/Reset-new-password";
+
 import UserManagement from "@/pages/user-management/UserManagement";
+
+import Permission from "@/pages/Permission/permission";
+
 
 const router = createBrowserRouter([
   {
@@ -66,7 +70,11 @@ const router = createBrowserRouter([
       { path: "/sentstatistics", element: <SentStatistics /> },
       { path: "/sentmessage", element: <SentMessage /> },
       { path: "/role&permission", element: <RolePermissionUI /> },
+
       { path: "/user-management", element: <UserManagement /> },
+
+      { path: "/permission", element: <Permission /> },
+
     ],
   },
   {

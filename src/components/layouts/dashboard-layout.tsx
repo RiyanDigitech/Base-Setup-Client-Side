@@ -151,7 +151,8 @@ const DashboardLayout = () => {
   // const { useFetchTargetedAdmin } = AuthService();
 
   // const { data } = useFetchTargetedAdmin();
-  const userDetails = JSON.parse(localStorage.getItem('userdetails') || '{}');
+  const userDetails = localStorage.getItem('userdetails') || '{}';
+  const user = JSON.parse(userDetails)
 
   // console.log("admin data", data?.data);
   return (
@@ -288,6 +289,16 @@ const DashboardLayout = () => {
                     />
                   ),
                   label: <div className="">Settings</div>,
+                },
+                {
+                  key: "/permission",
+                  icon: (
+                    <OrderedListOutlined
+                      className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                        }`}
+                    />
+                  ),
+                  label: <div className="">Permission</div>,
                 },
                 {
                   key: "/role&permission",
@@ -429,8 +440,8 @@ const DashboardLayout = () => {
       {/* Profile */}
       <div className="flex items-center gap-3 relative cursor-pointer">
         <div className="text-right hidden sm:block leading-tight">
-          <h2 className="text-[14px] font-bold text-gray-500">{userDetails.name ? userDetails.name : "user"}</h2>
-          <h2 className="text-[12px] font-bold text-gray-500">Account ID # 000{userDetails.id ? userDetails.id : "000"}</h2>
+          <h2 className="text-[14px] font-bold text-gray-500">{user.name ? user.name : "user"}</h2>
+          <h2 className="text-[12px] font-bold text-gray-500">Account ID # 000{user.id ? user.id : "000"}</h2>
         </div>
 
         <Dropdown overlay={profileMenu} placement="bottomRight" arrow>

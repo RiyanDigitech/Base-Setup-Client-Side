@@ -39,7 +39,7 @@ function Resetnewpassword() {
     mutationFn: resetChangePassword,
     onSuccess: (data:any) => {
       if (data?.success) {
-        console.log(data)
+        console.log('reset Passwrd' , data)
         message.success(data.data.message || "Password has been reset successfully");
       naviagte('/admin/login')
       }else {
