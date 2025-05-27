@@ -5,6 +5,7 @@ import '../../Css/Tabs.css'
 import AccountForm from '@/components/SettingsComponents/AcountForm';
 import ChangePasswordForm from '@/components/SettingsComponents/ChangePassword';
 import OtherSettings from '@/components/SettingsComponents/OtherSetting';
+import SettingsEditor from '@/components/SettingsComponents/Settings';
 
 const { TabPane } = Tabs;
 
@@ -30,8 +31,14 @@ const Settings = () => {
                 >
                     <AccountForm />
                 </TabPane>
-
-                
+                <TabPane tab ={
+                        <span>
+                            <SettingOutlined />  Settings
+                        </span>
+                    }
+                    key="2">
+                    <SettingsEditor />
+                </TabPane>
 
                 
 
@@ -41,7 +48,7 @@ const Settings = () => {
                             <SettingOutlined /> Other Settings
                         </span>
                     }
-                    key="4"
+                    key="3"
                 >
                     <OtherSettings />
                 </TabPane>
