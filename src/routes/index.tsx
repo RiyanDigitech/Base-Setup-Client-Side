@@ -25,6 +25,8 @@ import Resetnewpassword from "@/pages/auth/Reset-new-password";
 import UserManagement from "@/pages/user-management/UserManagement";
 
 import Permission from "@/pages/Permission/permission";
+import Chats from "@/pages/Chats/Chats";
+import ReplyChat from "@/pages/Chats/ReplyChat";
 
 
 const router = createBrowserRouter([
@@ -66,6 +68,8 @@ const router = createBrowserRouter([
       { path: "/complaint-details/:id", element: <ComplainDetails /> },
       { path: "/add-new-service", element: <CreateNewService /> },
       { path: "/service-details/:id", element: <ServiceDetails /> },
+      { path: "/chats", element: <Chats /> },
+      { path: "/chat-reply/:id", element: <ReplyChat /> },
       { path: "/lead-list", element: <LeadList /> },
       { path: "/sentstatistics", element: <SentStatistics /> },
       { path: "/sentmessage", element: <SentMessage /> },
