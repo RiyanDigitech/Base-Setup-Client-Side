@@ -1,11 +1,16 @@
 
 import axios from '@/lib/config/axios-instance'
-import { error } from 'console'
+// import { error } from 'console'
+import { TokenValue } from '../Base/TokenGet'
 
 export const getAllPermission = async () => {
 
     try {
-       const response = await axios.get('permissions')
+       const response = await axios.get('permissions',{
+        headers: {
+                "Authorization": `Bearer ${TokenValue}`
+              }
+       })
     if(response.status === 200){
         return response.data
     }else{
@@ -19,7 +24,11 @@ export const getAllPermission = async () => {
 
 export const addPermission = async (pname: string) => {
   try {
-    const response = await axios.post("/permissions", { name: pname });
+    const response = await axios.post("/permissions", { name: pname,
+      headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+     });
 
     // Check if response indicates duplication
     if (response.data?.message?.includes("already exists")) {
@@ -53,7 +62,11 @@ export const addPermission = async (pname: string) => {
 
 export const updatePermission = async ({ id, name }: { id: number; name: string }) => {
   try {
-    const response = await axios.put(`/permissions/${id}`, { name });
+    const response = await axios.put(`/permissions/${id}`, { name,
+      headers: {
+              "Authorization": `Bearer ${TokenValue}`
+            }
+     });
     if (response.status === 200) {
       return response.data;
     } else {
@@ -70,7 +83,11 @@ export const updatePermission = async ({ id, name }: { id: number; name: string 
 export const searchPermission = async (q: string) => {
   try {
     const endpoint = q ? `/permissions/search?q=${encodeURIComponent(q)}` : `/permissions`;
-    const response = await axios.get(endpoint);
+    const response = await axios.get(endpoint,{
+      headers: {
+              "Authorization": `Bearer ${TokenValue}`
+            }
+    });
 
     if (response.status === 200) {
       const { data, total } = response.data;
@@ -88,7 +105,11 @@ export const searchPermission = async (q: string) => {
 export const deletePermission = async (id:number) => {
 
     try {
-       const response = await axios.delete(`/permissions/${id}`)
+       const response = await axios.delete(`/permissions/${id}`,{
+        headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+       })
     if(response.status === 200){
         return response.data
     }else{

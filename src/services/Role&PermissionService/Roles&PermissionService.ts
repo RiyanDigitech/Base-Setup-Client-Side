@@ -2,32 +2,56 @@ import axios from "@/lib/config/axios-instance"
 import { Role } from "@/lib/types/role&permission";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from 'antd';
+import { TokenValue } from "../Base/TokenGet";
 
  const fetchRoles = async (search?: string): Promise<Role[]> => {
   if (search && search.trim()) {
     const res = await axios.get('/roles/search', {
       params: { q: search },
+      headers: {
+              "Authorization": `Bearer ${TokenValue}`
+            }
     });
     return res.data.data as Role[];
   } else {
-    const res = await axios.get('/roles');
+    const res = await axios.get('/roles',{
+      headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+    });
     return res.data.data as Role[];
   }
 };
 const createRole = async (roleName: string) => {
-  const response = await axios.post('/roles', { name: roleName });
+  const response = await axios.post('/roles', { name: roleName,
+    headers: {
+            "Authorization": `Bearer ${TokenValue}`
+          }
+   });
   return response.data;
 };
 export const deleteRole = async (roleId: number | string) => {
-  const response = await axios.delete(`/roles/${roleId}`);
+  const response = await axios.delete(`/roles/${roleId}`,{
+    headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+  });
   return response.data;
 };
 export const updateRole = async ({ id, name }: { id: number; name: string }) => {
-  const response = await axios.put(`/roles/${id}`, { name });
+  const response = await axios.put(`/roles/${id}`, { name, 
+    headers: {
+            "Authorization": `Bearer ${TokenValue}`
+          }
+   });
   return response.data;
 };
  export const fetchAllPermissions = async () => {
-  const response = await axios.get("/permissions");
+  const response = await axios.get("/permissions", {
+    headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+  });
   return response.data.data; // assuming the structure is { success, message, data }
 };
 export const assignPermissionsToRole = async ({
@@ -39,6 +63,9 @@ export const assignPermissionsToRole = async ({
 }) => {
   const res = await axios.post(`/roles/${roleId}/permissions`, {
     permissions,
+    headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
   });
   return res.data;
 };

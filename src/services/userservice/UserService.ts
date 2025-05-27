@@ -2,24 +2,40 @@ import axios from "@/lib/config/axios-instance"
 import { CreateUserInput, User } from "@/lib/types/User";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from 'antd';
+import { TokenValue } from "../Base/TokenGet";
 
  const fetchUsers = async (search?: string): Promise<User[]> => {
   if (search && search.trim()) {
     const res = await axios.get('/users/search', {
       params: { q: search },
+      headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
     });
     return res.data.data as User[];
   } else {
-    const res = await axios.get('/users');
+    const res = await axios.get('/users',{
+      headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+    });
     return res.data.data as User[];
   }
 };
 const createUser = async (userData: CreateUserInput) => {
-  const response = await axios.post('/users', userData);
+  const response = await axios.post('/users', userData,{
+    headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+  });
   return response.data;
 };
 export const deleteUser = async (userId: number | string) => {
-  const response = await axios.delete(`/users/${userId}`);
+  const response = await axios.delete(`/users/${userId}`,{
+    headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+  });
   return response.data;
 };
 export const updateUser = async (user: {
@@ -30,7 +46,11 @@ export const updateUser = async (user: {
   password?: string;
 }) => {
   const { id, ...payload } = user;
-  const response = await axios.put(`/users/${id}`, payload);
+  const response = await axios.put(`/users/${id}`, payload,{
+    headers: {
+        "Authorization": `Bearer ${TokenValue}`
+      }
+  });
   return response.data;
 };
 
