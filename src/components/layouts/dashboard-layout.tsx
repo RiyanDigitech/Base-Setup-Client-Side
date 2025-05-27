@@ -2,21 +2,24 @@ import { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
 // import { FaUser } from "react-icons/fa";
 import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
-
-import { Input, Layout, Menu, theme, Dropdown, Badge } from "antd";
+import echo from '@/utils/echo';
+import moment from 'moment';
+import { Input, Layout, Menu, theme, Dropdown, Badge, Button, Avatar, message } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import "../../index.css";
-// import tokenService from "@/services/token.service";
-// import { RiCustomerService2Fill } from "react-icons/ri";
 import AuthService from "@/services/auth.service";
 import { Footer } from "antd/es/layout/layout";
 import { logoutFunc } from "@/services/authService/AuthService";
 const { Header, Sider, Content } = Layout;
+import "../../index.css";
 
-// import { jwtDecode } from "jwt-decode";
-// import dayjs from "dayjs";
 
-// const person = tokenService.getUser();
+interface ChatItem {
+  wa_id: string;
+  message: string;
+  sender: string;
+  created_at: string;
+  updated_at: string;
+}
 const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState("");
@@ -25,8 +28,21 @@ const DashboardLayout = () => {
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
+  const handleLogout = async () => {
+    const success = await logoutFunc();
+    if (success) {
+      navigate("/admin/login");
+    } else {
+      // message.error("Something went Wrong")
+    }
+  };
+
+
+
 
   const [see, setSee] = useState(true);
+  const [notifications, setNotifications] = useState<{ id: string; text: string }[]>([]);
+
   // const [lastPersonData, setLastPersonData] = useState("");
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -49,20 +65,49 @@ const DashboardLayout = () => {
   
       <Menu.Item
         key="4"
-        onClick={logoutFunc}
+        onClick={handleLogout}
         className="!text-red-500"
         icon={<LogoutOutlined />}
       >
-        <Link to="/admin/login">Logout</Link>
+        Logout
       </Menu.Item>
     </Menu>
   );
 
-  const notifications = [
-    { id: 1, text: "New booking received" },
-    { id: 2, text: "Room 101 is ready" },
-    { id: 3, text: "New review submitted" },
-  ];
+  // const notifications = [
+  //   { id: 1, text: "New booking received" },
+  //   { id: 2, text: "Room 101 is ready" },
+  //   { id: 3, text: "New review submitted" },
+  // ];
+
+  // Pusher listener ke andar se setDataSource hattayein
+useEffect(() => {
+  const channel = echo.channel('new-message');
+  channel.listen('.chat-new', (e: ChatItem) => {
+    console.log('New message received:', e);
+
+    // Only show notifications where message is "Message A"
+    // if (e.message ==='A customer needs assistance') {
+      setNotifications(prev => [
+        ...prev,
+        { id: e.wa_id, text: `${e.wa_id}` }
+      ]);
+    // }
+  });
+
+  return () => {
+    echo.leave('new-message');
+  };
+}, []);
+
+
+  const userDetails = localStorage.getItem('userdetails');
+const user = userDetails && userDetails !== "undefined" ? JSON.parse(userDetails) : {};
+
+const handleReply = (number: string) => {
+  console.log(number)
+  navigate(`chat-reply/${number}`)
+}
   
   const expiryStr = localStorage.getItem("token_expiry");
   const expiry = expiryStr ? Number(expiryStr) : 0;
@@ -72,14 +117,40 @@ const DashboardLayout = () => {
   window.location.href = "/admin/login";
 }
   // Notification Dropdown Menu
-  const notificationMenu = (
-    <Menu
-      items={notifications.map((noti) => ({
-        key: noti.id,
-        label: noti.text,
-      }))}
-    />
-  );
+ const notificationMenu = (
+  <div className="w-96 max-h-96 overflow-y-auto p-4 bg-white rounded shadow-lg">
+    <h3 className="text-lg font-semibold mb-2 px-2">Notifications</h3>
+    <hr />
+    {notifications.map((noti, index) => (
+      <div onClick={() => handleReply(noti.text)} key={noti.id} className="flex items-start gap-3 p-2 hover:bg-gray-100 rounded-md">
+        <Avatar src="/profilelgo.png" size={40} />
+        <div className="flex-1">
+          <div className="flex justify-between items-center">
+            <p className="font-semibold text-sm text-gray-800">
+              {noti.text.split(":")[1]?.substring(0, 40) || "A customer needs assistance"}...
+             
+            </p>
+          </div>
+          <p className="text-xs text-gray-600">
+           You Have a New Message
+          <Badge count={1} style={{ backgroundColor: '#f5222d', marginLeft: 8 }} />
+          </p>
+
+          <p className="text-xs text-gray-600">
+           Hi  {user.name ? user.name : "user"} Number: {noti.text.split(":")[0]}
+          </p>
+          
+          <p className="text-xs text-gray-400 mt-1">
+            {moment().subtract(index, 'days').format('YYYY-MM-DD HH:mm:ss')}
+          </p>
+        </div>
+      </div>
+    ))}
+    <div className="text-center mt-3">
+      <Button type="primary" className="bg-green-600 hover:bg-green-700">See All Messages</Button>
+    </div>
+  </div>
+);
 
   useEffect(() => {
     // const token = tokenService?.getLocalAccessToken();
@@ -151,8 +222,8 @@ const DashboardLayout = () => {
   // const { useFetchTargetedAdmin } = AuthService();
 
   // const { data } = useFetchTargetedAdmin();
-  const userDetails = localStorage.getItem('userdetails') || '{}';
-  const user = JSON.parse(userDetails)
+
+
 
   // console.log("admin data", data?.data);
   return (
@@ -255,6 +326,19 @@ const DashboardLayout = () => {
                   ),
                   label: (
                     <div className=" text-[#0F172A]">Sent Statistics</div>
+                  ),
+                },
+                {
+                  key: "/chats",
+                  icon: (
+                    <BarChartOutlined 
+                    
+                      className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                        }`}
+                    />
+                  ),
+                  label: (
+                    <div className=" text-[#0F172A]">Chat</div>
                   ),
                 },
                 {
@@ -431,11 +515,11 @@ const DashboardLayout = () => {
       </div>
 
       {/* Notification */}
-      <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
-        <Badge count={notifications.length} size="small" offset={[-2, 2]}>
-          <BellOutlined className="ms-2 text-xl cursor-pointer hover:text-green-700 transition" />
-        </Badge>
-      </Dropdown>
+     <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
+  <Badge count={notifications.length} size="small" offset={[-2, 2]}>
+    <BellOutlined className="ms-2 text-xl cursor-pointer hover:text-green-700 transition" />
+  </Badge>
+</Dropdown>
 
       {/* Profile */}
       <div className="flex items-center gap-3 relative cursor-pointer">

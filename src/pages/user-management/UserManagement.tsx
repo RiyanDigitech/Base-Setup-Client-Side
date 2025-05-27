@@ -14,6 +14,11 @@ const UserManagement:React.FC = () => {
       const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
         const [selectedUserRoleId, setSelectedUserRoleId] = useState<number | undefined>(undefined);
 
+
+        const getuserPermission = localStorage.getItem('userdetails')
+         const userPermission = JSON.parse(getuserPermission)
+         console.log("User Permissions Console" , userPermission.permissions)
+
 const [userToEdit, setUserToEdit] = useState<{
   id: number;
   name: string;
@@ -85,6 +90,7 @@ const [userToEdit, setUserToEdit] = useState<{
           </Col>
   
           <Col>
+          {userPermission.permissions.includes("Create_User") && (
             <Button
               onClick={() => setShowUserModal(true)}
                loading={isCreatingUser}
@@ -92,6 +98,8 @@ const [userToEdit, setUserToEdit] = useState<{
             >
               + Create User
             </Button>
+
+            )}
           </Col>
         </Row>
   
@@ -155,6 +163,7 @@ const [userToEdit, setUserToEdit] = useState<{
          render: (_, record) => {
       const menu = (
         <Menu>
+          {userPermission.permissions.includes("Update_User") && (
           <Menu.Item
             key="edit"
             icon={<EditOutlined />}
@@ -170,6 +179,8 @@ const [userToEdit, setUserToEdit] = useState<{
           >
             Edit
           </Menu.Item>
+          )}
+          {userPermission.permissions.includes("Delete_User") && (
           <Menu.Item
     key="delete"
     icon={<DeleteOutlined />}
@@ -199,6 +210,7 @@ const [userToEdit, setUserToEdit] = useState<{
   >
     Delete
   </Menu.Item>
+  )}
   
           <Menu.Item
             key="assign"

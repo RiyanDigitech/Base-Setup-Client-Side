@@ -2,6 +2,8 @@
 import { Button, Input, message, Modal, Radio } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addPostParentMenu } from "@/services/MenusServices/MenusService";
 
 interface SubMenu {
   id: number;
@@ -31,11 +33,35 @@ const AddMenu = ({ draftMenus, setDraftMenus }: AddMenuProps) => {
 
   const handleAddMenuDraft = () => {
     if (!menuName) {
-      message.error("Please enter a menu description.");
+      message.error("Menu Name is Missing");
       return;
     }
-    setIsMenuModalOpen(true);
+    
+    console.log(menuName, "Input Value")
+    postParentMutation.mutate(menuName)
+    setMenuName("")
   };
+  // setIsMenuModalOpen(true);
+
+  const queryClient = useQueryClient()
+  const postParentMutation = useMutation({
+  
+    mutationFn:addPostParentMenu,
+    onSuccess:(data:any) => {
+      message.success( data?.message ||"Add Main Menu Successfully")
+      queryClient.invalidateQueries({queryKey:['menus']})
+
+    },onError:(error:any) => {
+      message.error(error?.response?.data?.message || "Failed to Add Main Menu")
+    }
+
+  })
+
+
+
+
+
+
 
   const handleConfirmAddMenu = () => {
     if (!menuKey || menuKey < 1 || menuKey > 99) {
@@ -90,16 +116,26 @@ const AddMenu = ({ draftMenus, setDraftMenus }: AddMenuProps) => {
         {menuType === "Textarea" ? (
           <Input.TextArea
             rows={4}
-            placeholder="Please Enter Your Menu Description"
+            placeholder="Please Enter Your Menu"
             value={menuName}
-            onChange={(e) => setMenuName(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^[A-Za-z\s]*$/.test(value)) {
+                setMenuName(value);
+              }
+            }}
             className="w-full md:w-[400px]"
           />
         ) : (
           <Input
-            placeholder="Please Enter Your Menu Description"
+            placeholder="Please Enter Your Menu"
             value={menuName}
-            onChange={(e) => setMenuName(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^[A-Za-z\s]*$/.test(value)) {
+                setMenuName(value);
+              }
+            }}
             className="w-full md:w-[400px]"
           />
         )}
@@ -107,9 +143,10 @@ const AddMenu = ({ draftMenus, setDraftMenus }: AddMenuProps) => {
         <Button
           className="bg-green-700 text-white w-full md:w-auto hover:!bg-green-500"
           icon={<PlusOutlined />}
+          loading={postParentMutation.isPending}
           onClick={handleAddMenuDraft}
         >
-          Add Menu
+          Create Menu
         </Button>
       </div>
 

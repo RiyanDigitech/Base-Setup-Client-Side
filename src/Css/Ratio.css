@@ -1,0 +1,8 @@
+.ant-radio-checked .ant-radio-inner {
+  border-color: #16a34a !important; /* green-600 border */
+  background-color: #16a34a !important; /* green-600 fill */
+}
+
+.ant-radio-inner {
+  border-width: 2px;
+}

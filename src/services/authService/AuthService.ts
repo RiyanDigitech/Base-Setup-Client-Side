@@ -68,9 +68,9 @@ export const logoutFunc = async () => {
         return response.data;
       }
       
-    } catch (error) {
-      console.error('Logout error:', error);
-      return { error: true, message: 'Logout failed' };
+    } catch (error:any) {
+      message.error(error?.response?.data?.message  || 'Logout Failed Check your Internet Connection' );
+    //   return { error: true, message: '' };
     }
 }
   

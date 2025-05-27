@@ -1,6 +1,7 @@
 // components/UserComponents/AssignRoleModal.tsx
 import React, { useEffect, useState } from 'react';
 import { Modal, Radio, Spin } from 'antd';
+import '../../Css/Ratio.css'
 import { useRoles } from '@/services/Role&PermissionService/Roles&PermissionService';
 
 interface AssignRoleModalProps {
@@ -61,7 +62,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           className="flex flex-col gap-2"
         >
           {roles.map((role) => (
-            <Radio key={role.id} value={role.id}>
+            <Radio  key={role.id} value={role.id}>
               {role.name}
             </Radio>
           ))}
