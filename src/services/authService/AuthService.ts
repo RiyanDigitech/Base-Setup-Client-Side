@@ -1,6 +1,7 @@
 import axios from "@/lib/config/axios-instance"
 import { resetPasswordType } from "@/lib/types/resetPasswordTypes";
 import { message } from 'antd';
+import Cookies from "js-cookie";
 
 
 export const AuthuserLogin = async ({ phone, password }: { phone: string, password: string }) => {
@@ -12,6 +13,17 @@ export const AuthuserLogin = async ({ phone, password }: { phone: string, passwo
         });
 
         if (response.status === 200) {
+             const token = response.data?.data?.token;
+
+            if (token) {
+                // Store the token in cookies for 7 days
+                Cookies.set('token', token, {
+                    expires: 7, // expires in 7 days
+                    secure: true, // use secure cookies in production
+                    sameSite: 'Strict',
+                });
+            }
+
             return { success: true, data: response.data };
         } else if (response.status === 401) {
             console.log("Unauthorized access");
