@@ -1,8 +1,4 @@
+import Cookies from "js-cookie"
+export const GetTokenToCookie = localStorage.getItem('token')
 
-
-
-
-
-const GetTokenToCookie = Cookies.get('token')
-
-export const TokenValue = GetTokenToCookie
+// export const TokenValue = GetTokenToCookie

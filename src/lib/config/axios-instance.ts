@@ -1,5 +1,8 @@
 import axios from "axios";
 import tokenService from "@/services/token.service";
+import { GetTokenToCookie } from "@/services/Base/TokenGet";
+import { message } from "antd";
+import Cookies from "js-cookie";
 
 let isNotificationShown = false;
 
@@ -9,7 +12,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = tokenService.getLocalAccessToken();
+     const token = localStorage.getItem("token");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -31,8 +34,14 @@ instance.interceptors.response.use(
     if (!isNotificationShown) {
       isNotificationShown = true;
 
-      if (error.response?.status === 401) {
+      if (error.response?.status === 401 || error?.response?.data?.message === "Token expired") {
         console.log(error?.response?.data?.message);
+        message.error("Session expired. Please log in again.");
+      localStorage.removeItem("token");
+      localStorage.removeItem("token_expiry");
+      localStorage.removeItem("userdetails");
+      Cookies.remove("token");
+       window.location.href = "/admin/login";
       } else {
         console.log(error?.response?.data?.message);
       }
