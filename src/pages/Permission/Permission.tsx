@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import {
   Table, Button, Modal, Input, Form, Dropdown, Menu, Spin, message
 } from "antd";
+import '../../Css/Spin.css';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, MoreOutlined
 } from "@ant-design/icons";
-import '../../Css/Spin.css';
 import {
   useMutation, useQuery, useQueryClient
 } from "@tanstack/react-query";
