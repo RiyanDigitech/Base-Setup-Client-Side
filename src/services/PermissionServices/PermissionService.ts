@@ -1,15 +1,15 @@
 
 import axios from '@/lib/config/axios-instance'
 // import { error } from 'console'
-import { TokenValue } from '../Base/TokenGet'
+// import { TokenValue } from '../Base/TokenGet'
 
 export const getAllPermission = async () => {
 
     try {
        const response = await axios.get('permissions',{
-        headers: {
-                "Authorization": `Bearer ${TokenValue}`
-              }
+        // headers: {
+        //         "Authorization": `Bearer ${TokenValue}`
+        //       }
        })
     if(response.status === 200){
         return response.data
@@ -25,9 +25,9 @@ export const getAllPermission = async () => {
 export const addPermission = async (pname: string) => {
   try {
     const response = await axios.post("/permissions", { name: pname,
-      headers: {
-        "Authorization": `Bearer ${TokenValue}`
-      }
+      // headers: {
+      //   "Authorization": `Bearer ${TokenValue}`
+      // }
      });
 
     // Check if response indicates duplication
@@ -63,9 +63,9 @@ export const addPermission = async (pname: string) => {
 export const updatePermission = async ({ id, name }: { id: number; name: string }) => {
   try {
     const response = await axios.put(`/permissions/${id}`, { name,
-      headers: {
-              "Authorization": `Bearer ${TokenValue}`
-            }
+      // headers: {
+      //         "Authorization": `Bearer ${TokenValue}`
+      //       }
      });
     if (response.status === 200) {
       return response.data;
@@ -84,9 +84,9 @@ export const searchPermission = async (q: string) => {
   try {
     const endpoint = q ? `/permissions/search?q=${encodeURIComponent(q)}` : `/permissions`;
     const response = await axios.get(endpoint,{
-      headers: {
-              "Authorization": `Bearer ${TokenValue}`
-            }
+      // headers: {
+      //         "Authorization": `Bearer ${TokenValue}`
+      //       }
     });
 
     if (response.status === 200) {
@@ -106,9 +106,9 @@ export const deletePermission = async (id:number) => {
 
     try {
        const response = await axios.delete(`/permissions/${id}`,{
-        headers: {
-        "Authorization": `Bearer ${TokenValue}`
-      }
+      //   headers: {
+      //   "Authorization": `Bearer ${TokenValue}`
+      // }
        })
     if(response.status === 200){
         return response.data

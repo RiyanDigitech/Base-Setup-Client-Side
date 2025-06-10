@@ -1,50 +1,81 @@
-import { Modal, Input } from 'antd';
-import React from 'react';
+// components/ChatbotsComponents/AddSubmenuModal.tsx
+import { Modal, Form, Input, Select, message } from 'antd';
+import { useState } from 'react';
+import axios from '../../../lib/config/axios-instance';
+import { useQueryClient } from '@tanstack/react-query';
 
-interface AddSubMenuModalProps {
-  visible: boolean;
-  onOk: (name: string, key: string) => void;
-  onCancel: () => void;
-  name: string;
-  setName: (value: string) => void;
-  menuKey: string;
-  setMenuKey: (value: string) => void;
+interface AddSubmenuModalProps {
+  open: boolean;
+  onClose: () => void;
+  parentId: number; // Required to set parent_id
+  onSuccess?: () => void; // Optional callback after successful creation
 }
 
-const AddSubMenuModal: React.FC<AddSubMenuModalProps> = ({
-  visible,
-  onOk,
-  onCancel,
-  name,
-  setName,
-  menuKey,
-  setMenuKey,
-}) => {
+const AddSubmenuModal: React.FC<AddSubmenuModalProps> = ({ open, onClose, parentId, onSuccess }) => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+   const queryClient = useQueryClient(); 
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      setLoading(true);
+
+      const payload = {
+        title: values.title,
+        action_type: values.action_type,
+        action_payload: values.action_payload,
+        parent_id: parentId,
+      };
+
+      await axios.post('/menus', payload);
+
+      message.success('Submenu created successfully!');
+      form.resetFields();
+      onClose();
+       queryClient.invalidateQueries({ queryKey: ['menus'] });
+      onSuccess?.();
+    } catch (error: any) {
+      console.error(error);
+      message.error(error?.response?.data?.message || 'Failed to create submenu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
-      title="Add Sub Menu"
-      visible={visible}
-      onOk={() => onOk(name, menuKey)}
-      onCancel={onCancel}
+      title="Add Submenu"
+      open={open}
+      onCancel={onClose}
+      onOk={handleOk}
+      confirmLoading={loading}
       okText="Add"
       okButtonProps={{
         className: "bg-green-700 text-white hover:!bg-green-500",
       }}
+      cancelButtonProps={{
+        className: "bg-red-700 text-white hover:!bg-red-500",
+      }}
     >
-      <div className="flex flex-col gap-4">
-        <Input
-          placeholder="Sub Menu Text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Input
-          placeholder="Sub Menu Key"
-          value={menuKey}
-          onChange={(e) => setMenuKey(e.target.value)}
-        />
-      </div>
+      <Form form={form} layout="vertical">
+        <Form.Item name="title" label="Submenu Title" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="action_type" label="Action Type" rules={[{ required: true }]}>
+          <Select
+            options={[
+              { value: 'text', label: 'Text' },
+              { value: 'video', label: 'Video URL' },
+            ]}
+          />
+        </Form.Item>
+        <Form.Item name="action_payload" label="Payload" rules={[{ required: true }]}>
+          <Input.TextArea placeholder="Enter text or video URL" />
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };
 
-export default AddSubMenuModal;
+export default AddSubmenuModal;

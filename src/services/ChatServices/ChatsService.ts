@@ -1,14 +1,9 @@
 import axios from '@/lib/config/axios-instance';
-import { TokenValue } from '../Base/TokenGet';
+// import { TokenValue } from '../Base/TokenGet';
 
 export const getAllChatswithPusher = async () => {
   try {
-    const response = await axios.post('webhook', {
-      headers:{
-
-        "Authorization": `Bearer ${TokenValue}`
-      }
-    }); 
+    const response = await axios.post('webhook'); 
 
     if (response.status === 200) {
       return response.data;
@@ -25,16 +20,9 @@ export const getAllChatswithPusher = async () => {
 
 export const getAllMessage = async (status: string) => {
 
-
-  const token  = localStorage.getItem('token')
-
   try {
     const response = await axios.get(`chat` , {
-      params:{status:status},
-      headers:{
-
-        "Authorization": `Bearer ${token}`
-      }
+      params:{status:status}
     })
   if(response.status === 200){
     return response.data
