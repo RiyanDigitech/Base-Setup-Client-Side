@@ -14,6 +14,7 @@ export const AuthuserLogin = async ({ phone, password }: { phone: string, passwo
 
         if (response.status === 200) {
             //  const token = response.data?.data?.token;
+
             // if (token) {
             //     // Store the token in cookies for 7 days
             //     Cookies.set('token', token, {
@@ -74,6 +75,7 @@ export const logoutFunc = async () => {
         localStorage.removeItem('token');
         localStorage.removeItem('token_expiry');
         localStorage.removeItem('userdetails');
+        Cookies.remove('token')
         message.success('Logged out successfully')
         
         return response.data;

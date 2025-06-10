@@ -1,5 +1,5 @@
 import axios from '@/lib/config/axios-instance';
-import { TokenValue } from '../Base/TokenGet';
+// import { TokenValue } from '../Base/TokenGet';
 
 export const getAllChatswithPusher = async () => {
   try {
@@ -21,12 +21,14 @@ export const getAllChatswithPusher = async () => {
 export const getAllMessage = async (status: string) => {
 
 
+
   // const token  = localStorage.getItem('token')
 
   try {
     const response = await axios.get(`chat` , {
       params:{status:status},
       
+
     })
   if(response.status === 200){
     return response.data
