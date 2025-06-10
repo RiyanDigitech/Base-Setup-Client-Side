@@ -44,6 +44,26 @@ export const getBarChartData = async () => {
 };
 
 
+export const getDashboardData = async () => {
+  try {
+    const response = await axios.get('/stats/total-messages', {
+      headers: {
+        Authorization: `Bearer ${TokenValue}`,
+      },
+    });
+
+    if (response.status === 200 && response.data?.data?.weekly) {
+      return response.data.data; // Return only the array
+    } else {
+      throw new Error("Invalid weekly data response");
+    }
+  } catch (error: any) {
+    console.error("Bar chart API error:", error?.response?.data?.message || error.message);
+    throw new Error("Failed to fetch bar chart data");
+  }
+};
+
+
 export const getFailedSMS = async () => {
   try {
     const response = await axios.get('/stats/failures', {

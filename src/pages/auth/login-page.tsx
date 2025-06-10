@@ -30,11 +30,11 @@ export default function LoginPage() {
 
 
   const handleLogin: SubmitHandler<LoginFormInputs> = (data) => {
-   
-      setPhone(data.phone);
-      setPassword(data.password);
-      sendOtpMutation.mutate({ phone: data.phone, password: data.password });
-    
+
+    setPhone(data.phone);
+    setPassword(data.password);
+    sendOtpMutation.mutate({ phone: data.phone, password: data.password });
+
   };
 
   const handleVerifyOTP = () => {
@@ -45,42 +45,42 @@ export default function LoginPage() {
     mutationFn: AuthuserLogin,
     onSuccess: (data: any) => {
       if (data?.success) {
-        
-          localStorage.setItem('token', data?.data?.data?.token);
-          localStorage.setItem('userdetails', JSON.stringify(data?.data?.data?.user));
-          localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
-          message.success(data.data.message || "Login successful");
-          console.log("User Logged In:", data.data.data.token);
-          navigate('/');
-      
+
+        localStorage.setItem('token', data?.data?.data?.token);
+        localStorage.setItem('userdetails', JSON.stringify(data?.data?.data?.user));
+        localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
+        message.success(data.data.message || "Login successful");
+        console.log("User Logged In:", data.data.data.token);
+        navigate('/');
+
       }
-       else {
+      else {
         message.error(data.error || "Login failed");
       }
     },
     onError: (error: any) => {
       message.success("OTP Sent Successfully");
-          console.log("OTP Sent Response:", error);
-          setIsModalVisible(true);
+      console.log("OTP Sent Response:", error);
+      setIsModalVisible(true);
     }
   });
-  
+
 
   const verifyOtpMutation = useMutation({
     mutationFn: RecivecedOTPLogin,
     onSuccess: (data: any) => {
-      
-      
-        localStorage.setItem('token', data?.data?.token);
+
+
+      localStorage.setItem('token', data?.data?.token);
       localStorage.setItem('userdetails', JSON.stringify(data?.data?.user));
       localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
       console.log("User Logged In:", data);
       navigate('/');
-      
-      
+
+
     },
-    onError: (error:any) => {
-const seterror = error?.response?.data?.message
+    onError: (error: any) => {
+      const seterror = error?.response?.data?.message
       message.error(seterror);
     },
   });
@@ -100,49 +100,49 @@ const seterror = error?.response?.data?.message
           <div className="flex">
             <div className="flex mx-auto">
               <label className="block text-gray-700 my-auto me-4">Username</label>
-            <Controller
-              name="phone"
-              control={control}
-              rules={{ required: "Phone number is required" }}
-              render={({ field }) => (
-                <Form.Item
-                  validateStatus={errors.phone ? "error" : ""}
-                  help={errors.phone?.message}
-                  className="mb-0"
-                >
-                  <Input
-                    className="lg:w-80 md:w-80 w-50 h-10 focus:!border-green-600 hover:!border-green-600 focus:!shadow-none"
-                    {...field}
-                  />
-                </Form.Item>
-              )}
-            />
-          </div>
+              <Controller
+                name="phone"
+                control={control}
+                rules={{ required: "Phone number is required" }}
+                render={({ field }) => (
+                  <Form.Item
+                    validateStatus={errors.phone ? "error" : ""}
+                    help={errors.phone?.message}
+                    className="mb-0"
+                  >
+                    <Input
+                      className="lg:w-80 md:w-80 w-50 h-10 focus:!border-green-600 hover:!border-green-600 focus:!shadow-none"
+                      {...field}
+                    />
+                  </Form.Item>
+                )}
+              />
+            </div>
           </div>
 
           {/* Password */}
           <div className="flex">
             <div className="flex mx-auto">
               <label className="block text-gray-700 my-auto me-5">Password</label>
-            <Controller
-              name="password"
-              control={control}
-              rules={{ required: "Password is required" }}
-              render={({ field }) => (
-                <Form.Item
-                  validateStatus={errors.password ? "error" : ""}
-                  help={errors.password?.message}
-                  className="mb-0"
-                >
-                  <Input.Password
-                    className={`lg:w-80 md:w-80 w-50 h-10 !border ${isPasswordFocused || field.value ? '!border-green-600' : '!border-gray-300'} focus:!border-green-600 hover:!border-green-600 focus:!shadow-none`} {...field}
-                    onFocus={() => setIsPasswordFocused(true)}
+              <Controller
+                name="password"
+                control={control}
+                rules={{ required: "Password is required" }}
+                render={({ field }) => (
+                  <Form.Item
+                    validateStatus={errors.password ? "error" : ""}
+                    help={errors.password?.message}
+                    className="mb-0"
+                  >
+                    <Input.Password
+                      className={`lg:w-80 md:w-80 w-50 h-10 !border ${isPasswordFocused || field.value ? '!border-green-600' : '!border-gray-300'} focus:!border-green-600 hover:!border-green-600 focus:!shadow-none`} {...field}
+                      onFocus={() => setIsPasswordFocused(true)}
                       onBlur={() => setIsPasswordFocused(false)}
-                  />
-                </Form.Item>
-              )}
-            />
-          </div>
+                    />
+                  </Form.Item>
+                )}
+              />
+            </div>
           </div>
 
           {/* Remember Me and Submit */}
