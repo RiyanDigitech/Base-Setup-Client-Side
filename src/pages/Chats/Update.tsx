@@ -50,8 +50,6 @@ const ReplyChat: React.FC = () => {
       new Date(msg.created_at) > agentLastSeen
   );
 
-  const unreadCount = firstUnreadIndex !== -1 ? getData.slice(firstUnreadIndex).filter(msg => msg.sender !== 'agent').length : 0;
-
   const renderStatusIcon = (status?: string | null) => {
     if (!status) return null;
 
@@ -267,7 +265,7 @@ const ReplyChat: React.FC = () => {
                             display: 'inline-block',
                           }}
                         >
-                          Unread Messages ({unreadCount})
+                          Unread Messages
                         </Tag>
                         <div className="flex-grow border-t border-gray-300"></div>
                       </div>

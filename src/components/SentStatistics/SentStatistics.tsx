@@ -127,3 +127,135 @@ const SmsStatistics: React.FC = () => {
 };
 
 export default SmsStatistics;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useMemo } from "react";
+// import { useQuery } from "@tanstack/react-query";
+// import { Table, Card, Input, Spin } from "antd";
+// import Chart from "react-apexcharts";
+// import { ApexOptions } from "apexcharts";
+// import { getDataTableChart } from "@/"; // adjust path if needed
+
+// const SmsStatistics: React.FC = () => {
+//   const [searchText, setSearchText] = useState("");
+//   const wa_id = "923002292312"; // or pass via props/context
+
+//   const { data, isLoading, error } = useQuery({
+//     queryKey: ["sms-stats", wa_id],
+//     queryFn: () => getDataTableChart(wa_id),
+//   });
+
+//   const tableData = useMemo(() => {
+//     if (!data) return [];
+//     return Object.entries(data.daily).map(([date, value], index) => ({
+//       id: index + 1,
+//       date,
+//       smsCount: value.sent + value.received,
+//     }));
+//   }, [data]);
+
+//   const filteredData = tableData.filter((item) =>
+//     item.date.includes(searchText)
+//   );
+
+//   const totalCount = filteredData.reduce((sum, row) => sum + row.smsCount, 0);
+
+//   const chartCategories = filteredData.map((row) => row.date);
+//   const chartSeries = [
+//     {
+//       name: "SMS Count",
+//       data: filteredData.map((row) => row.smsCount),
+//     },
+//   ];
+
+//   const chartOptions: ApexOptions = {
+//     chart: { type: "bar" },
+//     xaxis: { categories: chartCategories },
+//     dataLabels: { enabled: true },
+//     colors: ["#00C853"],
+//     title: {
+//       text: "Daily SMS Statistics",
+//       align: "center",
+//     },
+//   };
+
+//   if (isLoading) return <Spin fullscreen />;
+//   if (error) return <div>Error fetching data: {(error as Error).message}</div>;
+
+//   return (
+//     <div className="flex flex-col md:flex-row" style={{ display: "flex", gap: "2rem" }}>
+//       <Card style={{ flex: 1 }} title="SMS Statistics">
+//         <Input
+//           placeholder="Search by Date..."
+//           value={searchText}
+//           onChange={(e) => setSearchText(e.target.value)}
+//           style={{ marginBottom: 16 }}
+//         />
+//         <Table
+//           dataSource={filteredData}
+//           columns={[
+//             { title: "ID", dataIndex: "id", key: "id" },
+//             { title: "Date", dataIndex: "date", key: "date" },
+//             { title: "No. of SMS", dataIndex: "smsCount", key: "smsCount" },
+//           ]}
+//           pagination={{ pageSize: 10 }}
+//           rowKey="id"
+//           summary={() => (
+//             <Table.Summary.Row>
+//               <Table.Summary.Cell index={0} colSpan={2}>
+//                 <strong>TOTAL:</strong>
+//               </Table.Summary.Cell>
+//               <Table.Summary.Cell index={2}>
+//                 <strong>{totalCount}</strong>
+//               </Table.Summary.Cell>
+//             </Table.Summary.Row>
+//           )}
+//         />
+//       </Card>
+
+//       <Card style={{ flex: 1 }}>
+//         <Chart options={chartOptions} series={chartSeries} type="bar" height={350} />
+//       </Card>
+//     </div>
+//   );
+// };
+
+// export default SmsStatistics;
+

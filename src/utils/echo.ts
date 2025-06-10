@@ -11,9 +11,10 @@ window.Pusher = Pusher;
 
 const echo = new Echo({
   broadcaster: 'pusher',
-  key: '13ded0801b48055b1368',
-  cluster: 'ap3',
+  key: import.meta.env.VITE_PUSHER_KEY,
+  cluster: import.meta.env.VITE_PUSHER_CLUSTER,
   forceTLS: true,
+  // encrypted: true,
 });
 
 export default echo;

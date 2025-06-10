@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
 // import { FaUser } from "react-icons/fa";
-import { BarChartOutlined, BellOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
+import { BarChartOutlined, BellOutlined, MessageOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
 import echo from '@/utils/echo';
 import moment from 'moment';
 import { Input, Layout, Menu, theme, Dropdown, Badge, Button, Avatar, message } from "antd";
@@ -42,6 +42,9 @@ const DashboardLayout = () => {
 
   const [see, setSee] = useState(true);
   const [notifications, setNotifications] = useState<{ id: string; text: string }[]>([]);
+  const [visible, setVisible] = useState(false);
+  const [clickedIds, setClickedIds] = useState<string[]>([]);
+
 
   // const [lastPersonData, setLastPersonData] = useState("");
   const navigate = useNavigate();
@@ -81,33 +84,75 @@ const DashboardLayout = () => {
   // ];
 
   // Pusher listener ke andar se setDataSource hattayein
-useEffect(() => {
-  const channel = echo.channel('new-message');
-  channel.listen('.chat-new', (e: ChatItem) => {
-    console.log('New message received:', e);
+// useEffect(() => {
+//   const channel = echo.channel('new-message');
+//   channel.listen('.chat-new', (e: ChatItem) => {
+//     console.log('New message received:', e);
 
-    // Only show notifications where message is "Message A"
-    // if (e.message ==='A customer needs assistance') {
-      setNotifications(prev => [
-        ...prev,
-        { id: e.wa_id, text: `${e.wa_id}` }
-      ]);
-    // }
-  });
+//     // Only show notifications where message is "Message A"
+//     // if (e.message ==='A customer needs assistance') {
+//       setNotifications(prev => [
+//         ...prev,
+//         { id: e.wa_id, text: `${e.wa_id}` }
+//       ]);
+//     // }
+//   });
+
+//   return () => {
+//     echo.leave('new-message');
+//   };
+// }, []);
+
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    if (!echo) {
+      console.error("Echo is not initialized");
+      return;
+    }
+
+    const channel = echo.channel('new-message');
+    // console.log('dfbdf',echo)
+    channel.listen('.chat-new', (e: ChatItem) => {
+    // console.log('New message received:', e);
+      setNotifications(prev => {
+        const exists = prev.some(n => n.id === e.wa_id);
+        if (exists) return prev;
+        return [...prev, { id: e.wa_id, text: `${e.wa_id}` }];
+      });
+    });
+  }, 1500); // Slight delay for safety
 
   return () => {
-    echo.leave('new-message');
+    clearTimeout(timeout);
+    if (echo) echo.leave('new-message');
   };
-}, []);
+});
+
+
+
+
 
 
   const userDetails = localStorage.getItem('userdetails');
 const user = userDetails && userDetails !== "undefined" ? JSON.parse(userDetails) : {};
 
 const handleReply = (number: string) => {
-  console.log(number)
-  navigate(`chat-reply/${number}`)
-}
+  console.log(number);
+
+  const notiId = notifications.find(
+    (noti) => noti.text.split(":")[0] === number
+  )?.id;
+
+  if (notiId) {
+    setClickedIds((prev) => [...prev, notiId]);
+  }
+
+  setVisible(false);
+  navigate(`/chat-reply/${number}`);
+};
+
+
+
   
   const expiryStr = localStorage.getItem("token_expiry");
   const expiry = expiryStr ? Number(expiryStr) : 0;
@@ -118,39 +163,61 @@ const handleReply = (number: string) => {
 }
   // Notification Dropdown Menu
  const notificationMenu = (
-  <div className="w-96 max-h-96 overflow-y-auto p-4 bg-white rounded shadow-lg">
-    <h3 className="text-lg font-semibold mb-2 px-2">Notifications</h3>
-    <hr />
-    {notifications.map((noti, index) => (
-      <div onClick={() => handleReply(noti.text)} key={noti.id} className="flex items-start gap-3 p-2 hover:bg-gray-100 rounded-md">
-        <Avatar src="/profilelgo.png" size={40} />
-        <div className="flex-1">
-          <div className="flex justify-between items-center">
-            <p className="font-semibold text-sm text-gray-800">
-              {noti.text.split(":")[1]?.substring(0, 40) || "A customer needs assistance"}...
-             
-            </p>
-          </div>
-          <p className="text-xs text-gray-600">
-           You Have a New Message
-          <Badge count={1} style={{ backgroundColor: '#f5222d', marginLeft: 8 }} />
-          </p>
-
-          <p className="text-xs text-gray-600">
-           Hi  {user.name ? user.name : "user"} Number: {noti.text.split(":")[0]}
-          </p>
-          
-          <p className="text-xs text-gray-400 mt-1">
-            {moment().subtract(index, 'days').format('YYYY-MM-DD HH:mm:ss')}
-          </p>
-        </div>
+    <div
+      className="w-96 max-h-96 overflow-y-auto p-4 bg-white rounded shadow-lg"
+      onMouseLeave={() => setVisible(false)} // yahan mouse nikalte hi band hoga
+    >
+      <h3 className="text-lg font-semibold mb-2 px-2">Notifications</h3>
+      <hr />
+     {notifications.map((noti, index) => (
+  <div
+    onClick={() => handleReply(noti.text.split(":")[0])}
+    key={noti.id}
+    className="flex items-start gap-3 p-2 hover:bg-gray-100 rounded-md"
+  >
+    <Avatar src="/profilelgo.png" size={40} />
+    <div className="flex-1">
+      <div className="flex justify-between items-center">
+        <p className="font-semibold text-sm text-gray-800">
+          {noti.text.split(":")[1]?.substring(0, 40) || "A customer needs assistance"}...
+        </p>
       </div>
-    ))}
-    <div className="text-center mt-3">
-      <Button type="primary" className="bg-green-600 hover:bg-green-700">See All Messages</Button>
+
+      {/* ✅ Static Badge Logic Based on Clicked ID */}
+      {clickedIds.includes(noti.id) ? (
+        <p className="text-xs text-gray-600">Message Seen ✅</p>
+      ) : (
+        <p className="text-xs text-gray-600">
+          You Have a New Message
+          <Badge count={1} style={{ backgroundColor: "#f5222d", marginLeft: 8 }} />
+        </p>
+      )}
+
+      <p className="text-xs text-gray-600">
+        Hi {user.name ? user.name : "user"} Number: {noti.text.split(":")[0]}
+      </p>
+      <p className="text-xs text-gray-400 mt-1">
+        {moment().subtract(index, "days").format("YYYY-MM-DD HH:mm:ss")}
+      </p>
     </div>
   </div>
-);
+))}
+
+
+      <div className="text-center mt-3">
+        <Button
+          type="primary"
+          className="bg-green-600 hover:!bg-green-700 active:!scale-110"
+          onClick={() => {
+            setVisible(false);
+            navigate("/chats");
+          }}
+        >
+          See All Messages
+        </Button>
+      </div>
+    </div>
+  );
 
   useEffect(() => {
     // const token = tokenService?.getLocalAccessToken();
@@ -331,14 +398,17 @@ const handleReply = (number: string) => {
                 {
                   key: "/chats",
                   icon: (
-                    <BarChartOutlined 
+                    <MessageOutlined  
                     
                       className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                         }`}
                     />
                   ),
                   label: (
-                    <div className=" text-[#0F172A]">Chat</div>
+                    <div className="flex gap-2">
+                      <div className=" text-[#0F172A]">Chats</div>
+                      <Badge className="mt-[11px]"  count={clickedIds.length === notifications.length ? 0 : notifications.length} size="small" offset={[-2, 2]}></Badge>
+                    </div>
                   ),
                 },
                 {
@@ -515,11 +585,24 @@ const handleReply = (number: string) => {
       </div>
 
       {/* Notification */}
-     <Dropdown overlay={notificationMenu} trigger={["click"]} placement="bottomRight">
-  <Badge count={notifications.length} size="small" offset={[-2, 2]}>
+
+      <Dropdown
+  overlay={notificationMenu}
+  trigger={["click"]}
+  placement="bottomRight"
+  open={visible}
+  onOpenChange={(open) => setVisible(open)}
+>
+  <Badge
+    count={clickedIds.length === notifications.length ? 0 : notifications.length}
+    size="small"
+    offset={[-2, 2]}
+  >
     <BellOutlined className="ms-2 text-xl cursor-pointer hover:text-green-700 transition" />
   </Badge>
 </Dropdown>
+
+    
 
       {/* Profile */}
       <div className="flex items-center gap-3 relative cursor-pointer">
@@ -545,10 +628,10 @@ const handleReply = (number: string) => {
 
 
           <Content
-            className={`${getMarginLeft()} transition-all duration-300 `}
+            className={`${getMarginLeft()} transition-all duration-300`}
             style={{
               // paddingLeft: 18,
-              minHeight: "100vh",
+              // minHeight: "100vh",
               backgroundColor: "#f8fafc",
               // paddingTop: 12,
             }}

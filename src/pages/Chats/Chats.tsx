@@ -54,16 +54,19 @@ const Chats: React.FC = () => {
       key: 'updated_at',
        render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A')
     },
-    {
+   {
   title: 'Status',
   dataIndex: 'status',
   key: 'status',
-  render: (status: string) => {
-    let color = 'default';
+  render: (status: string | null | undefined) => {
+    if (!status) return <Tag color="default">UNKNOWN</Tag>;
 
-    if (status.toLowerCase() === 'replied') color = 'green';
-    else if (status.toLowerCase() === 'closed') color = 'red';
-    else if (status.toLowerCase() === 'pending') color = 'blue';
+    let color = 'default';
+    const lowerStatus = status.toLowerCase();
+
+    if (lowerStatus === 'replied') color = 'green';
+    else if (lowerStatus === 'closed') color = 'red';
+    else if (lowerStatus === 'pending') color = 'blue';
 
     return <Tag color={color}>{status.toUpperCase()}</Tag>;
   }
@@ -97,7 +100,7 @@ const Chats: React.FC = () => {
   })); 
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div className='p-6 bg-white min-h-screen mt-7'>
     {/* Dropdown filter */}
     <div style={{ marginBottom: 16 }}>
       <Select

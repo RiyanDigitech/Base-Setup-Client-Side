@@ -1,8 +1,7 @@
 import axios from "axios";
 
 export const ThebaseUrl = axios.create({
-  // baseURL : "https://js-bot.laravel.cloud/api/v1",  // Old Base URL
-  baseURL : "https://js.cybersecure11.com/api/v1/",//  NEW Base URL
+  baseURL : import.meta.env.VITE_API_BASE_URL ,
   headers: {
       "Content-Type":"application/json",
   }
