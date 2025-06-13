@@ -1,21 +1,36 @@
 import axios from "@/lib/config/axios-instance"
 import { CreateUserInput, User } from "@/lib/types/user";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from 'antd';
+import { PaginatedResponse } from "../Role&PermissionService/Roles&PermissionService";
 // import { TokenValue } from "../Base/TokenGet";
 
- const fetchUsers = async (search?: string): Promise<User[]> => {
+ const fetchUsers = async (
+   search?: string,
+   page = 1,
+   limit = 10
+ ): Promise<PaginatedResponse<User>> => {
   if (search && search.trim()) {
     const res = await axios.get('/users/search', {
       params: { q: search },
       
     });
-    return res.data.data as User[];
+    return {
+      data: res.data.data,
+      total: res.data.data.length,
+      currentPage: 1,
+      pageSize: res.data.data.length,
+    };
   } else {
     const res = await axios.get('/users',{
-      
+      params: { page, limit },
     });
-    return res.data.data as User[];
+    return {
+      data: res.data.data.data, // ✅ Fixed
+      total: res.data.data.total, // ✅ Fixed
+      currentPage: res.data.data.current_page, // ✅ Fixed
+      pageSize: res.data.data.per_page, // ✅ Fixed
+    };
   }
 };
 const createUser = async (userData: CreateUserInput) => {
@@ -46,10 +61,15 @@ export const updateUser = async (user: {
 
 
 // get users
-export const useUsers = (search?: string) =>
+export const useUsers = (
+  search?: string,
+  page = 1,
+  limit = 10
+) =>
   useQuery({
-    queryKey: ['users', search],
-    queryFn: () => fetchUsers(search),
+    queryKey: ['users', search, page, limit],
+    queryFn: () => fetchUsers(search, page, limit),
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
   });
 // --- Custom Hook for create user mutation ---

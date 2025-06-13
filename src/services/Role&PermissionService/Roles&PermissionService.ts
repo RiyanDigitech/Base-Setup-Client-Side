@@ -1,23 +1,49 @@
 import axios from "@/lib/config/axios-instance"
 import { Role } from "@/lib/types/role&permission";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from 'antd';
 // import { TokenValue } from "../Base/TokenGet";
 
- const fetchRoles = async (search?: string): Promise<Role[]> => {
-  if (search && search.trim()) {
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  currentPage: number;
+  pageSize: number;
+}
+
+const fetchRoles = async (
+  search?: string,
+  page = 1,
+  limit = 10
+): Promise<PaginatedResponse<Role>> => {
+  if (search?.trim()) {
     const res = await axios.get('/roles/search', {
       params: { q: search },
-      
     });
-    return res.data.data as Role[];
+
+    return {
+      data: res.data.data,
+      total: res.data.data.length,
+      currentPage: 1,
+      pageSize: res.data.data.length,
+    };
   } else {
-    const res = await axios.get('/roles',{
-      
+    const res = await axios.get('/roles', {
+      params: { page, limit },
     });
-    return res.data.data as Role[];
+
+    return {
+      data: res.data.data.data, // ✅ Fixed
+      total: res.data.data.total, // ✅ Fixed
+      currentPage: res.data.data.current_page, // ✅ Fixed
+      pageSize: res.data.data.per_page, // ✅ Fixed
+    };
   }
 };
+
+
+
+
 const createRole = async (roleName: string) => {
   const response = await axios.post('/roles', { name: roleName,
    
@@ -57,10 +83,15 @@ export const assignPermissionsToRole = async ({
 };
 
 // get roles
-export const useRoles = (search?: string) =>
+export const useRoles = (
+  search?: string,
+  page = 1,
+  limit = 10
+) =>
   useQuery({
-    queryKey: ['roles', search],
-    queryFn: () => fetchRoles(search),
+    queryKey: ['roles', search, page, limit],
+    queryFn: () => fetchRoles(search, page, limit),
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
   });
 // --- Custom Hook for create role mutation ---

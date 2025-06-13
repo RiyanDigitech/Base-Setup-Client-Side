@@ -31,17 +31,22 @@ const RolePermissionUI: React.FC = () => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 const [roleToEdit, setRoleToEdit] = useState<{ id: number; name: string } | null>(null);
+const [currentPage, setCurrentPage] = useState(1);
+const [pageSize, setPageSize] = useState(15);
+
 
   const [rolePermissions, setRolePermissions] =
     useState<Record<string, any>>({});
    const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search, 400);
    const {
-    data: fetchedRoles = [],
-    isFetching,
-    isError,
-    error,
-  } = useRoles(debouncedSearch);
+  data,
+  isFetching,
+  isError,
+  error,
+} = useRoles(debouncedSearch, currentPage, pageSize);
+const fetchedRoles = data?.data ?? [];
+const total = data?.total ?? 0;
 
   const { mutate: deleteRoleMutation } = useDeleteRole();
   const { mutate: updateRoleMutation, isPending: isUpdatingRole } = useUpdateRole(() => setEditModalVisible(false));
@@ -139,8 +144,17 @@ const handleSavePermissions = (roleId: number, permissionIds: number[]) => {
   rowKey={(record) => record.id}
   loading={isFetching}
   dataSource={fetchedRoles}
-  className='overflow-auto'
+  className="overflow-auto"
   scroll={{ x: 'max-content' }}
+  pagination={{
+    current: currentPage,
+    pageSize,
+    total,
+    onChange: (page, size) => {
+      setCurrentPage(page);
+      setPageSize(size);
+    },
+  }}
   columns={[
     {
       title: 'ID',

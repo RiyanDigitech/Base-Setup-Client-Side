@@ -19,7 +19,8 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   defaultSelected,
   loading = false,
 }) => {
-  const { data: roles = [], isLoading: rolesLoading } = useRoles();
+  const { data, isLoading: rolesLoading } = useRoles();
+  const roles = data?.data ?? [];
   const [selectedRole, setSelectedRole] = useState<number | null>(null);
 
   useEffect(() => {
