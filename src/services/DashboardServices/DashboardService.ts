@@ -32,8 +32,8 @@ export const getBarChartData = async () => {
       },
     });
 
-    if (response.status === 200 && response.data?.data?.weekly) {
-      return response.data.data.weekly; // Return only the array
+    if (response.status === 200 && response.data?.data) {
+      return response.data.data; // Return only the array
     } else {
       throw new Error("Invalid weekly data response");
     }
@@ -64,22 +64,33 @@ export const getDashboardData = async () => {
 };
 
 
-export const getFailedSMS = async () => {
+export const getFailedSMS = async ({ error_code, start_date, end_date, page, limit }: any) => {
   try {
+    const params: Record<string, any> = {
+      page,
+      limit,
+    };
+
+    if (error_code) params.error_code = error_code;
+    if (start_date) params.start_date = start_date;
+    if (end_date) params.end_date = end_date;
+
     const response = await axios.get('/stats/failures', {
       headers: {
         Authorization: `Bearer ${TokenValue}`,
       },
+      params
     });
 
     if (response.status === 200) {
-      return response.data.data;
+      return response.data;
     } else {
-      throw new Error("Invalid weekly data response");
+      throw new Error("Invalid response");
     }
   } catch (error: any) {
-    console.error("Bar chart API error:", error?.response?.data?.message || error.message);
-    throw new Error("Failed to fetch bar chart data");
+    console.error("API Error:", error?.response?.data?.message || error.message);
+    throw new Error("Failed to fetch failed messages");
   }
 };
+
 

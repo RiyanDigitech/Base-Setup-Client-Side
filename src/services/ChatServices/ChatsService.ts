@@ -18,20 +18,20 @@ export const getAllChatswithPusher = async () => {
 };
 
 
-export const getAllMessage = async (status: string) => {
-
-
-
-  // const token  = localStorage.getItem('token')
-
+export const getAllMessage = async ({status, page , limit}:any) => {
   try {
+    const params : Record<string ,any> = {
+      page ,
+      limit,
+    }
+    if (status) params.status = status;
     const response = await axios.get(`chat` , {
-      params:{status:status},
+      params,
       
 
     })
   if(response.status === 200){
-    return response.data
+    return response?.data
   }else{[]}
   } catch (error:any) {
     console.log(error?.response?.data?.message)

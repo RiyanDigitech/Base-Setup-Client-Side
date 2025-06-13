@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import PieChart from "./PieChart";
@@ -6,8 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getBarChartData } from "@/services/DashboardServices/DashboardService";
 
 const DashboardChart: React.FC = () => {
+  const [viewType, setViewType] = useState<"weekly" | "daily">("weekly");
+
   const {
-    data: weeklyData,
+    data: chartData,
     isLoading,
     isError,
     error,
@@ -16,26 +18,55 @@ const DashboardChart: React.FC = () => {
     queryFn: getBarChartData,
   });
 
-  const barData = Array.isArray(weeklyData) ? weeklyData : [];
+  const barDataWeekly = Array.isArray(chartData?.weekly) ? chartData.weekly : [];
 
-  const barSeries = [
-    {
-      name: "Sent",
-      data: barData.map((item) => ({
-        x: item.week,
-        y: item.sent,
-        fillColor: "#42A5F5", // Blue
-      })),
-    },
-    {
-      name: "Received",
-      data: barData.map((item) => ({
-        x: item.week,
-        y: item.received,
-        fillColor: "#66BB6A", // Green
-      })),
-    },
-  ];
+  // Convert object to array for daily
+  const barDataDaily = chartData?.daily
+    ? Object.entries(chartData.daily).map(([date, values]: any) => ({
+        date,
+        sent: values.sent,
+        received: values.received,
+      }))
+    : [];
+
+  const barSeries =
+    viewType === "weekly"
+      ? [
+          {
+            name: "Sent",
+            data: barDataWeekly.map((item: any) => ({
+              x: item.week,
+              y: item.sent,
+              fillColor: "#1565C0",
+            })),
+          },
+          {
+            name: "Received",
+            data: barDataWeekly.map((item: any) => ({
+              x: item.week,
+              y: item.received,
+              fillColor: "#2E7D32",
+            })),
+          },
+        ]
+      : [
+          {
+            name: "Sent",
+            data: barDataDaily.map((item: any) => ({
+              x: item.date,
+              y: item.sent,
+              fillColor: "#1565C0",
+            })),
+          },
+          {
+            name: "Received",
+            data: barDataDaily.map((item: any) => ({
+              x: item.date,
+              y: item.received,
+              fillColor: "#2E7D32",
+            })),
+          },
+        ];
 
   const barOptions: ApexOptions = {
     chart: {
@@ -52,7 +83,7 @@ const DashboardChart: React.FC = () => {
       enabled: true,
     },
     title: {
-      text: "Last 7 Days Usage History",
+      text: viewType === "weekly" ? "Weekly Usage History" : "Daily Usage History",
       align: "left",
       style: { fontSize: "18px", fontWeight: "bold" },
     },
@@ -70,25 +101,41 @@ const DashboardChart: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6">
-      <div className="bg-white p-4 rounded-lg shadow-md w-full md:w-2/3">
-        {isLoading ? (
-          <div>Loading bar chart...</div>
-        ) : isError ? (
-          <div>Error loading bar chart: {error?.message}</div>
-        ) : barData.length === 0 ? (
-          <div>No data available</div>
-        ) : (
-          <Chart
-            options={barOptions}
-            series={barSeries}
-            type="bar"
-            height={250}
-          />
-        )}
+    <div className="flex flex-col gap-6">
+      <div className="flex justify-end gap-2 mb-2">
+        <button
+          onClick={() => setViewType("daily")}
+          className={`px-4 py-1 rounded ${
+            viewType === "daily" ? "bg-green-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          Convert to Daily
+        </button>
+        <button
+          onClick={() => setViewType("weekly")}
+          className={`px-4 py-1 rounded ${
+            viewType === "weekly" ? "bg-green-600 text-white" : "bg-gray-200"
+          }`}
+        >
+          Convert to Weekly
+        </button>
       </div>
-      <div className="bg-white p-4 rounded-lg shadow-md w-full md:w-1/3">
-        <PieChart />
+
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="bg-white p-4 rounded-lg shadow-md w-full md:w-2/3">
+          {isLoading ? (
+            <div>Loading bar chart...</div>
+          ) : isError ? (
+            <div>Error loading bar chart: {error?.message}</div>
+          ) : barSeries[0].data.length === 0 ? (
+            <div>No data available</div>
+          ) : (
+            <Chart options={barOptions} series={barSeries} type="bar" height={250} />
+          )}
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md w-full md:w-1/3">
+          <PieChart />
+        </div>
       </div>
     </div>
   );

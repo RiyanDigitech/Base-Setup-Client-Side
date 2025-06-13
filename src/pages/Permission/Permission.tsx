@@ -4,24 +4,30 @@ import {
 } from "antd";
 import '../../Css/Spin.css';
 import {
-  PlusOutlined, EditOutlined, DeleteOutlined, MoreOutlined
+  PlusOutlined, EditOutlined, DeleteOutlined, MoreOutlined,
+  AlignLeftOutlined
 } from "@ant-design/icons";
 import {
   useMutation, useQuery, useQueryClient
 } from "@tanstack/react-query";
 import { debounce } from 'lodash';
 import {
+  AddActionPermission,
   addPermission, deletePermission, searchPermission, updatePermission
 } from "@/services/PermissionServices/PermissionService";
+
+
 
 function Permission() {
   const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [isModalAddAction, setIsModalAddAction] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [editRecord, setEditRecord] = useState<any>(null);
   const [editName, setEditName] = useState("");
+  const [actionName , setActionName] = useState("")
 
   const queryClient = useQueryClient();
 
@@ -47,7 +53,20 @@ function Permission() {
       render: (_: any, record: any) => {
         const menu = (
           <Menu>
+           
             <Menu.Item
+              key="addAction"
+              icon={<AlignLeftOutlined />}
+              onClick={() => {
+                setIsModalAddAction(true)
+                localStorage.setItem("PermissionParentId" , record.id)
+              }}
+            >
+              Add Action
+            </Menu.Item>
+             
+             
+             <Menu.Item
               key="edit"
               icon={<EditOutlined />}
               onClick={() => {
@@ -121,10 +140,36 @@ function Permission() {
   }
 });
 
+const postChildPermission = useMutation({
+  mutationFn: AddActionPermission,
+  onSuccess: () => {
+    message.success("Action added successfully");
+    queryClient.invalidateQueries({ queryKey: ['permission'] });
+    form.resetFields();
+    setActionName("")
+    setIsModalAddAction(false);
+  },
+  onError: (error: any) => {
+    const errormsg = error?.message || "Permission already exists or failed to add";
+    message.error(errormsg);
+  }
+});
+
 
   const handleAddSubmit = (values: any) => {
     postPermission.mutate(values.name);
+    console.log(values)
   };
+
+ const handleAddActions = () => {
+  const iidd = localStorage.getItem('PermissionParentId');
+  const parent_id: number = Number(iidd);
+
+  const name = String(actionName); // Force convert to string
+
+  postChildPermission.mutate({ parent_id, name });
+};
+
 
   // UPDATE
   const updatePermissionMutation = useMutation({
@@ -256,6 +301,46 @@ function Permission() {
           </Button>
         </Form>
       </Modal>
+
+
+      {/* Addd Action Modal Here */}
+      <Modal
+        title="Add Action"
+        open={isModalAddAction}
+        onCancel={() => setIsModalAddAction(false)}
+        footer={null}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Action Name"
+            name="name"
+            // rules={[{ required: true, message: "Please enter name" }]}
+          >
+            <Input
+              disabled
+              value={Number(localStorage.getItem('PermissionParentId'))}
+              className="!border-gray-300 hover:!border-gray-300 focus:!border-gray-300 mt-3"
+            />
+            <Input
+              value={actionName}
+              onChange={(e) => setActionName(e.target.value)}
+              placeholder="Enter Action Name"
+              className="!border-gray-300 hover:!border-gray-300 focus:!border-gray-300 mt-3"
+            />
+          </Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="bg-green-700 mt-2 w-full hover:!bg-green-800"
+            onClick={handleAddActions}
+            // loading={updatePermissionMutation.isPending}
+          >
+            Add Action
+          </Button>
+        </Form>
+      </Modal>
+
+
     </div>
   );
 }

@@ -19,6 +19,17 @@ const Chats: React.FC = () => {
   const navigate = useNavigate();
 
   const [statusFilter, setStatusFilter] = useState('')
+  const [pagination , setPagination] = useState({
+    current:1,
+    pageSize:8,
+  })
+
+  const handlePagination = (newPagination:any) => {
+    setPagination({
+      current:newPagination.current,
+      pageSize:newPagination.pageSize
+    })
+  }
 
   const handleReply = (record: ChatItem) => {
     console.log('Reply to:', record.wa_id);
@@ -89,16 +100,22 @@ const Chats: React.FC = () => {
 
 
   const { data, isFetching, isError, error } = useQuery({
-    queryKey: ['chats', statusFilter],
-    queryFn: () => getAllMessage(statusFilter)
+    queryKey: ['chats', statusFilter , pagination.current , pagination.pageSize],
+    queryFn: () => getAllMessage({statusFilter ,
+       page:pagination.current , 
+       limit:pagination.pageSize})
   })
 
-  const getData = Array.isArray(data?.data) ? data?.data : []
+
+  const total = data?.data?.total || 0;
+  const getData = Array.isArray(data?.data?.data) ? data?.data?.data : []
   const datasources = getData.map((item: any) => ({
     ...item,
     key: item.id,
   }));
 
+  console.log("object" , total)
+  console.log("object" , data)
   return (
     <div className='p-6 bg-white min-h-screen mt-7'>
       {/* Dropdown filter */}
@@ -133,6 +150,13 @@ const Chats: React.FC = () => {
         ) : (<Table
           dataSource={datasources}
           columns={columns}
+          scroll={{ x: "max-content" }}
+          pagination={{
+            current:pagination.current,
+            pageSize:pagination.pageSize,
+            total:total
+          }}
+          onChange={handlePagination}
         />
         )}
       </Spin>

@@ -22,9 +22,30 @@ export const getAllPermission = async () => {
 
 }
 
-export const addPermission = async (pname: string) => {
+export const addPermission = async (pname: string ) => {
   try {
-    const response = await axios.post("/permissions", { name: pname,
+    const response = await axios.post("/permissions", { name: pname
+      // headers: {
+      //   "Authorization": `Bearer ${TokenValue}`
+      // }
+     });
+
+    // Check if response indicates duplication
+    if (response.data?.message?.includes("already exists")) {
+      // Throw error manually so it goes to onError block
+      throw new Error("Permission already exists");
+    }
+
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data || new Error("Failed to add permission");
+  }
+};
+
+
+export const AddActionPermission = async ({parent_id , name}:any) => {
+  try {
+    const response = await axios.post("/permissions", { parent_id , name
       // headers: {
       //   "Authorization": `Bearer ${TokenValue}`
       // }
