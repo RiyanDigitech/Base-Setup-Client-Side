@@ -18,7 +18,18 @@ interface ChatItem {
 const Chats: React.FC = () => {
   const navigate = useNavigate();
 
-  const [statusFilter , setStatusFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [pagination , setPagination] = useState({
+    current:1,
+    pageSize:8,
+  })
+
+  const handlePagination = (newPagination:any) => {
+    setPagination({
+      current:newPagination.current,
+      pageSize:newPagination.pageSize
+    })
+  }
 
   const handleReply = (record: ChatItem) => {
     console.log('Reply to:', record.wa_id);
@@ -26,9 +37,9 @@ const Chats: React.FC = () => {
   };
 
 
-    console.log('Filter Result' , statusFilter)
+  console.log('Filter Result', statusFilter)
 
-  
+
 
   const columns = [
     {
@@ -41,37 +52,37 @@ const Chats: React.FC = () => {
       dataIndex: 'wa_id',
       key: 'wa_id',
     },
-    
+
     {
-  title: 'Created At',
-  dataIndex: 'created_at',
-  key: 'created_at',
-  render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A')
-},
+      title: 'Created At',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A')
+    },
     {
       title: 'Updated At',
       dataIndex: 'updated_at',
       key: 'updated_at',
-       render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A')
+      render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A')
     },
-   {
-  title: 'Status',
-  dataIndex: 'status',
-  key: 'status',
-  render: (status: string | null | undefined) => {
-    if (!status) return <Tag color="default">UNKNOWN</Tag>;
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string | null | undefined) => {
+        if (!status) return <Tag color="default">UNKNOWN</Tag>;
 
-    let color = 'default';
-    const lowerStatus = status.toLowerCase();
+        let color = 'default';
+        const lowerStatus = status.toLowerCase();
 
-    if (lowerStatus === 'replied') color = 'green';
-    else if (lowerStatus === 'closed') color = 'red';
-    else if (lowerStatus === 'pending') color = 'blue';
+        if (lowerStatus === 'replied') color = 'green';
+        else if (lowerStatus === 'closed') color = 'red';
+        else if (lowerStatus === 'pending') color = 'blue';
 
-    return <Tag color={color}>{status.toUpperCase()}</Tag>;
-  }
-},
-    
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      }
+    },
+
     {
       title: 'Action',
       key: 'action',
@@ -88,55 +99,68 @@ const Chats: React.FC = () => {
   ];
 
 
-  const {data , isFetching , isError , error} = useQuery({
-    queryKey:['chats', statusFilter],
-    queryFn: () => getAllMessage(statusFilter)
+  const { data, isFetching, isError, error } = useQuery({
+    queryKey: ['chats', statusFilter , pagination.current , pagination.pageSize],
+    queryFn: () => getAllMessage({statusFilter ,
+       page:pagination.current , 
+       limit:pagination.pageSize})
   })
 
-  const getData = Array.isArray(data?.data) ? data?.data : []
+
+  const total = data?.data?.total || 0;
+  const getData = Array.isArray(data?.data?.data) ? data?.data?.data : []
   const datasources = getData.map((item: any) => ({
     ...item,
     key: item.id,
-  })); 
+  }));
 
+  console.log("object" , total)
+  console.log("object" , data)
   return (
     <div className='p-6 bg-white min-h-screen mt-7'>
-    {/* Dropdown filter */}
-    <div style={{ marginBottom: 16 }}>
-      <Select
-        placeholder="Filter by Status"
-        onChange={(value) => setStatusFilter(value)}
-        allowClear
-        style={{ width: 200 }}
-      >
-        <Option value="closed">Closed</Option>
-        <Option value="replied">Replied</Option>
-        <Option value="pending">Pending</Option>
-      </Select>
-    </div>
+      {/* Dropdown filter */}
+      <div style={{ marginBottom: 16 }}>
+        <Select
+          placeholder="Filter by Status"
+          onChange={(value) => setStatusFilter(value)}
+          allowClear
+          style={{ width: 200 }}
+        >
+          <Option value="closed">Closed</Option>
+          <Option value="replied">Replied</Option>
+          <Option value="pending">Pending</Option>
+        </Select>
+      </div>
 
-    {/* Table */}
-    <Spin
-       style={{ color: '#15803D' }}
-       className="custom-green-spin"
-       spinning={isFetching}
-       tip="Loading Data"
-     >
-       {isError ? (
-         <Alert
-           type="error"
-           message="Failed to load Users"
-           description={String(error)}
-           showIcon
-           className="mb-4"
-         />
-       ) : (<Table
-      dataSource={datasources}
-      columns={columns}
-    />
-       )}
-    </Spin>
-  </div>
+      {/* Table */}
+      <Spin
+        style={{ color: '#15803D' }}
+        className="custom-green-spin"
+        spinning={isFetching}
+        tip="Loading Data"
+      >
+        {isError ? (
+          <Alert
+            type="error"
+            message="Failed to load Users"
+            description={String(error)}
+            showIcon
+            className="mb-4"
+          />
+        ) : (<Table
+          dataSource={datasources}
+          columns={columns}
+          scroll={{ x: "max-content" }}
+          pagination={{
+            current:pagination.current,
+            pageSize:pagination.pageSize,
+            total:total
+          }}
+          onChange={handlePagination}
+        />
+        )}
+      </Spin>
+    </div>
   );
 };
 

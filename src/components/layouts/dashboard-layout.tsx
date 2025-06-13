@@ -1,25 +1,19 @@
 import { useState, useEffect } from "react";
 import { MdDashboard } from "react-icons/md";
-// import { FaUser } from "react-icons/fa";
-import { BarChartOutlined, BellOutlined, MessageOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined} from "@ant-design/icons";
+import { BarChartOutlined, BellOutlined, MessageOutlined, CalendarOutlined, FileTextOutlined, HomeOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, OrderedListOutlined, RedditOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 import echo from '@/utils/echo';
 import moment from 'moment';
-import { Input, Layout, Menu, theme, Dropdown, Badge, Button, Avatar, message } from "antd";
+import { Input, Layout, Menu, theme, Dropdown, Badge, Button, Avatar } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import AuthService from "@/services/auth.service";
 import { Footer } from "antd/es/layout/layout";
 import { logoutFunc } from "@/services/authService/AuthService";
 const { Header, Sider, Content } = Layout;
 import "../../index.css";
+import { ChatItem } from "@/lib/types/ChatItem";
 
 
-interface ChatItem {
-  wa_id: string;
-  message: string;
-  sender: string;
-  created_at: string;
-  updated_at: string;
-}
+
 const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState("");
@@ -52,20 +46,20 @@ const DashboardLayout = () => {
   const {
     token: { colorPrimary },
   } = theme.useToken();
- const profileMenu = (
+  const profileMenu = (
     <Menu>
       {/* <Menu.Item key="1" icon={<UserOutlined />}>
         <Link to="/settings">Profile</Link>
       </Menu.Item> */}
-  
+
       <Menu.Item key="2" icon={<SettingOutlined />}>
         <Link to="/settings">Settings</Link>
       </Menu.Item>
-  
+
       {/* <Menu.Item key="3" icon={<QuestionCircleOutlined />}>
         Help
       </Menu.Item> */}
-  
+
       <Menu.Item
         key="4"
         onClick={handleLogout}
@@ -84,49 +78,49 @@ const DashboardLayout = () => {
   // ];
 
   // Pusher listener ke andar se setDataSource hattayein
-// useEffect(() => {
-//   const channel = echo.channel('new-message');
-//   channel.listen('.chat-new', (e: ChatItem) => {
-//     console.log('New message received:', e);
+  // useEffect(() => {
+  //   const channel = echo.channel('new-message');
+  //   channel.listen('.chat-new', (e: ChatItem) => {
+  //     console.log('New message received:', e);
 
-//     // Only show notifications where message is "Message A"
-//     // if (e.message ==='A customer needs assistance') {
-//       setNotifications(prev => [
-//         ...prev,
-//         { id: e.wa_id, text: `${e.wa_id}` }
-//       ]);
-//     // }
-//   });
+  //     // Only show notifications where message is "Message A"
+  //     // if (e.message ==='A customer needs assistance') {
+  //       setNotifications(prev => [
+  //         ...prev,
+  //         { id: e.wa_id, text: `${e.wa_id}` }
+  //       ]);
+  //     // }
+  //   });
 
-//   return () => {
-//     echo.leave('new-message');
-//   };
-// }, []);
+  //   return () => {
+  //     echo.leave('new-message');
+  //   };
+  // }, []);
 
-useEffect(() => {
-  const timeout = setTimeout(() => {
-    if (!echo) {
-      console.error("Echo is not initialized");
-      return;
-    }
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!echo) {
+        console.error("Echo is not initialized");
+        return;
+      }
 
-    const channel = echo.channel('new-message');
-    // console.log('dfbdf',echo)
-    channel.listen('.chat-new', (e: ChatItem) => {
-    // console.log('New message received:', e);
-      setNotifications(prev => {
-        const exists = prev.some(n => n.id === e.wa_id);
-        if (exists) return prev;
-        return [...prev, { id: e.wa_id, text: `${e.wa_id}` }];
+      const channel = echo.channel('new-message');
+      // console.log('dfbdf',echo)
+      channel.listen('.chat-new', (e: ChatItem) => {
+        // console.log('New message received:', e);
+        setNotifications(prev => {
+          const exists = prev.some(n => n.id === e.wa_id);
+          if (exists) return prev;
+          return [...prev, { id: e.wa_id, text: `${e.wa_id}` }];
+        });
       });
-    });
-  }, 1500); // Slight delay for safety
+    }, 1500); // Slight delay for safety
 
-  return () => {
-    clearTimeout(timeout);
-    if (echo) echo.leave('new-message');
-  };
-});
+    return () => {
+      clearTimeout(timeout);
+      if (echo) echo.leave('new-message');
+    };
+  });
 
 
 
@@ -134,74 +128,74 @@ useEffect(() => {
 
 
   const userDetails = localStorage.getItem('userdetails');
-const user = userDetails && userDetails !== "undefined" ? JSON.parse(userDetails) : {};
+  const user = userDetails && userDetails !== "undefined" ? JSON.parse(userDetails) : {};
 
-const handleReply = (number: string) => {
-  console.log(number);
+  const handleReply = (number: string) => {
+    console.log(number);
 
-  const notiId = notifications.find(
-    (noti) => noti.text.split(":")[0] === number
-  )?.id;
+    const notiId = notifications.find(
+      (noti) => noti.text.split(":")[0] === number
+    )?.id;
 
-  if (notiId) {
-    setClickedIds((prev) => [...prev, notiId]);
-  }
+    if (notiId) {
+      setClickedIds((prev) => [...prev, notiId]);
+    }
 
-  setVisible(false);
-  navigate(`/chat-reply/${number}`);
-};
+    setVisible(false);
+    navigate(`/chat-reply/${number}`);
+  };
 
 
 
-  
+
   const expiryStr = localStorage.getItem("token_expiry");
   const expiry = expiryStr ? Number(expiryStr) : 0;
 
   if (Date.now() > expiry) {
-  localStorage.clear();
-  window.location.href = "/admin/login";
-}
+    localStorage.clear();
+    window.location.href = "/admin/login";
+  }
   // Notification Dropdown Menu
- const notificationMenu = (
+  const notificationMenu = (
     <div
       className="w-96 max-h-96 overflow-y-auto p-4 bg-white rounded shadow-lg"
       onMouseLeave={() => setVisible(false)} // yahan mouse nikalte hi band hoga
     >
       <h3 className="text-lg font-semibold mb-2 px-2">Notifications</h3>
       <hr />
-     {notifications.map((noti, index) => (
-  <div
-    onClick={() => handleReply(noti.text.split(":")[0])}
-    key={noti.id}
-    className="flex items-start gap-3 p-2 hover:bg-gray-100 rounded-md"
-  >
-    <Avatar src="/profilelgo.png" size={40} />
-    <div className="flex-1">
-      <div className="flex justify-between items-center">
-        <p className="font-semibold text-sm text-gray-800">
-          {noti.text.split(":")[1]?.substring(0, 40) || "A customer needs assistance"}...
-        </p>
-      </div>
+      {notifications.map((noti, index) => (
+        <div
+          onClick={() => handleReply(noti.text.split(":")[0])}
+          key={noti.id}
+          className="flex items-start gap-3 p-2 hover:bg-gray-100 rounded-md"
+        >
+          <Avatar src="/profilelgo.png" size={40} />
+          <div className="flex-1">
+            <div className="flex justify-between items-center">
+              <p className="font-semibold text-sm text-gray-800">
+                {noti.text.split(":")[1]?.substring(0, 40) || "A customer needs assistance"}...
+              </p>
+            </div>
 
-      {/* ✅ Static Badge Logic Based on Clicked ID */}
-      {clickedIds.includes(noti.id) ? (
-        <p className="text-xs text-gray-600">Message Seen ✅</p>
-      ) : (
-        <p className="text-xs text-gray-600">
-          You Have a New Message
-          <Badge count={1} style={{ backgroundColor: "#f5222d", marginLeft: 8 }} />
-        </p>
-      )}
+            {/* ✅ Static Badge Logic Based on Clicked ID */}
+            {clickedIds.includes(noti.id) ? (
+              <p className="text-xs text-gray-600">Message Seen ✅</p>
+            ) : (
+              <p className="text-xs text-gray-600">
+                You Have a New Message
+                <Badge count={1} style={{ backgroundColor: "#f5222d", marginLeft: 8 }} />
+              </p>
+            )}
 
-      <p className="text-xs text-gray-600">
-        Hi {user.name ? user.name : "user"} Number: {noti.text.split(":")[0]}
-      </p>
-      <p className="text-xs text-gray-400 mt-1">
-        {moment().subtract(index, "days").format("YYYY-MM-DD HH:mm:ss")}
-      </p>
-    </div>
-  </div>
-))}
+            <p className="text-xs text-gray-600">
+              Hi {user.name ? user.name : "user"} Number: {noti.text.split(":")[0]}
+            </p>
+            <p className="text-xs text-gray-400 mt-1">
+              {moment().subtract(index, "days").format("YYYY-MM-DD HH:mm:ss")}
+            </p>
+          </div>
+        </div>
+      ))}
 
 
       <div className="text-center mt-3">
@@ -360,33 +354,32 @@ const handleReply = (number: string) => {
                   key: "sent-statistics",
                   icon: (
                     <MdDashboard
-                      className={`${
-                        collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                      }`}
+                      className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                        }`}
                     />
                   ),
                   label: <div className="text-[#0F172A]">Accounts</div>,
-        
+
                   children: [
                     {
                       key: "/chatbots",
                       icon: (
-                        <RedditOutlined 
+                        <RedditOutlined
                           className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                             }`}
                         />
                       ),
                       label: <div className="text-[#0F172A]">Chatbots</div>,
                     },
-                    
+
                   ],
                 },
-                
+
                 {
                   key: "/sentstatistics",
                   icon: (
-                    <BarChartOutlined 
-                    
+                    <BarChartOutlined
+
                       className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                         }`}
                     />
@@ -398,8 +391,8 @@ const handleReply = (number: string) => {
                 {
                   key: "/chats",
                   icon: (
-                    <MessageOutlined  
-                    
+                    <MessageOutlined
+
                       className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                         }`}
                     />
@@ -407,7 +400,7 @@ const handleReply = (number: string) => {
                   label: (
                     <div className="flex gap-2">
                       <div className=" text-[#0F172A]">Chats</div>
-                      <Badge className="mt-[11px]"  count={clickedIds.length === notifications.length ? 0 : notifications.length} size="small" offset={[-2, 2]}></Badge>
+                      <Badge className="mt-[11px]" count={clickedIds.length === notifications.length ? 0 : notifications.length} size="small" offset={[-2, 2]}></Badge>
                     </div>
                   ),
                 },
@@ -423,7 +416,7 @@ const handleReply = (number: string) => {
                     <div className=" text-[#0F172A]">Sent Message</div>
                   ),
                 },
-                
+
                 {
                   key: "/user-management",
                   icon: (
@@ -540,93 +533,90 @@ const handleReply = (number: string) => {
           </>
         )}{" "}
         <Layout className="p-6 !rounded-xl">
-      <Header
-  className={`bg-white shadow-md transition-all duration-300 ${getMarginLeft()} p-4`}
-  style={{
-    paddingLeft: 24,
-    paddingRight: 24,
-    height: "auto",
-  }}
->
-<div className="w-full max-w-screen-xl mx-auto flex items-center justify-between overflow-x-auto gap-4">    
-    {/* Left Side */}
-    <div className="flex items-center gap-4 text-xl flex-shrink-0">
-      <button onClick={() => setCollapsed(!collapsed)}>
-        {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      </button>
-      <FileTextOutlined className="hidden lg:block md:block sm:block" />
-      <CalendarOutlined className="hidden lg:block md:block sm:block" />
-    </div>
+          <Header
+            className={`bg-white shadow-md transition-all duration-300 ${getMarginLeft()} p-4`}
+            style={{
+              paddingLeft: 24,
+              paddingRight: 24,
+              height: "auto",
+            }}
+          >
+            <div className="w-full max-w-screen-xl mx-auto flex items-center justify-between overflow-x-auto gap-4">
+              {/* Left Side */}
+              <div className="flex items-center gap-4 text-xl flex-shrink-0">
+                <button onClick={() => setCollapsed(!collapsed)}>
+                  {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                </button>
+                <FileTextOutlined className="hidden lg:block md:block sm:block" />
+                <CalendarOutlined className="hidden lg:block md:block sm:block" />
+              </div>
 
-    {/* Right Side */}
-    <div className="flex items-center justify-end flex-nowrap gap-4 sm:gap-6 w-full overflow-x-auto">
+              {/* Right Side */}
+              <div className="flex items-center justify-end flex-nowrap gap-4 sm:gap-6 w-full overflow-x-auto">
 
-      
-      {/* SMS */}
-      <h2 className="text-[17px] hidden lg:block md:block sm:block font-bold text-gray-500 whitespace-nowrap">
-        195 SMS
-      </h2>
 
-      {/* Search */}
-      <div className="flex items-center">
-        <SearchOutlined
-          className="ms-2"
-          style={{ fontSize: "20px", cursor: "pointer" }}
-          onClick={toggleSearch}
-        />
-        {showSearch && (
-          <Input
-            className="!border mt-2 sm:mt-0"
-            placeholder="Search..."
-            style={{ width: 200, marginLeft: 10 }}
-            allowClear
-          />
-        )}
-      </div>
+                {/* SMS */}
+                <h2 className="text-[17px] hidden lg:block md:block sm:block font-bold text-gray-500 whitespace-nowrap">
+                  195 SMS
+                </h2>
 
-      {/* Notification */}
+                {/* Search */}
+                <div className="flex items-center">
+                  <SearchOutlined
+                    className="ms-2"
+                    style={{ fontSize: "20px", cursor: "pointer" }}
+                    onClick={toggleSearch}
+                  />
+                  {showSearch && (
+                    <Input
+                      className="!border mt-2 sm:mt-0"
+                      placeholder="Search..."
+                      style={{ width: 200, marginLeft: 10 }}
+                      allowClear
+                    />
+                  )}
+                </div>
 
-      <Dropdown
-  overlay={notificationMenu}
-  trigger={["click"]}
-  placement="bottomRight"
-  open={visible}
-  onOpenChange={(open) => setVisible(open)}
->
-  <Badge
-    count={clickedIds.length === notifications.length ? 0 : notifications.length}
-    size="small"
-    offset={[-2, 2]}
-  >
-    <BellOutlined className="ms-2 text-xl cursor-pointer hover:text-green-700 transition" />
-  </Badge>
-</Dropdown>
+                {/* Notification */}
 
-    
-
-      {/* Profile */}
-      <div className="flex items-center gap-3 relative cursor-pointer">
-        <div className="text-right hidden sm:block leading-tight">
-          <h2 className="text-[14px] font-bold text-gray-500">{user.name ? user.name : "user"}</h2>
-          <h2 className="text-[12px] font-bold text-gray-500">Account ID # 000{user.id ? user.id : "000"}</h2>
-        </div>
-
-        <Dropdown overlay={profileMenu} placement="bottomRight" arrow>
-          <img
-            className="h-10 w-10 rounded-full object-cover"
-            src="/profilelgo.png"
-            alt="profile"
-          />
-        </Dropdown>
-
-        <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></span>
-      </div>
-    </div>
-  </div>
-</Header>
+                <Dropdown
+                  overlay={notificationMenu}
+                  trigger={["click"]}
+                  placement="bottomRight"
+                  open={visible}
+                  onOpenChange={(open) => setVisible(open)}
+                >
+                  <Badge
+                    count={clickedIds.length === notifications.length ? 0 : notifications.length}
+                    size="small"
+                    offset={[-2, 2]}
+                  >
+                    <BellOutlined className="ms-2 text-xl cursor-pointer hover:text-green-700 transition" />
+                  </Badge>
+                </Dropdown>
 
 
 
+                {/* Profile */}
+                <div className="flex items-center gap-3 relative cursor-pointer">
+                  <div className="text-right hidden sm:block leading-tight">
+                    <h2 className="text-[14px] font-bold text-gray-500">{user.name ? user.name : "user"}</h2>
+                    <h2 className="text-[12px] font-bold text-gray-500">Account ID # 000{user.id ? user.id : "000"}</h2>
+                  </div>
+
+                  <Dropdown overlay={profileMenu} placement="bottomRight" arrow>
+                    <img
+                      className="h-10 w-10 rounded-full object-cover"
+                      src="/profilelgo.png"
+                      alt="profile"
+                    />
+                  </Dropdown>
+
+                  <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></span>
+                </div>
+              </div>
+            </div>
+          </Header>
           <Content
             className={`${getMarginLeft()} transition-all duration-300`}
             style={{
@@ -650,18 +640,18 @@ const handleReply = (number: string) => {
       //   zIndex: 1000,
       // }}
       >
-        
-         <div className="lg:flex  lg:justify-between ">
-         <div className="lg:flex md:flex sm:flex text-center justify-center">
-         <h2 className="">COPYRIGHT © 2025WA.</h2>
-            <h2 className='text-blue-500 cursor-pointer underline'>DIGITECHINFRA.COM</h2>
-           <h2 className="">All rights Reserved</h2>
-         </div>
-         <div className="flex justify-center">
-           <h2 className="">Hand-crafted & Made with ♥</h2>
-         </div>
-         </div>
-         
+
+        <div className="lg:flex  lg:justify-between ">
+          <div className="lg:flex md:flex sm:flex text-center justify-center">
+            <h2 className="me-1">COPYRIGHT © 2025</h2>
+            <a href="https://wa.digitechinfra.com/" className='text-blue-500 cursor-pointer underline'>WA.DIGITECHINFRA.COM</a>
+            <h2 className="ms-1">All rights Reserved</h2>
+          </div>
+          <div className="flex justify-center">
+            <h2 className="">Hand-crafted & Made with ♥</h2>
+          </div>
+        </div>
+
       </Footer>   </>
   );
 };

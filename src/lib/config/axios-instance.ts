@@ -41,7 +41,7 @@ instance.interceptors.response.use(
       localStorage.removeItem("token_expiry");
       localStorage.removeItem("userdetails");
       Cookies.remove("token");
-       window.location.href = "/admin/login";
+       window.location.href = "/";
 
       } else {
         console.log(error?.response?.data?.message);

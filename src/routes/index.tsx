@@ -27,6 +27,7 @@ import UserManagement from "@/pages/user-management/UserManagement";
 import Permission from "@/pages/Permission/permission";
 import Chats from "@/pages/Chats/Chats";
 import ReplyChat from "@/pages/Chats/ReplyChat";
+import FailedMessageTable from "@/components/DashboardComponents/FailedMessageTable";
 
 
 const router = createBrowserRouter([
@@ -80,6 +81,12 @@ const router = createBrowserRouter([
       { path: "/user-management", element: <UserManagement /> },
 
       { path: "/permission", element: <Permission /> },
+
+
+
+      { path: "/failedSMS", element: <FailedMessageTable /> },
+
+
 
     ],
   },

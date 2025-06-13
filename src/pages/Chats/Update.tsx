@@ -108,7 +108,7 @@ const ReplyChat: React.FC = () => {
   const handleSend = () => {
     if (!newMessage.trim()) return;
     const wa_id = waNumber.waNumber;
-    
+
     // Optimistic update: Create a temporary message object
     const tempMessage: ChatItem = {
       wa_id: `temp_${Date.now()}`, // Temporary unique ID

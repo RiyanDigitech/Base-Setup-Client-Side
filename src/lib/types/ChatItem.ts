@@ -4,4 +4,5 @@ export interface ChatItem {
   sender: string;
   created_at: string;
   status?: string;
+  updated_at: string;
 }
