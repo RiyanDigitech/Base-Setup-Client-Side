@@ -13,6 +13,8 @@ const UserManagement:React.FC = () => {
       const [showAssignRoleModal, setShowAssignRoleModal] = useState(false);
       const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
         const [selectedUserRoleId, setSelectedUserRoleId] = useState<number | undefined>(undefined);
+        const [currentPage, setCurrentPage] = useState(1);
+        const [pageSize, setPageSize] = useState(15);
 
 
         const getuserPermission = localStorage.getItem('userdetails')
@@ -30,11 +32,13 @@ const [userToEdit, setUserToEdit] = useState<{
        const [search, setSearch] = useState('');
       const [debouncedSearch] = useDebounce(search, 400);
        const {
-        data: fetchedUsers = [],
+        data,
         isFetching,
         isError,
         error,
-      } = useUsers(debouncedSearch);
+      } = useUsers(debouncedSearch, currentPage, pageSize);
+      const fetchedUsers = data?.data ?? [];
+const total = data?.total ?? 0;
     
       const { mutate: deleteUserMutation } = useDeleteUser();
       const { mutate: updateUserMutation, isPending: isUpdatingUser } = useUpdateUser(() => setEditModalVisible(false));
@@ -120,10 +124,19 @@ const [userToEdit, setUserToEdit] = useState<{
     ) : (
       <Table
     rowKey={(record) => record.id}
-    loading={isFetching}
-    dataSource={fetchedUsers}
-    className='overflow-auto'
-    scroll={{ x: 'max-content' }}
+  loading={isFetching}
+  dataSource={fetchedUsers}
+  className="overflow-auto"
+  scroll={{ x: 'max-content' }}
+  pagination={{
+    current: currentPage,
+    pageSize,
+    total,
+    onChange: (page, size) => {
+      setCurrentPage(page);
+      setPageSize(size);
+    },
+  }}
     columns={[
       {
         title: 'ID',
@@ -144,18 +157,6 @@ const [userToEdit, setUserToEdit] = useState<{
         title: 'Phone',
         dataIndex: 'phone',
         key: 'phone',
-      },
-      {
-        title: 'Created At',
-        dataIndex: 'created_at',
-        key: 'created_at',
-        render: (text) => new Date(text).toLocaleString(),
-      },
-      {
-        title: 'Updated At',
-        dataIndex: 'updated_at',
-        key: 'updated_at',
-        render: (text) => new Date(text).toLocaleString(),
       },
       {
         title: 'Actions',
