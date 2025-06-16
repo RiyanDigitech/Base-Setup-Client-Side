@@ -28,29 +28,42 @@ import Permission from "@/pages/Permission/permission";
 import Chats from "@/pages/Chats/Chats";
 import ReplyChat from "@/pages/Chats/ReplyChat";
 import FailedMessageTable from "@/components/DashboardComponents/FailedMessageTable";
+import PublicRoute from "./PublicRoute";
 
 
 const router = createBrowserRouter([
   {
     path: "/admin/login",
-    element: <LoginPage />,
+    element: (
+    <PublicRoute>
+      <LoginPage />
+    </PublicRoute>
+  ),
   },
   {
     path: "/admin/changeresetpassword",
-    element: <Resetnewpassword />,
+    element: (
+    <PublicRoute>
+      <Resetnewpassword />
+    </PublicRoute>
+  ),
   },
   {
     path: "/admin/forgot-password",
-    element: <ForGetPassword />,
-  },
-  {
-    path: "/admin/change-password",
     element: (
-      <ProtectedRoute>
-        <ChangePassword />
-      </ProtectedRoute>
-    ),
+    <PublicRoute>
+      <ForGetPassword />
+    </PublicRoute>
+  ),
   },
+  // {
+  //   path: "/admin/change-password",
+  //   element: (
+  //     <ProtectedRoute>
+  //       <ChangePassword />
+  //     </ProtectedRoute>
+  //   ),
+  // },
   {
     element: (
       <ProtectedRoute>
