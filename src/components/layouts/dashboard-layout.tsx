@@ -25,7 +25,7 @@ const DashboardLayout = () => {
   const handleLogout = async () => {
     const success = await logoutFunc();
     if (success) {
-      navigate("/admin/login");
+      navigate("/");
     } else {
       // message.error("Something went Wrong")
     }
@@ -153,7 +153,7 @@ const DashboardLayout = () => {
 
   if (Date.now() > expiry) {
     localStorage.clear();
-    window.location.href = "/admin/login";
+    window.location.href = "/";
   }
   // Notification Dropdown Menu
   const notificationMenu = (
@@ -341,7 +341,7 @@ const DashboardLayout = () => {
               onClick={({ key }) => navigate(key)}
               items={[
                 {
-                  key: "/",
+                  key: "/dashboard",
                   icon: (
                     <HomeOutlined
                       className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
