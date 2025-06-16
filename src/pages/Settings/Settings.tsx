@@ -10,7 +10,7 @@ import SettingsEditor from '@/components/SettingsComponents/Settings';
 const { TabPane } = Tabs;
 
 const Settings = () => {
-    
+  
 
     return (
         <div className="p-6 mt-7  min-h-screen">
@@ -23,7 +23,7 @@ const Settings = () => {
                 <TabPane 
                 
                     tab={
-                        <span>
+                        <span className='hover:!bg-[#047857] focusbg-[#047857] p-4 rounded'>
                             <UserOutlined /> Account
                         </span>
                     }
@@ -32,7 +32,7 @@ const Settings = () => {
                     <AccountForm />
                 </TabPane>
                 <TabPane tab ={
-                        <span>
+                        <span className='hover:!bg-[#047857] focus:!bg-[#047857] p-4 rounded'>
                             <SettingOutlined />  Settings
                         </span>
                     }
@@ -44,7 +44,7 @@ const Settings = () => {
 
                 <TabPane
                     tab={
-                        <span>
+                        <span className='hover:!bg-[#047857] focus:!bg-[#047857] p-4 rounded'>
                             <SettingOutlined /> Other Settings
                         </span>
                     }
