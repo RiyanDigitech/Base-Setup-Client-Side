@@ -37,7 +37,7 @@ const DashboardChart: React.FC = () => {
             data: barDataWeekly.map((item: any) => ({
               x: item.week,
               y: item.sent,
-              fillColor: "#1565C0",
+              fillColor: "#0035a7",
             })),
           },
           {
@@ -45,7 +45,7 @@ const DashboardChart: React.FC = () => {
             data: barDataWeekly.map((item: any) => ({
               x: item.week,
               y: item.received,
-              fillColor: "#2E7D32",
+              fillColor: "#007016",
             })),
           },
         ]
@@ -55,7 +55,7 @@ const DashboardChart: React.FC = () => {
             data: barDataDaily.map((item: any) => ({
               x: item.date,
               y: item.sent,
-              fillColor: "#1565C0",
+              fillColor: "#0035a7",
             })),
           },
           {
@@ -63,7 +63,7 @@ const DashboardChart: React.FC = () => {
             data: barDataDaily.map((item: any) => ({
               x: item.date,
               y: item.received,
-              fillColor: "#2E7D32",
+              fillColor: "#007016",
             })),
           },
         ];
@@ -102,7 +102,7 @@ const DashboardChart: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-end gap-2 mb-2">
+      <div className="flex justify-start gap-2">
         <button
           onClick={() => setViewType("daily")}
           className={`px-4 py-1 rounded ${

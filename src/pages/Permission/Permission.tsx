@@ -53,7 +53,7 @@ function Permission() {
       render: (_: any, record: any) => {
         const menu = (
           <Menu>
-           
+           {!record.parent_id && (
             <Menu.Item
               key="addAction"
               icon={<AlignLeftOutlined />}
@@ -64,7 +64,7 @@ function Permission() {
             >
               Add Action
             </Menu.Item>
-             
+             )}
              
              <Menu.Item
               key="edit"
@@ -333,7 +333,7 @@ const postChildPermission = useMutation({
             htmlType="submit"
             className="bg-green-700 mt-2 w-full hover:!bg-green-800"
             onClick={handleAddActions}
-            // loading={updatePermissionMutation.isPending}
+            loading={postChildPermission.isPending}
           >
             Add Action
           </Button>

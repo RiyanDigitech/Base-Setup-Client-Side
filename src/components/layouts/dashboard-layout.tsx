@@ -547,8 +547,8 @@ const DashboardLayout = () => {
                 <button onClick={() => setCollapsed(!collapsed)}>
                   {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 </button>
-                <FileTextOutlined className="hidden lg:block md:block sm:block" />
-                <CalendarOutlined className="hidden lg:block md:block sm:block" />
+                {/* <FileTextOutlined className="hidden lg:block md:block sm:block" />
+                <CalendarOutlined className="hidden lg:block md:block sm:block" /> */}
               </div>
 
               {/* Right Side */}
@@ -556,12 +556,12 @@ const DashboardLayout = () => {
 
 
                 {/* SMS */}
-                <h2 className="text-[17px] hidden lg:block md:block sm:block font-bold text-gray-500 whitespace-nowrap">
+                {/* <h2 className="text-[17px] hidden lg:block md:block sm:block font-bold text-gray-500 whitespace-nowrap">
                   195 SMS
-                </h2>
+                </h2> */}
 
                 {/* Search */}
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <SearchOutlined
                     className="ms-2"
                     style={{ fontSize: "20px", cursor: "pointer" }}
@@ -575,7 +575,7 @@ const DashboardLayout = () => {
                       allowClear
                     />
                   )}
-                </div>
+                </div> */}
 
                 {/* Notification */}
 
@@ -647,9 +647,9 @@ const DashboardLayout = () => {
             <a href="https://wa.digitechinfra.com/" className='text-blue-500 cursor-pointer underline'>WA.DIGITECHINFRA.COM</a>
             <h2 className="ms-1">All rights Reserved</h2>
           </div>
-          <div className="flex justify-center">
+          {/* <div className="flex justify-center">
             <h2 className="">Hand-crafted & Made with ♥</h2>
-          </div>
+          </div> */}
         </div>
 
       </Footer>   </>

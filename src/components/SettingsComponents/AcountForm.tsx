@@ -7,6 +7,10 @@ const AccountForm = () => {
         console.log('Saved:', values);
     };
 
+  
+ const userDetails = localStorage.getItem('userdetails');
+  const user = userDetails && userDetails !== "undefined" ? JSON.parse(userDetails) : {};
+
   return (
    <Card title="Profile Details" className="shadow-md rounded-lg">
                            <Form
@@ -22,23 +26,23 @@ const AccountForm = () => {
                            >
                                <Row gutter={16}>
                                    <Col xs={24} md={12}>
-                                       <Form.Item label="Account ID" name="accountId">
-                                           <Input disabled />
+                                       <Form.Item label="Account ID" name="id">
+                                           <Input defaultValue={user?.id} disabled />
                                        </Form.Item>
                                    </Col>
                                    <Col xs={24} md={12}>
-                                       <Form.Item label="Username" name="username">
-                                           <Input disabled />
+                                       <Form.Item label="Username" name="name">
+                                           <Input defaultValue={user?.name} disabled />
                                        </Form.Item>
                                    </Col>
                                    <Col xs={24} md={12}>
-                                       <Form.Item label="Name" name="name">
-                                           <Input />
+                                       <Form.Item label="Phone" name="phone">
+                                           <Input defaultValue={user?.phone} />
                                        </Form.Item>
                                    </Col>
                                    <Col xs={24} md={12}>
                                        <Form.Item label="Email" name="email">
-                                           <Input />
+                                           <Input defaultValue={user?.email} />
                                        </Form.Item>
                                    </Col>
                                </Row>
