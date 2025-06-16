@@ -37,10 +37,10 @@ const PermissionModal: React.FC<Props> = ({
   });
 
   useEffect(() => {
-  if (visible && existingPermissions) {
+  if (visible) {
     setSelectedPermissions(existingPermissions);
   }
-}, [visible, existingPermissions]);
+}, [visible]);
 
   const togglePermission = (id: number) => {
     setSelectedPermissions((prev) =>
