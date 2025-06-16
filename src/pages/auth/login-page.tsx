@@ -51,7 +51,7 @@ export default function LoginPage() {
         localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
         message.success(data.data.message || "Login successful");
         console.log("User Logged In:", data.data.data.token);
-        navigate('/');
+       navigate('/', { replace: true });
 
       }
       else {
