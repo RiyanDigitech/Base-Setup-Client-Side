@@ -33,7 +33,7 @@ import PublicRoute from "./PublicRoute";
 
 const router = createBrowserRouter([
   {
-    path: "/admin/login",
+    path: "/",
     element: (
     <PublicRoute>
       <LoginPage />
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { path: "/", element: <DashboardPage /> },
+      { path: "/dashboard", element: <DashboardPage /> },
       { path: "/franchise-lead/:id", element: <FranchiseSendQuotation /> },
       { path: "/lead", element: <FranchiseLeadList /> },
       { path: "/send-quotation/:id", element: <SendQuotation /> },
