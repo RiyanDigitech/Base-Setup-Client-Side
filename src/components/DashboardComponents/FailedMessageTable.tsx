@@ -1,25 +1,60 @@
-import { Button, DatePicker, Input, Spin, Table, Tag } from "antd";
-import { ExportOutlined } from "@ant-design/icons";
+import { DatePicker, Input, Spin, Table, Tag } from "antd";
+// import { ExportOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { getFailedSMS } from "@/services/DashboardServices/DashboardService";
 import '../../Css/Spin.css';
+import '../../Css/DatePicker.css';
 import { useState } from "react";
 import dayjs from "dayjs";
 
 function FailedMessageTable() {
     const { RangePicker } = DatePicker;
-    const columns = [
-        { title: 'Code', dataIndex: 'error_code' },
-        { title: 'TO', dataIndex: 'wa_id' },
-        { title: 'Message', dataIndex: 'error_message' },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            render: () => <Tag color="red">Failed</Tag>
-        },
-        { title: 'Failed Message', dataIndex: 'message' },
-        { title: 'Time', dataIndex: 'timestamp' },
-    ];
+   const columns = [
+  {
+    title: 'S.No',
+    dataIndex: 'index',
+    render: (text: any, record: any, index: number) => index + 1
+  },
+  {
+    title: 'Code',
+    dataIndex: 'error_code',
+    sorter: (a: any, b: any) =>
+      (a.error_code ?? '').toString().localeCompare((b.error_code ?? '').toString())
+  },
+  {
+    title: 'TO',
+    dataIndex: 'wa_id',
+    sorter: (a: any, b: any) =>
+      (a.wa_id ?? '').toString().localeCompare((b.wa_id ?? '').toString())
+  },
+  {
+    title: 'Message',
+    dataIndex: 'error_message',
+    sorter: (a: any, b: any) =>
+      (a.error_message ?? '').toString().localeCompare((b.error_message ?? '').toString())
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    sorter: (a: any, b: any) =>
+      (a.status ?? '').toString().localeCompare((b.status ?? '').toString()),
+    render: (status: string) => <Tag color="red">{status || 'Failed'}</Tag>
+  },
+  {
+    title: 'Failed Message',
+    dataIndex: 'message',
+    sorter: (a: any, b: any) =>
+      (a.message ?? '').toString().localeCompare((b.message ?? '').toString())
+  },
+  {
+    title: 'Time',
+    dataIndex: 'timestamp',
+    sorter: (a: any, b: any) =>
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  }
+];
+
+
 
     const [searchCode, setSearchCode] = useState('');
     const [dateRange, setDateRange] = useState<[any, any] | null>(null);
@@ -55,15 +90,16 @@ function FailedMessageTable() {
                     onChange={(e) => setSearchCode(e.target.value)}
                     value={searchCode}
                     placeholder="Search by Code"
-                    className="focus:!border-green-600"
+                    className="focus:!border-green-600 hover:!border-green-600"
                 />
                 <RangePicker
-                    onChange={(dates) => setDateRange(dates)}
-                    value={dateRange}
-                />
-                <Button disabled className="!bg-green-600 text-white rounded p-2 active:!scale-110">
+  rootClassName="custom-range-hover"
+  onChange={(dates) => setDateRange(dates)}
+  value={dateRange}
+/>
+                {/* <Button disabled className="!bg-green-600 text-white rounded p-2 active:!scale-110">
                     <ExportOutlined /> Export
-                </Button>
+                </Button> */}
             </div>
             <Spin spinning={isFetching} className="custom-green-spin" tip="Loading Data">
                 <Table

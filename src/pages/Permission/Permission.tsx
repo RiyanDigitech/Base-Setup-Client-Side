@@ -33,18 +33,20 @@ function Permission() {
 
   // Columns
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "S.No.", dataIndex: "id", key: "id", sorter: (a: any, b: any) => a.message?.localeCompare(b.message) },
+    { title: "Name", dataIndex: "name", key: "name" , sorter: (a: any, b: any) => a.message?.localeCompare(b.message)},
     {
       title: "Created",
       dataIndex: "created_at",
       key: "created_at",
+      sorter: (a: any, b: any) => a.message?.localeCompare(b.message),
       render: (text: any) => new Date(text).toLocaleString(),
     },
     {
       title: "Updated",
       dataIndex: "updated_at",
       key: "updated_at",
+      sorter: (a: any, b: any) => a.message?.localeCompare(b.message),
       render: (text: any) => new Date(text).toLocaleString(),
     },
     {
@@ -62,7 +64,7 @@ function Permission() {
                 localStorage.setItem("PermissionParentId" , record.id)
               }}
             >
-              Add Action
+              Create Action
             </Menu.Item>
 
              )}
@@ -232,7 +234,7 @@ const postChildPermission = useMutation({
           className="bg-green-700 hover:!bg-green-800"
           onClick={() => setIsModalOpen(true)}
         >
-          Add Permission
+          Create Permission
         </Button>
       </div>
 
@@ -247,7 +249,7 @@ const postChildPermission = useMutation({
 
       {/* Add Modal */}
       <Modal
-        title="Add Permission"
+        title="Create Permission"
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
@@ -266,7 +268,7 @@ const postChildPermission = useMutation({
             className="bg-green-700 mt-2 w-full hover:!bg-green-800"
             loading={postPermission.isPending}
           >
-            Add Permission
+            Create Permission
           </Button>
         </Form>
       </Modal>
@@ -307,7 +309,7 @@ const postChildPermission = useMutation({
 
       {/* Addd Action Modal Here */}
       <Modal
-        title="Add Action"
+        title="Create Action"
         open={isModalAddAction}
         onCancel={() => setIsModalAddAction(false)}
         footer={null}
@@ -337,7 +339,7 @@ const postChildPermission = useMutation({
             onClick={handleAddActions}
             loading={postChildPermission.isPending}
           >
-            Add Action
+            Create Action
           </Button>
         </Form>
       </Modal>

@@ -4,6 +4,7 @@ import type { RadioChangeEvent } from "antd";
 import dayjs from "dayjs";
 import type { RangePickerProps } from "antd/es/date-picker";
 import SmsStatistics from "@/components/SentStatistics/SentStatistics";
+import '@/Css/DatePicker.css'
 
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
@@ -35,6 +36,7 @@ const SentStatistics: React.FC = () => {
         <Space wrap style={{ marginBottom: 16 }}>
           <RangePicker
             format="YYYY-MM-DD"
+              rootClassName="custom-range-hover"
             onChange={onDateChange}
             defaultValue={[dayjs(), dayjs()]}
           />

@@ -277,7 +277,7 @@ const DashboardLayout = () => {
   const handleButtonClick = () => {
     navigate("/account-details");
   };
-  console.log(see, collapsed);
+  // console.log(see, collapsed);
 
 
   // const { useFetchTargetedAdmin } = AuthService();

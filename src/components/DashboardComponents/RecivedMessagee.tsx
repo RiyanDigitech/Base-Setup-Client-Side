@@ -19,7 +19,7 @@ function RecivedMessagee() {
             <img src="/icons/two.png" alt="Used" className="w-8 h-8" />
             <div className="flex flex-col space-y-0">
                 <span className="leading-tight text-lg font-bold text-gray-800">{data?.total_received ?? 0}</span>
-                <span className="leading-tight text-sm text-gray-500">Total Recived</span>
+                <span className="leading-tight text-sm text-gray-500">Total Received</span>
             </div>
         </div>
     )

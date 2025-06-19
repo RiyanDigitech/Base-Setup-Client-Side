@@ -107,18 +107,20 @@ export const enableOTPModal = async (enable:boolean) => {
     }
 }
 
-export const resetPassword = async (phone : string) => {
-   try {
-    const reponse = await axios.post(`/forgot-password`,{phone})
+export const resetPassword = async (phone: string) => {
+  try {
+    const response = await axios.post(`/forgot-password`, { phone });
 
-    if(reponse.status === 200){
-        return  reponse.data
-    }else {[]}
-    } 
-   catch (error) {
-    console.log(error)
-   }
-}
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error(response?.data?.message || "Failed to reset password");
+    }
+  } catch (error: any) {
+    throw error; 
+  }
+};
+
 
 
 export const resetChangePassword = async (data:resetPasswordType) => {

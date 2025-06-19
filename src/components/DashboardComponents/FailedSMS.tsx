@@ -14,11 +14,11 @@ function FailedSMS() {
     // const getDataFailedSMS = Array.isArray(data?.data) ? data?.data : []
 
     // const totalFailedSMS = getDataFailedSMS.length;
-console.log("Total Failed SMS:", data?.data?.total_failed);
+// console.log("Total Failed SMS:", data?.data?.total_failed);
 
   const navigate = useNavigate()
   const handleClick = () => {
-    navigate('/failedSMS')
+    navigate('/failed')
 
 
   }
@@ -27,7 +27,7 @@ console.log("Total Failed SMS:", data?.data?.total_failed);
   if (isError) return <p>Error loading failed SMS.</p>;
 
   return (
-    <div onClick={handleClick} className="flex items-center gap-2 p-4">
+    <div onClick={handleClick} className="flex items-center gap-2 p-4 cursor-pointer active:scale-110">
       <img src="/icons/seven.svg" alt="SMS" className="w-8 h-8" />
       <div className="flex flex-col space-y-0">
         <span className="leading-tight text-lg font-bold text-gray-800">
