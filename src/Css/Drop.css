@@ -1,0 +1,11 @@
+/* On hover - change border color */
+.custom-green-select .ant-select-selector:hover {
+  border-color: #16a34a !important; /* Tailwind green-600 */
+}
+
+/* On focus - change border color */
+.custom-green-select .ant-select-selector:focus,
+.custom-green-select .ant-select-selector-focused {
+  border-color: #16a34a !important;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2); /* optional green shadow */
+}

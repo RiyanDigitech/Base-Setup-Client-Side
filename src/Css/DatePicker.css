@@ -1,0 +1,11 @@
+/* Target calendar cell on hover */
+.custom-range-hover .ant-picker-cell-inner:hover {
+  color: #16a34a !important;         /* text green-600 */
+  border-color: #16a34a !important;  /* optional */
+}
+
+/* Optional: also add border or background effect on hover */
+.custom-range-hover .ant-picker-cell:hover {
+  background-color: rgba(22, 163, 74, 0.1); /* light green background */
+  border-radius: 6px;
+}

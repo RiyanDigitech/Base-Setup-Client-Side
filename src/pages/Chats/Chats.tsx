@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllMessage } from '@/services/ChatServices/ChatsService';
 import moment from 'moment';
 import '@/Css/Spin.css'
+import '@/Css/Drop.css'
 const { Option } = Select;
 interface ChatItem {
   wa_id: string;
@@ -41,62 +42,76 @@ const Chats: React.FC = () => {
 
 
 
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Number',
-      dataIndex: 'wa_id',
-      key: 'wa_id',
-    },
+ const columns = [
+  {
+    title: 'S.No.',
+    dataIndex: 'index',
+    render: (_text: any, _record: any, index: any) =>
+      (pagination.current - 1) * pagination.pageSize + index + 1
+    // No need for sorter here — it's a computed index
+  },
+  // {
+  //   title: 'ID',
+  //   dataIndex: 'id',
+  //   key: 'id',
+  //   sorter: (a: any, b: any) => a.id - b.id,
+  // },
+  {
+    title: 'Number',
+    dataIndex: 'wa_id',
+    key: 'wa_id',
+    sorter: (a: any, b: any) => a.wa_id?.localeCompare(b.wa_id),
+  },
+  {
+    title: 'Created At',
+    dataIndex: 'created_at',
+    key: 'created_at',
+    sorter: (a: any, b: any) =>
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+    render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A'),
+  },
+  {
+    title: 'Updated At',
+    dataIndex: 'updated_at',
+    key: 'updated_at',
+    sorter: (a: any, b: any) =>
+      new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime(),
+    render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A'),
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+    sorter: (a: any, b: any) =>
+      (a.status || '').localeCompare(b.status || ''),
+    render: (status: string | null | undefined) => {
+      if (!status) return <Tag color="default">UNKNOWN</Tag>;
 
-    {
-      title: 'Created At',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A')
-    },
-    {
-      title: 'Updated At',
-      dataIndex: 'updated_at',
-      key: 'updated_at',
-      render: (date: string) => moment(date).format('MMM DD, YYYY hh:mm A')
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string | null | undefined) => {
-        if (!status) return <Tag color="default">UNKNOWN</Tag>;
+      let color = 'default';
+      const lowerStatus = status.toLowerCase();
 
-        let color = 'default';
-        const lowerStatus = status.toLowerCase();
+      if (lowerStatus === 'replied') color = 'green';
+      else if (lowerStatus === 'closed') color = 'red';
+      else if (lowerStatus === 'pending') color = 'blue';
 
-        if (lowerStatus === 'replied') color = 'green';
-        else if (lowerStatus === 'closed') color = 'red';
-        else if (lowerStatus === 'pending') color = 'blue';
-
-        return <Tag color={color}>{status.toUpperCase()}</Tag>;
-      }
+      return <Tag color={color}>{status.toUpperCase()}</Tag>;
     },
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_: any, record: ChatItem) => (
+      <Button
+        className="!bg-green-600 !p-2 !text-white !rounded"
+        type="primary"
+        onClick={() => handleReply(record)}
+      >
+        <WechatOutlined /> Reply
+      </Button>
+    ),
+  },
+];
 
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_: any, record: ChatItem) => (
-        <Button
-          className="!bg-green-600 !p-2 !text-white !rounded"
-          type="primary"
-          onClick={() => handleReply(record)}
-        >
-          <WechatOutlined /> Reply
-        </Button>
-      ),
-    },
-  ];
 
 
   const { data, isFetching, isError, error } = useQuery({
@@ -121,15 +136,17 @@ const Chats: React.FC = () => {
       {/* Dropdown filter */}
       <div style={{ marginBottom: 16 }}>
         <Select
-          placeholder="Filter by Status"
-          onChange={(value) => setStatusFilter(value)}
-          allowClear
-          style={{ width: 200 }}
-        >
-          <Option value="closed">Closed</Option>
-          <Option value="replied">Replied</Option>
-          <Option value="pending">Pending</Option>
-        </Select>
+  rootClassName="custom-green-select"
+  placeholder="Filter by Status"
+  onChange={(value) => setStatusFilter(value)}
+  allowClear
+  style={{ width: 200 }}
+>
+  <Option value="closed">Closed</Option>
+  <Option value="replied">Replied</Option>
+  <Option value="pending">Pending</Option>
+</Select>
+
       </div>
 
       {/* Table */}

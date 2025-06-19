@@ -297,7 +297,7 @@ const ReplyChat: React.FC = () => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onPressEnter={handleSend}
-            className="mr-2 mt-3 hover: border-green-600 focus:border-green-600"
+            className="mr-2 mt-3 hover: border-green-600 focus:!border-green-600 hover:!border-green-600"
           />
           <Button
             className="!bg-green-600 !text-white mt-3 p-4 rounded"

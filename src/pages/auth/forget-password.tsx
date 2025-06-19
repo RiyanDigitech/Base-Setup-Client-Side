@@ -5,38 +5,62 @@ import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function ForGetPassword() {
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit , formState: { errors } } = useForm({
     defaultValues: {
       phone: "",
     },
+    mode: "onTouched"
   });
 
-  const onSubmit = (data: any) => {
-    if (data.phone === '923332313391') {
-      console.log(data);
-      resetMutation.mutate(data.phone);
-    } else if (data.phone === "") {
-      message.error("Enter Phone Number");
-    } else {
-      message.error("Invalid Credential");
-    }
-  };
+ const onSubmit = (data: any) => {
+  const phone = data?.phone;
+
+  console.log("API DATA" , data)
+
+  if (!phone || phone.trim() === "") {
+    message.error("Enter Phone Number");
+    return;
+  }
+
+  resetMutation.mutate(phone);
+};
+
 
 
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   const resetMutation = useMutation({
-    mutationFn: resetPassword,
-    onSuccess: () => {
-      message.success("Sent OTP Successfully")
-      navigate('/admin/changeresetpassword')
-      queryClient.invalidateQueries({ queryKey: ['resetpassword'] })
-    },
-    onError: () => {
-      message.error("OTP Sent Failed")
+  mutationFn: resetPassword,
+
+  onSuccess: (res) => {
+    const phoneError = res?.errors?.phone?.[0];
+    const otpError = res?.errors?.otp?.[0];
+
+    if (phoneError) {
+      message.error(phoneError);
+    } else if (otpError) {
+      message.error(otpError); // ✅ correct kiya
+    } else {
+      message.success(res?.message || "Password reset successful");
+      navigate('/admin/changeresetpassword');
+      queryClient.invalidateQueries({ queryKey: ['resetpassword'] });
     }
-  })
+  },
+
+  onError: (error: any) => {
+    const phoneError = error?.response?.data?.errors?.phone?.[0];
+    const otpError = error?.response?.data?.errors?.otp?.[0];
+
+    if (phoneError) {
+      message.error(phoneError);
+    } else if (otpError) {
+      message.error(otpError); // ✅ correct kiya
+    } else {
+      message.error(error?.response?.data?.message || "Something went wrong");
+    }
+  }
+});
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4 py-6">
@@ -57,8 +81,13 @@ export default function ForGetPassword() {
             <Controller
               name="phone"
               control={control}
-              render={({ field }) => (
-                <Form.Item className="w-full">
+               rules={{ required: "Phone Number is required" }}
+             render={({ field }) => (
+                  <Form.Item
+                    validateStatus={errors.phone ? "error" : ""}
+                    help={errors.phone?.message}
+                    className=" w-full"
+                  >
                   <Input
                     {...field}
                     placeholder="Enter your Phone Number"
@@ -81,7 +110,7 @@ export default function ForGetPassword() {
                 >
                   Send Reset Link
                 </Button>
-                <Link to="/admin/login" className="w-full">
+                <Link to="/" className="w-full">
                   <Button
                     htmlType="button"
                     type="primary"

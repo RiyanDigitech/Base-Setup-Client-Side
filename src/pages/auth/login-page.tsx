@@ -19,12 +19,10 @@ export default function LoginPage() {
   });
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [isRememberMeChecked, setIsRememberMeChecked] = useState(false);
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [otp_code, setOtp] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const navigate = useNavigate();
 
@@ -44,18 +42,22 @@ export default function LoginPage() {
   const sendOtpMutation = useMutation({
     mutationFn: AuthuserLogin,
     onSuccess: (data: any) => {
+      const phoneError = data?.errors?.phone?.[0];
       if (data?.success) {
 
         localStorage.setItem('token', data?.data?.data?.token);
         localStorage.setItem('userdetails', JSON.stringify(data?.data?.data?.user));
         localStorage.setItem("token_expiry", String(Date.now() + 24 * 60 * 60 * 1000));
         message.success(data.data.message || "Login successful");
-        console.log("User Logged In:", data.data.data.token);
+        // console.log("User Logged In:", data.data.data.token);
        navigate('/dashboard', { replace: true });
 
       }
+      else if (phoneError){
+         message.error(phoneError);
+      }
       else {
-        message.error(data.error || "Login failed");
+        message.error("Invalid credentials");
       }
     },
     onError: (error: any) => {
@@ -81,7 +83,7 @@ export default function LoginPage() {
     },
     onError: (error: any) => {
       const seterror = error?.response?.data?.message
-      message.error(seterror);
+      message.error("Invalid credentials." , seterror);
     },
   });
 
@@ -135,9 +137,10 @@ export default function LoginPage() {
                     className="mb-0"
                   >
                     <Input.Password
-                      className={`lg:w-80 md:w-80 w-50 h-10 !border ${isPasswordFocused || field.value ? '!border-green-600' : '!border-gray-300'} focus:!border-green-600 hover:!border-green-600 focus:!shadow-none`} {...field}
-                      onFocus={() => setIsPasswordFocused(true)}
-                      onBlur={() => setIsPasswordFocused(false)}
+                       className="lg:w-80 md:w-80 w-50 h-10 focus:!border-green-600 hover:!border-green-600 focus:!shadow-none"
+                      {...field}
+                      // onFocus={() => setIsPasswordFocused(true)}
+                      // onBlur={() => setIsPasswordFocused(false)}
                     />
                   </Form.Item>
                 )}
@@ -148,12 +151,12 @@ export default function LoginPage() {
           {/* Remember Me and Submit */}
           <div className="flex">
             <div className="mx-auto ps-20">
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <Checkbox
                   onChange={(e) => setIsRememberMeChecked(e.target.checked)}
                 />
                 <span className="text-sm text-gray-700">Remember Me</span>
-              </div>
+              </div> */}
 
               <Button
                 htmlType="submit"

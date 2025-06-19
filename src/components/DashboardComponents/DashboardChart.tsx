@@ -20,7 +20,6 @@ const DashboardChart: React.FC = () => {
 
   const barDataWeekly = Array.isArray(chartData?.weekly) ? chartData.weekly : [];
 
-  // Convert object to array for daily
   const barDataDaily = chartData?.daily
     ? Object.entries(chartData.daily).map(([date, values]: any) => ({
         date,
@@ -37,7 +36,6 @@ const DashboardChart: React.FC = () => {
             data: barDataWeekly.map((item: any) => ({
               x: item.week,
               y: item.sent,
-              fillColor: "#0035a7",
             })),
           },
           {
@@ -45,7 +43,6 @@ const DashboardChart: React.FC = () => {
             data: barDataWeekly.map((item: any) => ({
               x: item.week,
               y: item.received,
-              fillColor: "#007016",
             })),
           },
         ]
@@ -55,7 +52,6 @@ const DashboardChart: React.FC = () => {
             data: barDataDaily.map((item: any) => ({
               x: item.date,
               y: item.sent,
-              fillColor: "#0035a7",
             })),
           },
           {
@@ -63,7 +59,6 @@ const DashboardChart: React.FC = () => {
             data: barDataDaily.map((item: any) => ({
               x: item.date,
               y: item.received,
-              fillColor: "#007016",
             })),
           },
         ];
@@ -73,6 +68,7 @@ const DashboardChart: React.FC = () => {
       id: "bar",
       stacked: false,
     },
+    colors: ["#0035a7", "#007016"], // ✅ Legend and bar colors
     xaxis: {
       type: "category",
       labels: {
@@ -95,13 +91,17 @@ const DashboardChart: React.FC = () => {
     plotOptions: {
       bar: {
         horizontal: false,
-        distributed: true,
+        distributed: false, // ✅ Respect colors array
       },
+    },
+    legend: {
+      show: true, // ✅ Keep Apex legend (with correct colors now)
     },
   };
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Toggle Buttons */}
       <div className="flex justify-start gap-2">
         <button
           onClick={() => setViewType("daily")}
@@ -121,6 +121,7 @@ const DashboardChart: React.FC = () => {
         </button>
       </div>
 
+      {/* Chart & Pie Sections */}
       <div className="flex flex-col md:flex-row gap-6">
         <div className="bg-white p-4 rounded-lg shadow-md w-full md:w-2/3">
           {isLoading ? (
@@ -133,6 +134,7 @@ const DashboardChart: React.FC = () => {
             <Chart options={barOptions} series={barSeries} type="bar" height={250} />
           )}
         </div>
+
         <div className="bg-white p-4 rounded-lg shadow-md w-full md:w-1/3">
           <PieChart />
         </div>
