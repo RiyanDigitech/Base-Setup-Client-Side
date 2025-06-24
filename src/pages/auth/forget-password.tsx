@@ -40,7 +40,7 @@ export default function ForGetPassword() {
     if (phoneError) {
       message.error(phoneError);
     } else if (otpError) {
-      message.error(otpError); // ✅ correct kiya
+      message.error(otpError); 
     } else {
       message.success(res?.message || "Password reset successful");
       navigate('/admin/changeresetpassword');
@@ -55,7 +55,7 @@ export default function ForGetPassword() {
     if (phoneError) {
       message.error(phoneError);
     } else if (otpError) {
-      message.error(otpError); // ✅ correct kiya
+      message.error(otpError); 
     } else {
       message.error(error?.response?.data?.message || "Something went wrong");
     }
@@ -82,7 +82,7 @@ export default function ForGetPassword() {
               name="phone"
               control={control}
                rules={{ required: "Phone Number is required" }}
-             render={({ field }) => (
+               render={({ field }) => (
                   <Form.Item
                     validateStatus={errors.phone ? "error" : ""}
                     help={errors.phone?.message}

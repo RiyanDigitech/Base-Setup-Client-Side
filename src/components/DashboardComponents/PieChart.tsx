@@ -49,7 +49,7 @@ function PieChart() {
   if (pieSeries.every(val => val === 0)) {
     return (
   <div className="flex items-center justify-center">
-    <div className="text-center p-6 bg-white rounded-2xl mt-18 shadow-xl">
+    <div className="text-center p-6 bg-green-200 rounded-2xl mt-18 shadow-xl">
       <p className="text-lg font-semibold text-gray-700">
         No message activity today.
       </p>
