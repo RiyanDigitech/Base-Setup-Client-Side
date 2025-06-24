@@ -90,7 +90,10 @@ const handleSavePermissions = (roleId: number, permissionIds: number[]) => {
 
   setRolePermissions((prev) => ({ ...prev, [roleObj.name]: permissionIds }));
 };
+  const inputBaseClass =
+    "mb-1 focus:border-green-600 hover:border-green-600 focus:ring-green-600";
 
+  const errorTextClass = "text-red-500 text-xs mb-2";
 
 
   return (
@@ -157,25 +160,29 @@ const handleSavePermissions = (roleId: number, permissionIds: number[]) => {
   }}
   columns={[
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
+    title: 'S.No.',
+    key: 'index',
+    sorter: () => 0,
+    render: (_text, _record, index) => (currentPage - 1) * pageSize + index + 1,
+  },
     {
       title: 'Role',
       dataIndex: 'name',
       key: 'name',
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'Created At',
       dataIndex: 'created_at',
       key: 'created_at',
+      sorter: (a:any, b:any) => a.created_at.localeCompare(b.created_at),
       render: (text) => new Date(text).toLocaleString(),
     },
     {
       title: 'Updated At',
       dataIndex: 'updated_at',
       key: 'updated_at',
+      sorter: (a:any, b:any) => a.updated_at.localeCompare(b.updated_at),
       render: (text) => new Date(text).toLocaleString(),
     },
     {
@@ -254,7 +261,7 @@ const handleSavePermissions = (roleId: number, permissionIds: number[]) => {
         visible={showRoleModal}
         onClose={() => setShowRoleModal(false)}
         onCreate={handleAddRole}
-        
+         isLoading={isCreatingRole}
       />
 
       <PermissionModal

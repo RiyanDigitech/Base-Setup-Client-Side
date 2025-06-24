@@ -59,7 +59,8 @@ if (values.password?.trim()) {
 };
 
 
-
+const inputBaseClass =
+    "mb-1 focus:border-green-600 hover:border-green-600 focus:ring-green-600";
  
 
   return (
@@ -80,20 +81,20 @@ if (values.password?.trim()) {
     >
       <Form form={form} layout="vertical">
         <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-          <Input />
+          <Input className={inputBaseClass}  />
         </Form.Item>
         <Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}>
-          <Input />
+          <Input className={inputBaseClass}  />
         </Form.Item>
         <Form.Item name="phone" label="Phone" rules={[{ required: true }]}>
-          <Input />
+          <Input className={inputBaseClass}  />
         </Form.Item>
         <Form.Item
   name="password"
   label="Password"
   rules={[{ required: false }]}
 >
-  <Input.Password placeholder="Leave empty to keep unchanged" />
+  <Input.Password placeholder="Leave empty to keep unchanged" className={inputBaseClass} />
 </Form.Item>
 
       </Form>

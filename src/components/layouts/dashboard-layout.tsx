@@ -351,32 +351,42 @@ const DashboardLayout = () => {
                   label: <div className="text-[#0F172A]">Dashboard</div>,
                 },
                 {
-                  key: "sent-statistics",
+                  key: "/menu",
                   icon: (
-                    <MdDashboard
-                      className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                        }`}
-                    />
-                  ),
-                  label: <div className="text-[#0F172A]">Accounts</div>,
-
-                  children: [
-                    {
-                      key: "/chatbots",
-                      icon: (
                         <RedditOutlined
                           className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                             }`}
                         />
                       ),
-                      label: <div className="text-[#0F172A]">Chatbots</div>,
-                    },
-
-                  ],
+                  label: <div className="text-[#0F172A]">Menu</div>,
                 },
+                // {
+                //   key: "sent-statistics",
+                //   icon: (
+                //     <MdDashboard
+                //       className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                //         }`}
+                //     />
+                //   ),
+                //   label: <div className="text-[#0F172A]">Accounts</div>,
+
+                //   children: [
+                //     {
+                //       key: "/chatbots",
+                //       icon: (
+                //         <RedditOutlined
+                //           className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                //             }`}
+                //         />
+                //       ),
+                //       label: <div className="text-[#0F172A]">Chatbots</div>,
+                //     },
+
+                //   ],
+                // },
 
                 {
-                  key: "/sentstatistics",
+                  key: "/statistics",
                   icon: (
                     <BarChartOutlined
 
@@ -404,28 +414,28 @@ const DashboardLayout = () => {
                     </div>
                   ),
                 },
-                {
-                  key: "/sentmessage",
-                  icon: (
-                    <FileTextOutlined
-                      className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
-                        }`}
-                    />
-                  ),
-                  label: (
-                    <div className=" text-[#0F172A]">Sent Message</div>
-                  ),
-                },
+                // {
+                //   key: "/sentmessage",
+                //   icon: (
+                //     <FileTextOutlined
+                //       className={`${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
+                //         }`}
+                //     />
+                //   ),
+                //   label: (
+                //     <div className=" text-[#0F172A]">Sent Message</div>
+                //   ),
+                // },
 
                 {
-                  key: "/user-management",
+                  key: "/user",
                   icon: (
                     <UserOutlined
                       className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                         }`}
                     />
                   ),
-                  label: <div className="">User Management</div>,
+                  label: <div className="">User</div>,
                 },
                 {
                   key: "/settings",
@@ -448,14 +458,14 @@ const DashboardLayout = () => {
                   label: <div className="">Permission</div>,
                 },
                 {
-                  key: "/role&permission",
+                  key: "/roles",
                   icon: (
                     <OrderedListOutlined
                       className={` ${collapsed || !see ? "ml-1 h-[20px] w-[20px] mr-5" : ""
                         }`}
                     />
                   ),
-                  label: <div className="">Role&Permission</div>,
+                  label: <div className="">Role & Permission</div>,
                 },
               ]}
             />

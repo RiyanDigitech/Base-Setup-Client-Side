@@ -1,6 +1,6 @@
 import { Alert, Button, Card, Col, Dropdown, Input, Menu, Modal, Row, Spin, Table } from 'antd';
 import { DeleteOutlined, EditOutlined, MoreOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useDebounce } from 'use-debounce';
 import { useAssignRoleToUser, useCreateUser, useDeleteUser, useUpdateUser, useUsers } from '@/services/userservice/UserService';
 import EditUserModal from '@/components/UserComponent/EditUserModal';
@@ -15,7 +15,7 @@ const UserManagement:React.FC = () => {
         const [selectedUserRoleId, setSelectedUserRoleId] = useState<number | undefined>(undefined);
         const [currentPage, setCurrentPage] = useState(1);
         const [pageSize, setPageSize] = useState(15);
-
+        const modalRef = useRef<{ resetForm: () => void }>(null);
 
         const getuserPermission = localStorage.getItem('userdetails')
          const userPermission = JSON.parse(getuserPermission)
@@ -43,6 +43,7 @@ const total = data?.total ?? 0;
       const { mutate: deleteUserMutation } = useDeleteUser();
       const { mutate: updateUserMutation, isPending: isUpdatingUser } = useUpdateUser(() => setEditModalVisible(false));
       const { mutate: createUserMutation, isPending: isCreatingUser } = useCreateUser(() => {
+            modalRef.current?.resetForm();
             setShowUserModal(false);
             });
             const { mutate: assignRoleMutation, isPending: isAssigning } = useAssignRoleToUser();
@@ -139,24 +140,28 @@ const total = data?.total ?? 0;
   }}
     columns={[
       {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-      },
+    title: 'S.No.',
+    key: 'index',
+    sorter: () => 0,
+    render: (_text, _record, index) => (currentPage - 1) * pageSize + index + 1,
+  },
       {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
+        sorter: (a, b) => a.name.localeCompare(b.name),
       },
       {
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
+        sorter: (a, b) => a.email.localeCompare(b.email),
       },
       {
         title: 'Phone',
         dataIndex: 'phone',
         key: 'phone',
+        sorter: (a, b) => a.phone.localeCompare(b.phone),
       },
       {
         title: 'Actions',
@@ -241,10 +246,11 @@ const total = data?.total ?? 0;
   
         {/* modals -------------------------------------------------------- */}
         <CreateUserModal
+        ref={modalRef}
           visible={showUserModal}
           onClose={() => setShowUserModal(false)}
           onCreate={handleAddUser}
-          
+          isLoading={isCreatingUser} 
         />
   
         <EditUserModal
