@@ -76,7 +76,7 @@ const router = createBrowserRouter([
       { path: "/lead", element: <FranchiseLeadList /> },
       { path: "/send-quotation/:id", element: <SendQuotation /> },
       { path: "/settings", element: <Settings /> },
-      { path: "/chatbots", element: <Chatbots /> },
+      { path: "/menu", element: <Chatbots /> },
       { path: "/create-franchise", element: <FranchiseCreate /> },
       { path: "/franchise-edit/:id", element: <FranchiseUpdate /> },
       { path: "/complaint-details/:id", element: <ComplainDetails /> },
@@ -87,17 +87,17 @@ const router = createBrowserRouter([
       { path: "/chat-reply/:waNumber/message", element: <ReplyChat /> },
       // { path: "/chat-reply", element: <ReplyChat /> },
       { path: "/lead-list", element: <LeadList /> },
-      { path: "/sentstatistics", element: <SentStatistics /> },
-      { path: "/sentmessage", element: <SentMessage /> },
-      { path: "/role&permission", element: <RolePermissionUI /> },
+      { path: "/statistics", element: <SentStatistics /> },
+      // { path: "/sentmessage", element: <SentMessage /> },
+      { path: "/roles", element: <RolePermissionUI /> },
 
-      { path: "/user-management", element: <UserManagement /> },
+      { path: "/user", element: <UserManagement /> },
 
       { path: "/permission", element: <Permission /> },
 
 
 
-      { path: "/failedSMS", element: <FailedMessageTable /> },
+      { path: "/failed", element: <FailedMessageTable /> },
 
 
 
