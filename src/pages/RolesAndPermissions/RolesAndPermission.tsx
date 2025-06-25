@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Card,
   Button,
@@ -14,7 +14,7 @@ import {
   Modal,
 } from 'antd';
 import { DeleteOutlined, EditOutlined, MoreOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
-import CreateRoleModal from '@/components/RoleComponents/CreateRoleModal';
+import CreateRoleModal, { CreateRoleModalRef } from '@/components/RoleComponents/CreateRoleModal';
 import PermissionModal from '@/components/RoleComponents/PermissionModal';
 import { assignPermissionsToRole, useCreateRole, useDeleteRole, useRoles, useUpdateRole } from '@/services/Role&PermissionService/Roles&PermissionService';
 import { useDebounce } from 'use-debounce';
@@ -47,7 +47,7 @@ const [pageSize, setPageSize] = useState(15);
 } = useRoles(debouncedSearch, currentPage, pageSize);
 const fetchedRoles = data?.data ?? [];
 const total = data?.total ?? 0;
-
+  const modalRef = useRef<CreateRoleModalRef>(null);
   const { mutate: deleteRoleMutation } = useDeleteRole();
   const { mutate: updateRoleMutation, isPending: isUpdatingRole } = useUpdateRole(() => setEditModalVisible(false));
   const queryClient = useQueryClient();
@@ -69,6 +69,7 @@ const total = data?.total ?? 0;
 
   const { mutate: createRoleMutation, isPending: isCreatingRole } = useCreateRole(() => {
     setShowRoleModal(false);
+    modalRef.current?.resetForm();
   });
 
   const handleAddRole = (role: string) => {
@@ -258,6 +259,7 @@ const handleSavePermissions = (roleId: number, permissionIds: number[]) => {
 
       {/* modals -------------------------------------------------------- */}
       <CreateRoleModal
+        ref={modalRef}
         visible={showRoleModal}
         onClose={() => setShowRoleModal(false)}
         onCreate={handleAddRole}

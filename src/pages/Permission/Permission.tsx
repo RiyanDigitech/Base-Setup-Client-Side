@@ -211,8 +211,27 @@ const postChildPermission = useMutation({
   });
 
   const handleDelete = (record: any) => {
-    deleteMutation.mutate(Number(record.id));
-  };
+  Modal.confirm({
+    title: "Are you sure?",
+    content: `Do you want to delete the permission "${record.name}"?`,
+    okText: "Yes",
+    cancelText: "No",
+    okButtonProps: {
+      className: "bg-green-700 text-white hover:!bg-green-800",
+    },
+    cancelButtonProps: {
+      className: "text-gray-600",
+    },
+    onOk: () =>
+      new Promise((resolve, reject) => {
+        deleteMutation.mutate(Number(record.id), {
+          onSuccess: () => resolve(null),
+          onError: () => reject(),
+        });
+      }),
+  });
+};
+
 
   return (
     <div className="p-6 bg-white min-h-screen mt-7">
@@ -254,23 +273,32 @@ const postChildPermission = useMutation({
         onCancel={() => setIsModalOpen(false)}
         footer={null}
       >
-        <Form form={form} onFinish={handleAddSubmit} layout="vertical">
-          <Form.Item
-            label="Permission Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter name" }]}
-          >
-            <Input className="!border-gray-300 hover:!border-gray-300 focus:!border-gray-300 mt-3" />
-          </Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="bg-green-700 mt-2 w-full hover:!bg-green-800"
-            loading={postPermission.isPending}
-          >
-            Create Permission
-          </Button>
-        </Form>
+        <Form
+  form={form}
+  onFinish={handleAddSubmit}
+  layout="vertical"
+  validateTrigger={['onBlur']}
+>
+  <Form.Item
+    label="Permission Name"
+    name="name"
+    rules={[{ required: true, message: "Please enter name" }]}
+  >
+    <Input
+      onBlur={() => form.validateFields(['name'])}
+      className="border-gray-300 hover:border-green-600 focus:border-green-600 mt-3"
+    />
+  </Form.Item>
+  <Button
+    type="primary"
+    htmlType="submit"
+    className="bg-green-700 mt-2 w-full hover:!bg-green-800"
+    loading={postPermission.isPending}
+  >
+    Create Permission
+  </Button>
+</Form>
+
       </Modal>
 
       {/* Edit Modal */}
@@ -280,30 +308,37 @@ const postChildPermission = useMutation({
         onCancel={() => setIsModalEditOpen(false)}
         footer={null}
       >
-        <Form form={form} onFinish={handleEditSubmit} layout="vertical">
-          <Form.Item
-            label="Permission Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter name" }]}
-          >
-            <Input
-              value={editName}
-              onChange={(e) => {
-                setEditName(e.target.value);
-                form.setFieldsValue({ name: e.target.value });
-              }}
-              className="!border-gray-300 hover:!border-gray-300 focus:!border-gray-300 mt-3"
-            />
-          </Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="bg-green-700 mt-2 w-full hover:!bg-green-800"
-            loading={updatePermissionMutation.isPending}
-          >
-            Update Permission
-          </Button>
-        </Form>
+        <Form
+  form={form}
+  onFinish={handleEditSubmit}
+  layout="vertical"
+  validateTrigger={['onBlur']}
+>
+  <Form.Item
+    label="Permission Name"
+    name="name"
+    rules={[{ required: true, message: "Please enter name" }]}
+  >
+    <Input
+      value={editName}
+      onChange={(e) => {
+        setEditName(e.target.value);
+        form.setFieldsValue({ name: e.target.value });
+      }}
+      onBlur={() => form.validateFields(['name'])}
+      className="border-gray-300 hover:border-green-600 focus:border-green-600 mt-3"
+    />
+  </Form.Item>
+  <Button
+    type="primary"
+    htmlType="submit"
+    className="bg-green-700 mt-2 w-full hover:!bg-green-800"
+    loading={updatePermissionMutation.isPending}
+  >
+    Update Permission
+  </Button>
+</Form>
+
       </Modal>
 
 
