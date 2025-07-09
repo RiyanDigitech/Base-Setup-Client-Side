@@ -36,23 +36,26 @@ export default function EditMenuModal({
   }, [menu, form])
 
   const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      const values = await form.validateFields()
-      await axios.put(`/menus/${menu.id}`, {
-        ...values,
-        parent_id: menu.parent_id || null,
-      })
-      message.success("Menu updated successfully.")
-      onSuccess()
-      onClose()
-      queryClient.invalidateQueries({ queryKey: ['menus'] });
-    } catch (error: any) {
-      message.error(
-        error.response?.data?.message || "Failed to update the menu."
-      )
-    }
+  setLoading(true);
+  try {
+    const values = await form.validateFields();
+    await axios.put(`/menus/${menu.id}`, {
+      ...values,
+      parent_id: menu.parent_id || null,
+    });
+    message.success("Menu updated successfully.");
+    onSuccess();
+    onClose();
+    queryClient.invalidateQueries({ queryKey: ['menus'] });
+  } catch (error: any) {
+    message.error(
+      error.response?.data?.message || "Failed to update the menu."
+    );
+  } finally {
+    setLoading(false); // ✅ Always reset loading state
   }
+};
+
 
   return (
     <Modal

@@ -166,3 +166,8 @@ ul.ant-menu-vertical > li.ant-menu-item-only-child {
 .ql-snow .ql-tooltip {
   left: 0px !important;
 }
+.ant-select-selector:hover,
+.ant-select-focused .ant-select-selector {
+  border-color: #15803d !important; /* Tailwind green-700 */
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2); /* green ring effect */
+}

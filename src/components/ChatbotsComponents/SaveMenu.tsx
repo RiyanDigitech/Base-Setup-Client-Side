@@ -1,13 +1,17 @@
 import { Card, List, Spin, Button, Popconfirm } from "antd"
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons"
 import { useDeleteMenu, useMenuQuery } from "@/services/MenusServices/MenusService"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import EditMenuModal from "./modals/EditMenuModal"
+import AddSubmenuModal from "./modals/AddSubMenuModal"
 
 
-export default function MenuViewer() {
+export default function MenuViewer({ refetchTrigger }: { refetchTrigger: number }) {
   const [editModalOpen, setEditModalOpen] = useState(false)
 const [selectedMenu, setSelectedMenu] = useState<any>(null)
+const [showSubmenuModal, setShowSubmenuModal] = useState(false);
+const [currentParentId, setCurrentParentId] = useState<number | null>(null);
+
 const { mutate: deleteMenu, isPending, variables } = useDeleteMenu()
  const handleCloseEditModal = () => {
     setSelectedMenu(null)
@@ -19,7 +23,10 @@ const { mutate: deleteMenu, isPending, variables } = useDeleteMenu()
     setSelectedMenu(menu)
     setEditModalOpen(true)
   }
-  
+  const handleAddSubmenu = (parentId: number) => {
+  setCurrentParentId(parentId);
+  setShowSubmenuModal(true);
+};
  
     return menus.map((menu, idx) => (
       <Card
@@ -28,6 +35,14 @@ const { mutate: deleteMenu, isPending, variables } = useDeleteMenu()
         style={{ marginBottom: 16, marginLeft: parentId ? 24 : 0 }}
         extra={
           <div className="flex gap-2">
+             {parentId === null && ( // ✅ Only show for top-level (no parent)
+        <Button
+          className="!bg-green-700 !text-white"
+          onClick={() => handleAddSubmenu(menu.id)}
+        >
+          Add Submenu
+        </Button>
+      )}
             <Button  className="!bg-green-700 !text-white" onClick={() => handleOpenEditModal(menu)} >Edit</Button>
 <Popconfirm
   title="Are you sure you want to delete this menu?"
@@ -83,6 +98,9 @@ const { mutate: deleteMenu, isPending, variables } = useDeleteMenu()
     ))
   }
   const { data, isLoading, isError, error,refetch } = useMenuQuery()
+    useEffect(() => {
+    refetch()
+  }, [refetchTrigger])
   
  
   return (
@@ -102,7 +120,7 @@ const { mutate: deleteMenu, isPending, variables } = useDeleteMenu()
         <p className="text-gray-500 italic">No saved menus yet.</p>
       )}
 
-        <div
+        {/* <div
           style={{
             background: "#fff7e6",
             padding: 16,
@@ -113,12 +131,20 @@ const { mutate: deleteMenu, isPending, variables } = useDeleteMenu()
           The <b>"WhatsApp Interactive Chat Menu"</b> can be started replying
           specific keywords like: <b>Hello, Hi, M, #, Menu</b>. Without these
           keywords, the menu cannot be started.
-        </div>
+        </div> */}
         <EditMenuModal
   open={editModalOpen}
   onClose={handleCloseEditModal}
   menu={selectedMenu}
   onSuccess={() => refetch()} // <-- make sure to call this if you're using TanStack to reload data
+/>
+<AddSubmenuModal
+  open={showSubmenuModal}
+  onClose={() => setShowSubmenuModal(false)}
+  parentId={currentParentId}
+  onSuccess={() => {
+    refetch(); // Refresh menu after adding submenu
+  }}
 />
 
     </div>
