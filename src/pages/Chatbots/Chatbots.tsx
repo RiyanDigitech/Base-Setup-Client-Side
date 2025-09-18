@@ -17,6 +17,7 @@ const Chatbots: React.FC = () => {
   const [selectedMenu, setSelectedMenu] = useState<any>(null);
   const [editSubmenuModalOpen, setEditSubmenuModalOpen] = useState(false);
 const [selectedSubmenu, setSelectedSubmenu] = useState<any>(null);
+const [menuRefetchKey, setMenuRefetchKey] = useState(0);
 
 const { mutate: deleteMenu, isPending, variables } = useDeleteMenu({
   onSuccess: (_:any, deletedId:any) => {
@@ -24,7 +25,8 @@ const { mutate: deleteMenu, isPending, variables } = useDeleteMenu({
       setMenuSaved(true);
       setCurrentMenu(null);
     }
-    refetch();
+    refetch(); // for draft
+    setMenuRefetchKey(prev => prev + 1); // for saved
   },
 })
 
@@ -165,7 +167,7 @@ const { mutate: deleteMenu, isPending, variables } = useDeleteMenu({
       </div>
 
       {/* Saved Menus Section */}
-      <MenuViewer />
+      <MenuViewer refetchTrigger={menuRefetchKey}  />
 
       {/* Submenu Modal */}
       <AddSubMenuModal

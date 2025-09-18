@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 interface AddSubmenuModalProps {
   open: boolean;
   onClose: () => void;
-  parentId: number; // Required to set parent_id
+  parentId: number | null; // Required to set parent_id
   onSuccess?: () => void; // Optional callback after successful creation
 }
 
@@ -60,10 +60,11 @@ const AddSubmenuModal: React.FC<AddSubmenuModalProps> = ({ open, onClose, parent
     >
       <Form form={form} layout="vertical">
         <Form.Item name="title" label="Submenu Title" rules={[{ required: true }]}>
-          <Input />
+          <Input className="hover:border-green-600 focus:border-green-700 focus:ring-1 focus:ring-green-300" />
         </Form.Item>
         <Form.Item name="action_type" label="Action Type" rules={[{ required: true }]}>
           <Select
+          popupClassName="custom-select-dropdown"
             options={[
               { value: 'text', label: 'Text' },
               { value: 'video', label: 'Video URL' },
@@ -71,7 +72,7 @@ const AddSubmenuModal: React.FC<AddSubmenuModalProps> = ({ open, onClose, parent
           />
         </Form.Item>
         <Form.Item name="action_payload" label="Payload" rules={[{ required: true }]}>
-          <Input.TextArea placeholder="Enter text or video URL" />
+          <Input.TextArea className="hover:border-green-600 focus:border-green-700 focus:ring-1 focus:ring-green-300" placeholder="Enter text or video URL" />
         </Form.Item>
       </Form>
     </Modal>
